@@ -1,9 +1,9 @@
-import { Model } from "mongoose"
+import { Document, Model } from "mongoose"
 import { PostModel, Role, RoleModel, SessionModel, User, UserModel } from "../models"
 import { Router, Response, Request} from "express"
 import * as express from 'express'
 import { SecurityUtils } from "../utils"
-// import { checkBody, checkUserRole, checkUserToken } from "../middleware"
+import { checkBody, checkUserRole, checkUserToken } from "../middleware"
 import { RolesEnums } from "../enums"
 import { checkQuery } from "../middleware/query.middleware"
 
@@ -34,24 +34,15 @@ export class UserController {
         "password" : "string",
         "firstname" : "string",
         "lastname" : "string",
-        "tree_name" : "string",
         "image" : "string",
-        "address" : "string",
-        "city" : "string",
-        "country" : "string",
-        "skills" : "object",
-        "hobbies" : "object",
-        "job" : "string",
         "aboutMe" : "string",
         "joinDate" : "string",
-        "birthday" : "string",
     }
 
     subscribe = async (req: Request, res: Response):Promise<void> => {
 
         const login: string = req.body.login
         const password: string  = req.body.password
-        let tree
 
 
         try{
@@ -64,19 +55,10 @@ export class UserController {
                 firstname : req.body.firstname,
                 lastname : req.body.lastname,
                 roles:[this.guestRole],
-                tree,
                 posts: [],
-                todoTask: [],
                 image: req.body.image,
-                address : req.body.address,
-                city : req.body.city,
-                country : req.body.country,
-                skills : req.body.skills,
-                hobbies : req.body.hobbies,
-                job : req.body.job,
                 aboutMe : req.body.aboutMe,
                 joinDate : req.body.joinDate,
-                birthday : req.body.birthday,
                 follow: []
             })
             res.json(user)
@@ -84,7 +66,6 @@ export class UserController {
         }catch(err: unknown){
             const me = err as {[key: string]: unknown}
             if (me['name'] === "MongoServerError" && me['code'] === 11000){
-                
                 res.status(409).json({"message": "The login is already in use."})
             }else{
                 console.log(me)
@@ -97,10 +78,6 @@ export class UserController {
     readonly paramsUpdateUser = {
         "password" : "string | undefined",
         "image": "string | undefined",
-        "address" : "string | undefined",
-        "skills" : "object | undefined",
-        "hobbies" : "object | undefined",
-        "job" : "string | undefined",
         "aboutMe" : "string | undefined",
     }
 
@@ -171,10 +148,9 @@ export class UserController {
     }
 
     getAllUsersInfo = async (req:Request, res:Response): Promise<void> => {
-        const return_list = []
-        return_list.push(await req.user?.populate("tree"))
+        const return_list: (Document<unknown, {}, User> & User & Required<{ _id: string }>)[] = []
 
-        const users = await UserModel.find({"_id": {"$ne": req.user?._id}}).populate("tree")
+        const users = await UserModel.find({"_id": {"$ne": req.user?._id}})
         if(!users){
             res.status(404).json({"message" : "No users"})
             return
@@ -245,7 +221,7 @@ export class UserController {
 
         let user
         try{
-            user = await UserModel.findById(req.query.id).populate("roles").populate("tree")
+            user = await UserModel.findById(req.query.id).populate("roles")
             if(user){
                 user.password = ""
                 user.roles = []
@@ -256,26 +232,7 @@ export class UserController {
 
         res.status(200).json(user)
     }
-
-    readonly queryUsersTree = {
-        "id" : "string"
-    }
-
-    getUserTree = async (req: Request, res: Response): Promise<void> => {
-
-        try{
-            const user = await UserModel.findById(req.query.id).populate("tree")
-            
-            if(!user){
-                res.status(404).end(); return 
-            }
-            
-            res.status(200).json(user.tree)
-        }catch(err){
-
-            res.status(400).json({"message": "User not found"})
-        }
-    }
+  
 
     readonly queryGetPost = {
         "user_id" : "string | undefined"
@@ -303,31 +260,8 @@ export class UserController {
     
     }
 
-    readonly paramsUpdateTree = {
-        "name" : "string"
-    }
 
-    updateTree = async (req:Request, res:Response):Promise<void> => {
-        if(!req.user){
-            res.status(500).json({"message" : "No access to your personal information"})
-            return 
-        }
-        try{
-            const tree = await TreeModel.findById(req.user.tree._id)
-            if(!tree){
-                res.status(400).json({"message" : "Tree not found"})
-                return 
-            }
-            tree.name = req.body.name
-            tree.save()
-            res.status(200).json(tree)
-            return
-        }catch(err){
-            res.status(500).json({"message" : "Can't access to your tree"})
-            return 
-        }
-    }
-
+  
     readonly queryValidatePost = {
         "post_id" : "string"
     }
@@ -352,14 +286,7 @@ export class UserController {
             
             post.whoValidates.push(req.user)
             post.save()
-            const tree = await TreeModel.findById(post.treeLinked)
             
-            if(!tree){
-                res.status(404).json({"message" : "Tree not found"})
-                return 
-            }
-            
-            await TreeService.treeAddScore(tree, 1)
 
             res.status(200).json({"message" : "You validate this post"})
             return
@@ -437,26 +364,7 @@ export class UserController {
       
 
     getFollower = async (req:Request, res:Response):Promise<void> => {
-        const user_tree:any[] = []
-        try{
-            user_tree.push(await req.user?.populate("tree"))
-            const list_followers = req.user?.follow
-            if(!list_followers){
-                res.status(204).json({"message" : "you are following no one"})
-                return 
-            }
-
-            for (let user of list_followers){
-                const user_info = await UserModel.findById(user._id).populate("tree")
-                user_tree.push(user_info)
-            }
-            res.status(200).json(user_tree)
-            
-        }catch(e){
-            console.log(e)
-            res.status(500).end()
             return 
-        }
     }
      deleteMe = async (req: Request, res: Response) => {
         try {
@@ -466,7 +374,6 @@ export class UserController {
             throw new Error('User not found'); // or handle it differently based on your requirements
           }
       
-          await TreeModel.findByIdAndDelete(user.tree._id)
           // Delete the user document from MongoDB
           await UserModel.findByIdAndDelete(user._id);
           // Respond with the deleted user information
@@ -485,7 +392,7 @@ export class UserController {
 
         let user
         try{
-            user = await UserModel.findById(req.query.id).populate("roles").populate("tree")
+            user = await UserModel.findById(req.query.id).populate("roles")
             if(user){
                 user.password = ""
                 user.roles = []
@@ -522,14 +429,12 @@ export class UserController {
         router.get('/me', checkUserToken(), this.me.bind(this))
         router.get('/count', checkUserToken(), checkUserRole(RolesEnums.admin), this.getAllUsers.bind(this))
         router.get('/one', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUser.bind(this))
-        router.get('/role', checkUserToken(), checkUserRole(RolesEnums.admin), this.getRoles.bind(this)) // Return the list of all possible roles 
-        router.get('/tree', checkUserToken(), checkQuery(this.queryUsersTree), this.getUserTree.bind(this))
+        router.get('/role', checkUserToken(), checkUserRole(RolesEnums.admin), this.getRoles.bind(this)) // Return the list of all possible roles
         router.get('/post', checkUserToken(), checkQuery(this.queryGetPost), this.getAllPost.bind(this))
         router.get('/all', checkUserToken(), this.getAllUsersInfo.bind(this))
         router.get('/sessions', checkUserToken(), this.getAllSession.bind(this))
         router.post('/unfollow',checkUserToken(), checkQuery(this.queryUnfollow),this.unfollow.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateUser), this.updateUser.bind(this))
-        router.patch('/tree', express.json(), checkUserToken(), checkBody(this.paramsUpdateTree), this.updateTree.bind(this))
         router.patch('/validate', express.json(), checkUserToken(), checkQuery(this.queryValidatePost), this.validatePost.bind(this))
         router.patch('/role', express.json(), checkUserToken(), checkUserRole(RolesEnums.admin), checkBody(this.paramsGiveRole), this.addRole.bind(this))
         router.post('/follows', express.json(), checkUserToken(), checkQuery(this.queryFollow), this.follow.bind(this))

@@ -1,5 +1,6 @@
 export * from './role.model'
 export * from './user.model'
+export * from './session.model'
 export * from './comment.model'
 export * from './post.model'
-export * from './session.model'
+export * from './message.model'

@@ -31,32 +31,8 @@ const userShemma = new Schema<User>({
         ref: "Post",
         required: true
     }],
-    
+    // User personal infos
     image: {
-        type: Schema.Types.String,
-        required: true
-    },
-    address: {
-        type: Schema.Types.String,
-        required: true
-    },
-    city: {
-        type: Schema.Types.String,
-        required: true
-    },
-    country: {
-        type: Schema.Types.String,
-        required: true
-    },
-    skills: [{
-        type: Schema.Types.String,
-        required: true
-    }],
-    hobbies: [{
-        type: Schema.Types.String,
-        required: true
-    }],
-    job: {
         type: Schema.Types.String,
         required: true
     },
@@ -65,10 +41,6 @@ const userShemma = new Schema<User>({
         required: true
     },
     joinDate : {
-        type: Schema.Types.Date,
-        required: true
-    },
-    birthday : {
         type: Schema.Types.Date,
         required: true
     },
@@ -92,17 +64,12 @@ export interface User{
     roles: Role[]
     posts: Post[]
 
+    // User personal infos
     image: string
-    address: string
-    city: string
-    country: string
-    skills: string[]
-    hobbies: string[]
-    job: string
     aboutMe: string
     joinDate: Date
-    birthday: Date
 
+    // Online
     follow: any[]
 
 }

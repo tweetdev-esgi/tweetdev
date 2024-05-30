@@ -16,7 +16,7 @@ const Header = () => {
 
     return (
         <nav className="flex flex-row justify-between w-full z-20 fixed top-0 left-0 h-14 border-b shadow-md bg-gradient-to-r from-gray-700 to-gray-900 text-white px-4 items-center">
-            <div className="text-lg font-bold tracking-wide">tweetDev</div>
+            <div className="text-lg font-bold tracking-wide">TweetDev</div>
             <div className="flex flex-row gap-x-4">
                 {userLoggedIn ? (
                     <>
