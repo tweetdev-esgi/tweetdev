@@ -47,8 +47,7 @@ export class StartService{
             UserModel.create({
                 login,
                 password: SecurityUtils.toSHA512("password"),
-                firstname : "Michel (test)",
-                lastname : "Dupont (test)",
+                username : "paschyz",
                 roles: userRoles,
                 posts: [],
                 image: "IMAGE",

@@ -13,11 +13,7 @@ const userShemma = new Schema<User>({
         type: Schema.Types.String,
         required: true
     },
-    firstname: {
-        type: Schema.Types.String,
-        required: true
-    },
-    lastname: {
+    username: {
         type: Schema.Types.String,
         required: true
     },
@@ -59,8 +55,7 @@ export interface User{
     _id: string
     login: string
     password: string
-    firstname: string
-    lastname: string
+    username: string
     roles: Role[]
     posts: Post[]
 
