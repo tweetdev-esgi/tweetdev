@@ -9,7 +9,8 @@ import { StartService } from './service'
 import { PostController } from './controller/post.controller'
 import { MessageController } from './controller/message.controller'
 const cors = require('cors');
-require('dotenv').config();
+import * as dotenv from "dotenv";
+dotenv.config({ path:'../.env' });
 
 const startServer = async (): Promise<void> => {
 
