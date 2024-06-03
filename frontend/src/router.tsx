@@ -4,6 +4,7 @@ import App from "./App";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Logout from "./pages/Logout";
+import Profile from "./pages/Profile";
 export default createBrowserRouter([
   {
     path: "/",
@@ -27,6 +28,11 @@ export default createBrowserRouter([
       {
         path:"/logout",
         element: <Logout />
+      }
+      ,
+      {
+        path:"/profile",
+        element: <Profile />
       }
       
       // {

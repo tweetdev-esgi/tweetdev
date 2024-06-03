@@ -23,9 +23,14 @@ function Header() {
             )}
 
                 {isLoggedIn && (
+                    <>
+                    <li className="header_nav-item">
+                        <a href="/profile" className="header_nav-link" >Profile</a>
+                    </li>
                     <li className="header_nav-item">
                         <a href="/logout" className="header_nav-link" >Log Out</a>
                     </li>
+                    </>
                 )}
                 </ul>
             </nav>
