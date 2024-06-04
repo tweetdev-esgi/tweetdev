@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
+import Feed from "./pages/Feed";
 export default createBrowserRouter([
   {
     path: "/",
@@ -33,6 +34,10 @@ export default createBrowserRouter([
       {
         path:"/profile",
         element: <Profile />
+      },
+      {
+        path:"/feed",
+        element: <Feed />
       }
       
       // {

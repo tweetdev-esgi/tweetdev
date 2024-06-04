@@ -29,7 +29,7 @@ function Profile() {
 
 
     return (
-        <div>
+        <div className='profile-container'>
             {!selfInfo && ( <>Loading...</>)}
             
             {selfInfo && (
