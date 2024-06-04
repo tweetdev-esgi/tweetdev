@@ -1,6 +1,7 @@
 import './App.css'
 import {Header} from './components/index'
 import { Outlet } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { AuthProvider } from './provider/AuthProvider';
 import { Toaster } from 'react-hot-toast';
