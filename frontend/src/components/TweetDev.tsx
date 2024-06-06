@@ -33,8 +33,9 @@ function TweetDev({key, postInfo}) {
                     <div className='likes'>{postInfo.like.length} Likes</div>
                     <div className='comments'>{postInfo.comments.length} Comments</div>
                 </div>
-                <div className='langages'>
-                    <div className='Python'>{postInfo.language}</div>
+                <div className='specs'>
+                    <div className='format'>{postInfo.format}</div>
+                    <div className='language'>{postInfo.language}</div>
                 </div>
              
             </div>

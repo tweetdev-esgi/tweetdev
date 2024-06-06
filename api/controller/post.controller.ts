@@ -34,7 +34,8 @@ export class PostController {
             userId : req.user?._id,
             authorName : req.user?.username,
             type: req.body.type,
-            language: req.body.language
+            language: req.body.language,
+            format: req.body.format
         })
 
         try{

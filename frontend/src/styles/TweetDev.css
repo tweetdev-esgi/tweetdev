@@ -35,12 +35,13 @@
     border-bottom: 1px solid black;
 }
 
-.engagement, .langages {
+
+.engagement, .specs {
     display: flex;
     align-items: center; 
 }
 
-.likes, .comments, .Python {
+.likes, .comments, .language, .format {
     margin-right: 10px; 
 }
 

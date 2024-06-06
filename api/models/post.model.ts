@@ -42,6 +42,11 @@ const postShemma = new Schema<Post>({
         type: Schema.Types.String,
         enum: ['python', 'javascript'],
         required: false
+    },
+    format: {
+        type: Schema.Types.String,
+        enum: ['text', 'image'],
+        required: false
     }
 }, {
     versionKey: false,
@@ -59,6 +64,7 @@ export interface Post{
     authorName: string
     type: 'tweet' | 'tweetdev'
     language: 'python' | 'javascript'
+    format: 'text' | 'image'
 }
 
 
