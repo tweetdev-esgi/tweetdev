@@ -185,12 +185,26 @@ export class PostController {
         res.status(200).json(all_post)
         return 
     }
+    getUserPosts = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const userId = req.query.userId || req.user?._id;
+            if (!userId) {
+                res.status(401).json({"message": "Unauthorized"});
+                return;
+            }
 
+            const userPosts = await PostModel.find({ userId: userId });
+            res.status(200).json(userPosts);
+        } catch (err) {
+            res.status(500).json({"message": "An error occurred while retrieving posts"});
+        }
+    }
 
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), checkUserRole(RolesEnums.guest), checkQuery(this.queryPostId), this.getOnePost.bind(this))
         router.get('/all', checkUserToken(), this.getAllPosts.bind(this))
+        router.get('/user-posts', checkUserToken(), this.getUserPosts.bind(this))
         router.get('/like', checkUserToken(),checkQuery(this.queryPostId), this.nbrLike.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewPost), this.newPost.bind(this))
         router.post('/comment', express.json(), checkUserToken(), checkBody(this.paramsComment), this.addComment.bind(this))

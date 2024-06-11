@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import "../styles/TweetDev.css"
-import Post from '../interfaces/Post';
 function TweetDev({key, postInfo}) {
         const [input, setInput] = useState('');
         
