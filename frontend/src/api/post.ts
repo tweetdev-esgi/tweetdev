@@ -27,9 +27,65 @@ export const fetchPosts = async (token: string) => {
     }
   };
 
-  export const getProfilePosts = async (token: string): Promise<any> => {
+  export const getProfilePosts = async (token: string, userId?: string): Promise<any> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/post/user-posts`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        params: userId ? { userId } : {}
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+  export const fetchProfilePosts = async (token: string, userId?: string) => {
+    try {
+      const postsData = await getProfilePosts(token, userId);
+      return postsData;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+
+  export const getIsPostLiked = async (token: string, postId: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/post/is-liked`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        params: {
+          post_id: postId
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+
+  export const fetchIsPostLiked = async (token: string, postId: string) => {
+    try {
+      const postsData = await getIsPostLiked(token, postId);
+      return postsData;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+
+
+  export const patchToggleLikePost = async (token: string, postId: any): Promise<any> => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/post/like`,
+        postId,
+        {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -41,14 +97,3 @@ export const fetchPosts = async (token: string) => {
       throw error;
     }
   };
-
-  export const fetchProfilePosts = async (token: string) => {
-    try {
-      const postsData = await getProfilePosts(token);
-      return postsData;
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      throw error;
-    }
-  };
-

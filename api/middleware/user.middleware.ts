@@ -13,7 +13,6 @@ export function checkUserToken(): RequestHandler {
     return async function(req: Request, res, next) {
         const authorization = req.headers['authorization'];
         if(authorization === undefined) {
-            
             res.status(401).json({"message": "First token invalid"})
             return;
         }

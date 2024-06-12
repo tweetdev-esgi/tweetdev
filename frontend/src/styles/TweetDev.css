@@ -88,3 +88,12 @@ pre {
     margin: 0;
   }
   
+
+  .icon {
+    vertical-align: middle; 
+  }
+  
+
+  .likes, .comments{
+    cursor: pointer;
+  }

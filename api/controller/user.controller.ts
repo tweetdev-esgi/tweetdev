@@ -90,7 +90,6 @@ export class UserController {
             return;
           }
       
-          // Compare hashed currentPassword with the user's password, if provided
           if (currentPassword) {
             const isCurrentPasswordValid = SecurityUtils.verifySHA512(
               currentPassword,
@@ -105,13 +104,11 @@ export class UserController {
       
           let updated_user;
       
-          // Create an update object with the new information, excluding password if not provided
           const updateData: any = {
             ...(password && { password: SecurityUtils.toSHA512(password) }),
             ...userInfo,
           };
       
-          // Update the user document with the new information
           try {
             updated_user = await UserModel.findByIdAndUpdate(
               req.user?._id,
@@ -172,7 +169,6 @@ export class UserController {
 
         if(!req.user){res.send(401).end(); return}
 
-        // Check that we don't assign roles to ourselves 
         if ( req.body.user_id === String(req.user._id)){
             res.status(409).json({"message" : "You can't assign roles to yourself"})
             return
@@ -291,40 +287,42 @@ export class UserController {
     }
 
     readonly queryFollow = {
-        "user_id" : "string"
+        "user_id" : "string | undefined"
     }
 
-    follow = async (req:Request, res:Response): Promise<void> => {
-
-        if ( !req.user || req.user._id == req.query.user_id){
-            res.status(400).json({"message": "You can't follow yourself"})
-            return 
+    follow = async (req: Request, res: Response): Promise<void> => {
+        if (!req.user || req.user._id == req.body.user_id) {
+            res.status(400).json({ "message": "You can't follow yourself" });
+            return;
         }
-
-        try{
-            const follow_user = await UserModel.findById(req.query.user_id)
-            if (!follow_user){
-                res.status(404).json({"message" : "We can't find this user"})
-                return 
-            }
-
-            if (req.user.follow.includes(req.query.user_id)) {
-                res.status(400).json({ message: "You are already following this user" });
+    
+        const following_user_id = req.user._id;
+        const followed_user_id = req.body.user_id;
+    
+        try {
+            const followed_user = await UserModel.findById(followed_user_id);
+            if (!followed_user) {
+                res.status(404).json({ "message": "We can't find this user" });
                 return;
-              }
-            req.user?.follow.push(follow_user)
-            req.user?.save()
-
-            res.status(200).send("OK")
-            return 
-        }catch(e){
+            }
+    
+            const followIndex = followed_user.follow.indexOf(following_user_id);
+    
+            if (followIndex !== -1) {
+                followed_user.follow.splice(followIndex, 1);
+                await followed_user.save();
+                res.status(200).json({ "message": "You have unfollowed this user" });
+            } else {
+                followed_user.follow.push(following_user_id);
+                await followed_user.save();
+                res.status(200).json({ "message": "You are now following this user" });
+            }
+        } catch (e) {
             console.log(e);
-            res.status(400).json({"message" : "This is not a user's ID"})
-            return
+            res.status(400).json({ "message": "This is not a user's ID" });
+            return;
         }
-
-
-    }
+    };
 
     readonly queryUnfollow={
         "user_id" : "string"
@@ -355,9 +353,21 @@ export class UserController {
       };
       
 
-    getFollower = async (req:Request, res:Response):Promise<void> => {
-            return 
-    }
+
+      getFollowers = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const user = await UserModel.findById(req.user?.id);
+            if (!user) {
+                res.status(404).json({ "message": "User not found" });
+                return;
+            }
+    
+            res.status(200).json(user.follow);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ "message": "Internal Server Error" });
+        }
+    };
      deleteMe = async (req: Request, res: Response) => {
         try {
           const user = req.user;
@@ -417,7 +427,7 @@ export class UserController {
         
         const router = express.Router()
         router.post(`/subscribe`, express.json(), checkBody(this.paramsLogin), this.subscribe.bind(this))
-        router.get('/follow', express.json(), checkUserToken(), this.getFollower.bind(this))
+        router.get('/follow', express.json(), checkUserToken(), this.getFollowers.bind(this))
         router.get('/me', checkUserToken(), this.me.bind(this))
         router.get('/count', checkUserToken(), checkUserRole(RolesEnums.admin), this.getAllUsers.bind(this))
         router.get('/one', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUser.bind(this))
@@ -429,7 +439,7 @@ export class UserController {
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateUser), this.updateUser.bind(this))
         router.patch('/validate', express.json(), checkUserToken(), checkQuery(this.queryValidatePost), this.validatePost.bind(this))
         router.patch('/role', express.json(), checkUserToken(), checkUserRole(RolesEnums.admin), checkBody(this.paramsGiveRole), this.addRole.bind(this))
-        router.post('/follows', express.json(), checkUserToken(), checkQuery(this.queryFollow), this.follow.bind(this))
+        router.post('/follows', express.json(), checkUserToken(), checkBody(this.queryFollow), this.follow.bind(this))
         router.delete('/me', checkUserToken(), this.deleteMe.bind(this))
         router.delete('/one', checkUserToken(), checkUserRole(RolesEnums.admin), this.deleteOneUser.bind(this))
         return router

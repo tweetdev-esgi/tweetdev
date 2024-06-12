@@ -108,34 +108,35 @@ export class PostController {
         "post_id" : "string"
     }
 
-    likePost = async (req:Request, res:Response): Promise<void> => {
-        
-        try{
-            const post = await PostModel.findById(req.body.post_id)
-            if (!post){
-                res.status(404).json({"message": "Post not found"})
-                return
+    likePost = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const post = await PostModel.findById(req.body.post_id);
+            if (!post) {
+                res.status(404).json({ "message": "Post not found" });
+                return;
             }
-            if (!req.user){
-                res.status(403).end()
-                return 
+            if (!req.user) {
+                res.status(403).end();
+                return;
             }
-            if(!(post.like.some(l => String(l._id) === String(req.user?._id)))){
-                post.like.push(req.user)
-                post.save()
-                res.status(200).end()
-                return
+    
+            const userLikedIndex = post.like.findIndex(l => String(l._id) === String(req.user?._id));
+    
+            if (userLikedIndex === -1) {
+                post.like.push(req.user);
+                await post.save();
+                res.status(200).json({ "message": "Post liked" });
+            } else {
+                post.like.splice(userLikedIndex, 1);
+                await post.save();
+                res.status(200).json({ "message": "Post like removed" });
             }
-
-            res.status(401).json({"message" : "You've already liked this post"})
-            return 
-
-        }catch(err){
-            res.status(401).end()
-            return
-
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ "message": "Internal Server Error" });
         }
-    }
+    };
+    
 
     nbrLike = async (req: Request, res: Response): Promise<void> => {
         
@@ -185,7 +186,7 @@ export class PostController {
         res.status(200).json(all_post)
         return 
     }
-    getUserPosts = async (req: Request, res: Response): Promise<void> => {
+    getSelfPosts = async (req: Request, res: Response): Promise<void> => {
         try {
             const userId = req.query.userId || req.user?._id;
             if (!userId) {
@@ -200,12 +201,46 @@ export class PostController {
         }
     }
 
+    getUserPosts = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const userId = req.query.userId || req.user?._id;
+            if (!userId) {
+                res.status(401).json({"message": "Unauthorized"});
+                return;
+            }
+
+            const userPosts = await PostModel.find({ userId: userId });
+            res.status(200).json(userPosts);
+        } catch (err) {
+            res.status(500).json({"message": "An error occurred while retrieving posts"});
+        }
+    }
+    isPostLikedByUser = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const post = await PostModel.findById(req.query.post_id);
+            if (!post) {
+                res.status(404).json({ "message": "Post not found" });
+                return;
+            }
+            if (!req.user) {
+                res.status(403).end();
+                return;
+            }
+
+            const isLiked = post.like.some(user => String(user._id) === String(req.user?._id));
+            res.status(200).json({ liked: isLiked });
+        } catch (err) {
+            res.status(500).json({ "message": "Internal Server Error" });
+        }
+    };
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), checkUserRole(RolesEnums.guest), checkQuery(this.queryPostId), this.getOnePost.bind(this))
         router.get('/all', checkUserToken(), this.getAllPosts.bind(this))
         router.get('/user-posts', checkUserToken(), this.getUserPosts.bind(this))
         router.get('/like', checkUserToken(),checkQuery(this.queryPostId), this.nbrLike.bind(this))
+        router.get('/is-liked', checkUserToken(), this.isPostLikedByUser.bind(this)); 
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewPost), this.newPost.bind(this))
         router.post('/comment', express.json(), checkUserToken(), checkBody(this.paramsComment), this.addComment.bind(this))
         router.patch('/like', express.json(), checkUserToken(), checkBody(this.paramsLike), this.likePost.bind(this))

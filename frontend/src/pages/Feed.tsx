@@ -15,7 +15,6 @@ function Feed() {
                 if (sessionToken) {
                   const postsData = await fetchPosts(sessionToken);
                   setPosts(postsData);
-                  console.log(postsData)
                 } else {
                   console.error("Error fetching posts");
                 }

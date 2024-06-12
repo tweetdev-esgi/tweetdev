@@ -1,18 +1,54 @@
 import React, { useEffect, useState } from 'react';
-
+import {Heart, ChatCircle} from "@phosphor-icons/react";
 import "../styles/TweetDev.css"
-function TweetDev({key, postInfo}) {
+import { fetchIsPostLiked, patchToggleLikePost } from '../api/post';
+import { getSession } from '../services/sessionService';
+function TweetDev({ postInfo}) {
         const [input, setInput] = useState('');
-        
+        const [likes, setLikes] = useState(postInfo.like.length);
         const [output, setOutput] = useState('');
-        
+        const [isLiked, setIsLiked] = useState(false);
+        const sessionToken = getSession();
+        const toggleLike = ()=>{
+            console.log(isLiked);
+            setIsLiked(!isLiked);
+            if (sessionToken) {
+                (async () => {
+                    try {
+                        await patchToggleLikePost(sessionToken, {"post_id": postInfo._id});
+                        
+                    } catch (error) {
+                        console.error("Error fetching post liked status:", error);
+                    }
+                })();
+            }
+            if(isLiked){
+                setLikes(likes-1);
+                
+            }else{
+                setLikes(likes+1);
+            
+            }
+            
+        }
         const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
             setInput(event.target.value);
         };
         useEffect(() => {
-            console.log(postInfo)
-            console.log(postInfo.authorName)
-
+            
+            const sessionToken = getSession();
+            
+            if (sessionToken) {
+                (async () => {
+                    try {
+                        const isLiked = await fetchIsPostLiked(sessionToken, postInfo._id);
+                        
+                        setIsLiked(isLiked.liked);
+                    } catch (error) {
+                        console.error("Error fetching post liked status:", error);
+                    }
+                })();
+            }
           }, []);
         const run = () => {
             setOutput("run");
@@ -28,9 +64,11 @@ function TweetDev({key, postInfo}) {
             </div>
             <div className='details'>
                 <div className='engagement'>
-
-                    <div className='likes'>{postInfo.like.length} Likes</div>
-                    <div className='comments'>{postInfo.comments.length} Comments</div>
+                    <div className='likes' onClick={()=>toggleLike()}>{likes } <span className='icon'>       
+                        {isLiked && <Heart size={22}  weight="fill" />} {}
+        {!isLiked && <Heart size={22} />} {}
+  </span></div>
+                    <div className='comments'>{postInfo.comments.length} <span className='icon'><ChatCircle size={22} /></span></div>
                 </div>
                 <div className='specs'>
                     <div className='format'>{postInfo.format}</div>
