@@ -90,3 +90,31 @@ export const followUser = async (token: string, userId:string): Promise<any> => 
     throw error;
   }
 };
+
+export const getIsUserFollowed = async (token: string, id: string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/is-liked`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      params: {
+        id: id
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
+export const fetchIsUserFollowed = async (token: string, id: string) => {
+  try {
+    const response = await getIsUserFollowed(token, id);
+    return response;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};

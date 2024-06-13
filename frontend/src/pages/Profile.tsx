@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchSelfInfo, fetchUserInfo, followUser} from '../api/user';
+import { fetchIsUserFollowed, fetchSelfInfo, fetchUserInfo, followUser} from '../api/user';
 import { getSession } from '../services/sessionService';
 import {convertTimestampToMonthYear, defaultUser} from '../utils/utils';
 import '../styles/Profile.css';
@@ -18,27 +18,43 @@ function Profile() {
   const [selfInfo, setSelfInfo] = useState<UserResponse>(defaultUser);
   
   const [selfPosts, setSelfPosts] = useState<Post[]>([]);
-
+  const [followersCount, setFollowersCount] = useState(0);
+  
+  const [isFollowed, setIsFollowed] = useState(false);
   const id = query.get('id');
-  const followerCount = selfInfo.follow.length;
-  const followerText = followerCount === 1 ? 'follower' : 'followers';
+  const followerText = followersCount === 1 ? 'follower' : 'followers';
   const sessionToken = getSession();
+
+  const isUserFollowed = async()=>{
+    if(sessionToken && id){
+      try{
+
+        const response = await fetchIsUserFollowed(sessionToken, id);
+        return response.isFollowed;
+      }catch(error){
+        console.error("Error fetching user info:", error);
+      }
+    }
+  }
+
+
     useEffect(() => {
         const fetchData = async () => {
           try {
-            
-            
+            setIsFollowed(await isUserFollowed());
             if (sessionToken) {
 
               if(id==null) {
                 const selfInfoData = await fetchSelfInfo(sessionToken);
                 setSelfInfo(selfInfoData);
+                setFollowersCount(selfInfoData.follow.length);
                 const selfPostsData = await fetchProfilePosts(sessionToken);
                 setSelfPosts(selfPostsData);
               }else{
                 console.log(id)
                 const selfInfoData = await fetchUserInfo(sessionToken, id);
                 setSelfInfo(selfInfoData);
+                setFollowersCount(selfInfoData.follow.length);
                 const selfPostsData = await fetchProfilePosts(sessionToken, id);
                 setSelfPosts(selfPostsData);
               }
@@ -52,9 +68,23 @@ function Profile() {
         fetchData();
       }, []);
 
-      const follow= ()=>{
-        console.log(sessionToken, id);
+      const follow= async ()=>{
+        if (isFollowed){
+          setFollowersCount(followersCount-1);
+        }
+        else{
+          setFollowersCount(followersCount+1);
+        }
+        setIsFollowed(!isFollowed);
         if(sessionToken && id){
+          try{
+
+            const response = await fetchIsUserFollowed(sessionToken, id);
+            console.log(response);
+          }catch(error){
+            console.error("Error fetching user info:", error);
+          }
+          console.log(fetchIsUserFollowed(sessionToken, id));
           followUser(sessionToken,id);
         }
       }
@@ -68,13 +98,13 @@ function Profile() {
                 <h2>{selfInfo.username}</h2>
                 <p> {selfInfo.aboutMe}</p>
                 <p>Joined {convertTimestampToMonthYear(selfInfo.joinDate)}</p>
-                <p>{followerCount} {followerText}</p>
+                <p>{followersCount} {followerText}</p>
                 {!id && <ModalProfileEdit selfInfo={selfInfo}></ModalProfileEdit>}
                 
 
                 {id && (
                 <Button variant="primary" onClick={follow} >
-                  Follow
+                  {isFollowed ? 'Unfollow' : 'Follow'}
                 </Button>)}
                 </div>
                 <div className="feed-container">

@@ -422,6 +422,32 @@ export class UserController {
             return 
         }
     }
+    isUserFollowed = async (req: Request, res: Response): Promise<void> => {
+        try {
+            if (!req.user) {
+                res.status(403).json({ "message": "Unauthorized" });
+                return;
+            }
+    
+            const userIdToCheck = req.query.id;
+            if (!userIdToCheck || typeof userIdToCheck !== "string") {
+                res.status(400).json({ "message": "Invalid or missing user ID" });
+                return;
+            }
+    
+            const user = await UserModel.findById(userIdToCheck);
+            if (!user) {
+                res.status(404).json({ "message": "User not found" });
+                return;
+            }
+    
+            const isFollowed = user.follow.some(followingUserId => String(followingUserId) === String(req.user?._id));
+            res.status(200).json({ isFollowed: isFollowed });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ "message": "Internal Server Error" });
+        }
+    };
 
     buildRouter = (): Router => {
         
@@ -431,10 +457,11 @@ export class UserController {
         router.get('/me', checkUserToken(), this.me.bind(this))
         router.get('/count', checkUserToken(), checkUserRole(RolesEnums.admin), this.getAllUsers.bind(this))
         router.get('/one', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUser.bind(this))
-        router.get('/role', checkUserToken(), checkUserRole(RolesEnums.admin), this.getRoles.bind(this)) // Return the list of all possible roles
+        router.get('/role', checkUserToken(), checkUserRole(RolesEnums.admin), this.getRoles.bind(this))
         router.get('/post', checkUserToken(), checkQuery(this.queryGetPost), this.getAllPost.bind(this))
         router.get('/all', checkUserToken(), this.getAllUsersInfo.bind(this))
         router.get('/sessions', checkUserToken(), this.getAllSession.bind(this))
+        router.get('/is-liked', checkUserToken(), this.isUserFollowed.bind(this))
         router.post('/unfollow',checkUserToken(), checkQuery(this.queryUnfollow),this.unfollow.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateUser), this.updateUser.bind(this))
         router.patch('/validate', express.json(), checkUserToken(), checkQuery(this.queryValidatePost), this.validatePost.bind(this))
