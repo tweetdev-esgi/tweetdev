@@ -6,3 +6,7 @@
 .profile-container{
     width: 1200px;
 }
+
+.followers{
+    display: block;
+}

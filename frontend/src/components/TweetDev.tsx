@@ -3,12 +3,14 @@ import {Heart, ChatCircle} from "@phosphor-icons/react";
 import "../styles/TweetDev.css"
 import { fetchIsPostLiked, patchToggleLikePost } from '../api/post';
 import { getSession } from '../services/sessionService';
+import { Link } from 'react-router-dom';
 function TweetDev({ postInfo}) {
         const [input, setInput] = useState('');
         const [likes, setLikes] = useState(postInfo.like.length);
         const [output, setOutput] = useState('');
         const [isLiked, setIsLiked] = useState(false);
         const sessionToken = getSession();
+        const authorUrl = `/profile?id=${postInfo.userId}`;
         const toggleLike = ()=>{
             console.log(isLiked);
             setIsLiked(!isLiked);
@@ -56,7 +58,7 @@ function TweetDev({ postInfo}) {
     return (
         <div className="tweetDev-container">
             <div className='up'>
-                <div className='author'>{postInfo.authorName}</div>
+                <div className='author'><a href={authorUrl}>{postInfo.authorName}</a></div>
                 <div className='title'>{postInfo.title}</div>
             </div>
             <div className='code'>

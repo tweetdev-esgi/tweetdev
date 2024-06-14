@@ -9,6 +9,7 @@ import { Post } from '../interfaces';
 import TweetDev from '../components/TweetDev';
 import { Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import ModalFollowers from '../components/ModalFollowers';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -36,7 +37,10 @@ function Profile() {
       }
     }
   }
-
+  const showFollowersModal = () => {
+    console.log('show followers modal');
+  
+  }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -98,7 +102,8 @@ function Profile() {
                 <h2>{selfInfo.username}</h2>
                 <p> {selfInfo.aboutMe}</p>
                 <p>Joined {convertTimestampToMonthYear(selfInfo.joinDate)}</p>
-                <p>{followersCount} {followerText}</p>
+                <ModalFollowers followersCount={followersCount} followersText={followerText}></ModalFollowers>
+                <a className='followers' onClick={showFollowersModal}>{followersCount} {followerText}</a>
                 {!id && <ModalProfileEdit selfInfo={selfInfo}></ModalProfileEdit>}
                 
 
