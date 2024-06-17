@@ -7,6 +7,7 @@ import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
 import Feed from "./pages/Feed";
 import CreateTweetDev from "./pages/CreateTweetDev";
+import CodeEditor from "./components/CodeEditor.tsx";
 export default createBrowserRouter([
   {
     path: "/",
@@ -44,7 +45,11 @@ export default createBrowserRouter([
         path:"/create-tweetdev",
         element: <CreateTweetDev />
       }
-      
+      ,
+      {
+        path:"/codeEditor",
+        element: <CodeEditor />
+      }
       // {
       //   path: "/header",
       //   element: <Header />

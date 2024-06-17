@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
     "@phosphor-icons/react": "^2.1.6",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@emailjs/browser": "^4.3.3",
+    "@monaco-editor/react": "^4.6.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
