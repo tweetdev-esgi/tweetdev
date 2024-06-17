@@ -17,16 +17,37 @@ export const getPosts = async (token: string): Promise<any> => {
   }
 };
 
-export const fetchPosts = async (token: string) => {
-    try {
-      const postsData = await getPosts(token);
+export const getFollowedUsersPosts = async (token: string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/post/followed-users-posts`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+};
+
+
+export const fetchPosts = async (token: string, fetchAllPosts: boolean): Promise<any> => {
+  try {
+      let postsData;
+      if (fetchAllPosts) {
+          postsData = await getPosts(token);
+      } else {
+          postsData = await getFollowedUsersPosts(token);
+      }
       return postsData;
-    } catch (error) {
+  } catch (error) {
       console.error("Error fetching posts:", error);
       throw error;
-    }
-  };
-
+  }
+};
   export const getProfilePosts = async (token: string, userId?: string): Promise<any> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/post/user-posts`, {

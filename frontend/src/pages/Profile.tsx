@@ -23,7 +23,7 @@ function Profile() {
   
   const [isFollowed, setIsFollowed] = useState(false);
   const id = query.get('id');
-  const followerText = followersCount === 1 ? 'follower' : 'followers';
+  const followerText = followersCount > 1 ? 'followers' : 'follower';
   const sessionToken = getSession();
 
   const isUserFollowed = async()=>{

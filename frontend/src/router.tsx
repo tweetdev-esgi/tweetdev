@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
 import Feed from "./pages/Feed";
+import CreateTweetDev from "./pages/CreateTweetDev";
 export default createBrowserRouter([
   {
     path: "/",
@@ -38,6 +39,10 @@ export default createBrowserRouter([
       {
         path:"/feed",
         element: <Feed />
+      },
+      {
+        path:"/create-tweetdev",
+        element: <CreateTweetDev />
       }
       
       // {

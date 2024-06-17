@@ -26,6 +26,9 @@ function Header() {
                 {isLoggedIn && (
                     <>
                     <li className="header_nav-item">
+                        <a href="/create-tweetdev" className="header_nav-link" >Create TweetDev</a>
+                    </li>
+                    <li className="header_nav-item">
                         <a href="/profile" className="header_nav-link" >Profile</a>
                     </li>
                     <li className="header_nav-item">

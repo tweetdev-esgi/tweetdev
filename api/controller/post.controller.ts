@@ -233,11 +233,36 @@ export class PostController {
             res.status(500).json({ "message": "Internal Server Error" });
         }
     };
+    getFollowedUsersPosts = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const userId = req.user?._id;
+            if (!userId) {
+                res.status(401).json({ "message": "Unauthorized" });
+                return;
+            }
 
+            const user = await UserModel.findById(userId).populate("follow", "_id");
+
+            if (!user) {
+                res.status(404).json({ "message": "User not found" });
+                return;
+            }
+
+            const followedUsersIds = user.follow.map((followedUser: any) => followedUser._id);
+
+            const posts = await PostModel.find({ userId: { $in: followedUsersIds } });
+
+            res.status(200).json(posts);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ "message": "Internal Server Error" });
+        }
+    };
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), checkUserRole(RolesEnums.guest), checkQuery(this.queryPostId), this.getOnePost.bind(this))
         router.get('/all', checkUserToken(), this.getAllPosts.bind(this))
+        router.get('/followed-users-posts', checkUserToken(), this.getFollowedUsersPosts.bind(this)); 
         router.get('/user-posts', checkUserToken(), this.getUserPosts.bind(this))
         router.get('/like', checkUserToken(),checkQuery(this.queryPostId), this.nbrLike.bind(this))
         router.get('/is-liked', checkUserToken(), this.isPostLikedByUser.bind(this)); 
