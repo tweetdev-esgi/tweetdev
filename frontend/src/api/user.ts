@@ -118,3 +118,22 @@ export const fetchIsUserFollowed = async (token: string, id: string) => {
     throw error;
   }
 };
+
+export const getFollowers = async (token: string, id: string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/follow`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      params: {
+        user_id: id
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+

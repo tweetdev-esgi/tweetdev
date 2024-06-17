@@ -103,7 +103,7 @@ function Profile() {
                 <p> {selfInfo.aboutMe}</p>
                 <p>Joined {convertTimestampToMonthYear(selfInfo.joinDate)}</p>
                 <ModalFollowers followersCount={followersCount} followersText={followerText}></ModalFollowers>
-                <a className='followers' onClick={showFollowersModal}>{followersCount} {followerText}</a>
+                {/* <a className='followers' onClick={showFollowersModal}>{followersCount} {followerText}</a> */}
                 {!id && <ModalProfileEdit selfInfo={selfInfo}></ModalProfileEdit>}
                 
 

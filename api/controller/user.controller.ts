@@ -356,13 +356,28 @@ export class UserController {
 
       getFollowers = async (req: Request, res: Response): Promise<void> => {
         try {
-            const user = await UserModel.findById(req.user?.id);
+            const user = await UserModel.findById(req.query.user_id);
             if (!user) {
                 res.status(404).json({ "message": "User not found" });
                 return;
             }
-    
+            
             res.status(200).json(user.follow);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ "message": "Internal Server Error" });
+        }
+    };
+    getUsersByIds = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const userIds = req.body.userIds; 
+            if (!userIds || !Array.isArray(userIds)) {
+                res.status(400).json({ "message": "Invalid request, userIds should be an array" });
+                return;
+            }
+            
+            const users = await UserModel.find({ _id: { $in: userIds } }).select('_id username'); 
+            res.status(200).json(users);
         } catch (err) {
             console.error(err);
             res.status(500).json({ "message": "Internal Server Error" });
@@ -452,6 +467,7 @@ export class UserController {
     buildRouter = (): Router => {
         
         const router = express.Router()
+        router.post('/get-users-by-ids', express.json(), this.getUsersByIds.bind(this)); 
         router.post(`/subscribe`, express.json(), checkBody(this.paramsLogin), this.subscribe.bind(this))
         router.get('/follow', express.json(), checkUserToken(), this.getFollowers.bind(this))
         router.get('/me', checkUserToken(), this.me.bind(this))
