@@ -15,7 +15,7 @@ function App() {
       <Header></Header>
       
       </div>      
-      <div style={{ display: "flex", flexDirection: "column", marginTop:"6.5rem"}}>
+      <div style={{ display: "flex", flexDirection: "column",alignItems: "center", marginTop:"6.5rem"}}>
         <Outlet />
 
         </div>
