@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, Text, useToast } from "@chakra-ui/react";
-import axios from "axios";
+import { executeCode } from "../api";
+import { AxiosError } from "axios";
 
 interface OutputProps {
     editorRef: React.RefObject<any>;
@@ -19,18 +20,21 @@ const Output: React.FC<OutputProps> = ({ editorRef, language }) => {
 
         try {
             setIsLoading(true);
-            const response = await axios.post("http://localhost:3000/execute", {
-                code: sourceCode,
-                language,
-            });
-            const result = response.data;
-            setOutput(result.output.split("\n"));
-            setIsError(result.status === "error");
+            const result = await executeCode(language, sourceCode);
+            setOutput(result.run.output.split("\n"));
+            setIsError(result.run.code !== 0);
         } catch (error) {
+            let description = "Unable to run code";
+            if (error instanceof AxiosError) {
+                description = error.response?.data?.message || error.message;
+            } else if (error instanceof Error) {
+                description = error.message;
+            }
+
             console.log(error);
             toast({
                 title: "An error occurred.",
-                description: error.message || "Unable to run code",
+                description: description,
                 status: "error",
                 duration: 6000,
                 isClosable: true,

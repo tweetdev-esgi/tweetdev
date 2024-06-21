@@ -1,9 +1,4 @@
 import axios from "axios";
-import { LANGUAGE_VERSIONS } from "./constants.js";
-
-const API = axios.create({
-  baseURL: "https://emkc.org/api/v2/piston",
-});
 
 type ExecuteCodeResponse = {
   run: {
@@ -20,16 +15,20 @@ type ExecuteCodeResponse = {
   };
 };
 
-export const executeCode = async (language: string, sourceCode: string): Promise<ExecuteCodeResponse> => {
-  const response = await API.post("/execute", {
-    language: language,
-    version: LANGUAGE_VERSIONS[language],
-    files: [
-      {
-        content: sourceCode,
-      },
-    ],
-  });
-
-  return response.data;
+export const executeCode = async (language: string, code: string): Promise<ExecuteCodeResponse> => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/executeCode', {
+      language: language,
+      code: code,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error executing code:", error.response ? error.response.data : error.message);
+      throw error;
+    } else {
+      console.error("Unexpected error:", error);
+      throw new Error("Unexpected error occurred");
+    }
+  }
 };

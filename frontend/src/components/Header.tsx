@@ -18,6 +18,7 @@ function Header() {
                         <li className="header_nav-item"><a href="/feed" className="header_nav-link">Feed</a></li>
                         {!isLoggedIn && (
                             <>
+                                <li className="header_nav-item"><a href="/create-tweetdev" className="header_nav-link">Create tweet dev</a></li>
                                 <li className="header_nav-item"><a href="/codeEditor" className="header_nav-link">Editeur</a></li>
                                 <li className="header_nav-item"><a href="/login" className="header_nav-link">Login</a></li>
                                 <li className="header_nav-item"><a href="/signup" className="header_nav-link">Sign up</a></li>

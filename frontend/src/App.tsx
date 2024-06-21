@@ -2,10 +2,10 @@ import './App.css'
 import {Header} from './components/index'
 import { Outlet } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { AuthProvider } from './provider/AuthProvider';
 import { Toaster } from 'react-hot-toast';
 import "../src/styles/Variables.css";
+
 function App() {
 
   return (
@@ -15,7 +15,7 @@ function App() {
       <Header></Header>
       
       </div>      
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop:"6.5rem"}}>
+      <div style={{ display: "flex", flexDirection: "column", marginTop:"6.5rem"}}>
         <Outlet />
 
         </div>
