@@ -27,7 +27,7 @@ const startServer = async (): Promise<void> => {
     const app = express()
     // Specify allowed origins explicitly
     const corsOptions = {
-        origin: 'http://localhost:4200', // Update with your Angular application's URL
+        origin: 'http://localhost:4000', // Update with your Angular application's URL
     };
     app.use(cors(corsOptions));
   
