@@ -3,6 +3,7 @@ import { saveCodeService, executeCodeService } from '../services/codeService';
 
 const saveCode = async (req: Request, res: Response) => {
     const { name, code, language } = req.body;
+    console.log('Received data:', { name, code, language }); // enregistre les données reçues
     try {
         await saveCodeService({ name, code, language });
         res.status(200).send('Code saved successfully');

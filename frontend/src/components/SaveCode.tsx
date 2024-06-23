@@ -12,6 +12,17 @@ const SaveCode: React.FC<SaveCodeProps> = ({ code, language }) => {
     const toast = useToast();
 
     const handleSave = async () => {
+        if (!name || !code || !language) {
+            toast({
+                title: 'Missing Information',
+                description: 'Please provide all required information.',
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+            });
+            return;
+        }
+
         try {
             await saveCode({ name, code, language });
             toast({
