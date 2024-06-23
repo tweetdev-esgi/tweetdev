@@ -1,9 +1,23 @@
 version: '3'
+
 services:
-  backend:
-    build: .
-    ports:
-      - "3000:3000"
+  javascript:
+    build:
+      context: ./languages/javascript
     volumes:
-      - .:/usr/src/app
-    command: npm run dev
+      - ./code:/app
+  typescript:
+    build:
+      context: ./languages/typescript
+    volumes:
+      - ./code:/app
+  python:
+    build:
+      context: ./languages/python
+    volumes:
+      - ./code:/app
+  java:
+    build:
+      context: ./languages/java
+    volumes:
+      - ./code:/app
