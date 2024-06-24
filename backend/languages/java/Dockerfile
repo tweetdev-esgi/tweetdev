@@ -2,6 +2,6 @@ FROM openjdk:15
 
 WORKDIR /app
 
-COPY . .
+COPY Runner.java /app/Runner.java
 
 CMD ["java", "Runner"]

@@ -2,6 +2,8 @@ FROM node:18
 
 WORKDIR /app
 
-COPY . .
+COPY runner.ts /app/runner.js
 
-CMD ["node", "runner.js"]
+RUN npm install -g ts-node typescript
+
+CMD ["ts-node", "runner.js"]

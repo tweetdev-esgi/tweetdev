@@ -6,6 +6,7 @@ import { CODE_SNIPPETS } from "../constants";
 import Output from "./Output";
 import FileUploader from "./FileUploader";
 import SaveCode from "./SaveCode.tsx";
+import { saveCode } from "../api.tsx";
 
 const CodeEditor: React.FC = () => {
     const editorRef = useRef<any>(null);
@@ -31,11 +32,13 @@ const CodeEditor: React.FC = () => {
         reader.readAsText(file);
     };
 
-    const handleSaveCode = (name: string, code: string, language: string) => {
-        // Ajouter la logique pour sauvegarder le code ici
-        // Cela pourrait impliquer un appel à une API backend pour stocker le code
-        console.log(`Saving code: ${name} - ${language}`);
-        // Exemple : saveCodeToServer(name, code, language);
+    const handleSaveCode = async (name: string, code: string, language: string) => {
+        try {
+            await saveCode({ name, code, language });
+            console.log(`Code saved: ${name} - ${language}`);
+        } catch (error) {
+            console.error("Error saving code:", error);
+        }
     };
 
     return (

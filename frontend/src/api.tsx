@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = 'http://localhost:5000/api'; // Assurez-vous que l'URL correspond à votre backend
+const API_URL = 'http://localhost:5000/api';
 
 type ExecuteCodeResponse = {
   run: {
@@ -16,6 +16,7 @@ type ExecuteCodeResponse = {
     code: number;
   };
 };
+
 export const executeCode = async (language: string, code: string): Promise<ExecuteCodeResponse> => {
   try {
     const response = await axios.post(`${API_URL}/executeCode`, {

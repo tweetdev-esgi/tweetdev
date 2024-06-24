@@ -2,6 +2,6 @@ FROM node:18
 
 WORKDIR /app
 
-COPY . .
+COPY runner.js /app/runner.js
 
 CMD ["node", "runner.js"]

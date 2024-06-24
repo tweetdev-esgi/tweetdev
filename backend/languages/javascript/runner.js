@@ -1,5 +1,5 @@
-import { exec } from 'child_process';
-import * as fs from 'fs';
+const { exec } = require('child_process');
+const fs = require('fs');
 
 const code = fs.readFileSync('/app/code.js', 'utf8');
 

@@ -33,6 +33,7 @@ const executeCodeService = async ({ language, code }: { language: string, code: 
     return new Promise((resolve, reject) => {
         exec(`docker-compose run --rm ${dockerService}`, { cwd: path.join(__dirname, '..', '..') }, (error, stdout, stderr) => {
             if (error) {
+                console.error('Error executing code:', stderr); // Log detailed error
                 reject(`Error: ${stderr}`);
             } else {
                 resolve(stdout);
