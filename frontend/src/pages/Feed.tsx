@@ -11,6 +11,7 @@ function Feed() {
     const [selectedMode, setSelectedMode] = useState(false); // State to track selected mode
 
     useEffect(() => {
+        console.log("mode changed :", selectedMode);
         const fetchData = async () => {
             try {
                 const sessionToken = getSession();

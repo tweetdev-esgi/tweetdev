@@ -40,7 +40,7 @@ const userShemma = new Schema<User>({
         type: Schema.Types.Date,
         required: true
     },
-    follow: [{
+    followers: [{
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
@@ -65,7 +65,7 @@ export interface User{
     joinDate: Date
 
     // Online
-    follow: any[]
+    followers: any[]
 
 }
 

@@ -51,14 +51,14 @@ function Profile() {
               if(id==null) {
                 const selfInfoData = await fetchSelfInfo(sessionToken);
                 setSelfInfo(selfInfoData);
-                setFollowersCount(selfInfoData.follow.length);
+                setFollowersCount(selfInfoData.followers.length);
                 const selfPostsData = await fetchProfilePosts(sessionToken);
                 setSelfPosts(selfPostsData);
               }else{
                 console.log(id)
                 const selfInfoData = await fetchUserInfo(sessionToken, id);
                 setSelfInfo(selfInfoData);
-                setFollowersCount(selfInfoData.follow.length);
+                setFollowersCount(selfInfoData.followers.length);
                 const selfPostsData = await fetchProfilePosts(sessionToken, id);
                 setSelfPosts(selfPostsData);
               }

@@ -241,14 +241,14 @@ export class PostController {
                 return;
             }
 
-            const user = await UserModel.findById(userId).populate("follow", "_id");
+            const user = await UserModel.findById(userId).populate("followers", "_id");
 
             if (!user) {
                 res.status(404).json({ "message": "User not found" });
                 return;
             }
 
-            const followedUsersIds = user.follow.map((followedUser: any) => followedUser._id);
+            const followedUsersIds = user.followers.map((followedUser: any) => followedUser._id);
 
             const posts = await PostModel.find({ userId: { $in: followedUsersIds } });
 

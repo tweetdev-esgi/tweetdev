@@ -57,7 +57,7 @@ export class UserController {
                 image: req.body.image,
                 aboutMe : req.body.aboutMe,
                 joinDate : req.body.joinDate,
-                follow: []
+                followers: []
             })
             res.json(user)
 
@@ -306,14 +306,14 @@ export class UserController {
                 return;
             }
     
-            const followIndex = followed_user.follow.indexOf(following_user_id);
+            const followIndex = followed_user.followers.indexOf(following_user_id);
     
             if (followIndex !== -1) {
-                followed_user.follow.splice(followIndex, 1);
+                followed_user.followers.splice(followIndex, 1);
                 await followed_user.save();
                 res.status(200).json({ "message": "You have unfollowed this user" });
             } else {
-                followed_user.follow.push(following_user_id);
+                followed_user.followers.push(following_user_id);
                 await followed_user.save();
                 res.status(200).json({ "message": "You are now following this user" });
             }
@@ -336,12 +336,12 @@ export class UserController {
       
         console.log("id",userIdToUnfollow);
         try {
-            if (req.user && req.user.follow) {
+            if (req.user && req.user.followers) {
                 console.log("user:",req.user)
 
                 // Filter out the user with the specified ID from req.user.follow
-                req.user.follow = req.user.follow.filter((userId) => userId.toString() !== userIdToUnfollow);
-                console.log("follows;",req.user.follow)
+                req.user.followers = req.user.followers.filter((userId) => userId.toString() !== userIdToUnfollow);
+                console.log("follows;",req.user.followers)
               } 
               req.user?.save() // Send a success response if the unfollowing was successful
           res.status(200).json({ message: 'Unfollowed user successfully' });
@@ -362,7 +362,7 @@ export class UserController {
                 return;
             }
             
-            res.status(200).json(user.follow);
+            res.status(200).json(user.followers);
         } catch (err) {
             console.error(err);
             res.status(500).json({ "message": "Internal Server Error" });
@@ -456,7 +456,7 @@ export class UserController {
                 return;
             }
     
-            const isFollowed = user.follow.some(followingUserId => String(followingUserId) === String(req.user?._id));
+            const isFollowed = user.followers.some(followingUserId => String(followingUserId) === String(req.user?._id));
             res.status(200).json({ isFollowed: isFollowed });
         } catch (err) {
             console.error(err);

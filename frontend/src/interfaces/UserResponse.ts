@@ -1,6 +1,6 @@
 interface UserResponse {
     aboutMe: string;
-    follow: string[];
+    followers: string[];
     image: string;
     joinDate: string; 
     login: string;
