@@ -11,7 +11,7 @@ import { Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import ModalFollowers from '../components/ModalFollowers';
 import Favorites from '../components/Favorites';
-
+import { Clock, PencilSimple, DotsThreeVertical, InstagramLogo, YoutubeLogo,XLogo, TwitterLogo, TwitchLogo, DiscordLogo,GithubLogo,PatreonLogo } from '@phosphor-icons/react';
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -24,7 +24,7 @@ function Profile2() {
   
   const [isFollowed, setIsFollowed] = useState(false);
   const id = query.get('id');
-  const followerText = followersCount > 1 ? 'followers' : 'follower';
+  const followerText = followersCount > 1 ? 'Followers' : 'Follower';
   const sessionToken = getSession();
 
   const isUserFollowed = async()=>{
@@ -94,23 +94,45 @@ function Profile2() {
         }
       }
     return (
-        <div className='profile-container grid grid-cols-[1fr_3.5fr] gap-12 p-12 mt-6 '>
+        <div className='profile-container grid grid-cols-[1fr_3.5fr] gap-4 p-12 mt-6 '>
             {!selfInfo && ( <>Loading...</>)}
             
             {selfInfo && (
                 <>
                 <Favorites></Favorites>
-                <div className='profile-card border-2 border-customGray rounded-xl grid grid-rows-[60fr_30fr_20fr] h-[700px]'>
-                    <div className='border-b-2 border-customGray ' style={{ backgroundImage: `url(https://media.discordapp.net/attachments/1157269425796435998/1254963812516368455/image.png?ex=667b67a1&is=667a1621&hm=6d03b6f3aaabc54115e93cf4196485d0b1b1eea37ef289b2f6995260007b420b&=&format=webp&quality=lossless)`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-                    <div className='p-4 border-b-2 border-customGray '>
-                        <div className=''></div>
-                        <p>{selfInfo.username}</p>
+                <div className='profile-card border-2 border-customGray rounded-xl grid grid-rows-[60fr_20fr_15fr] h-[700px] mr-6'>
+                    <div className='border-b-2 border-customGray ' style={{ backgroundImage: `url(https://thejujutsukaisen.com/wp-content/uploads/2024/02/Jujutsu-Kaisen-Satoru_Gojo.webp)`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                    <div className='p-2 border-b-2 border-customGray grid grid-cols-[19fr_80fr_15fr]'>
+                      <div className='flex justify-center'>
+                        <div className='h-[160px] w-[160px] border-4 border-cyan-400 rounded-full mt-[-60px]' 
+                        style={{ backgroundImage: `url(https://64.media.tumblr.com/5b27f2fa31997d52b20a085729d79800/8a8beb1bdd1ae19a-3b/s1280x1920/0543189a41fb3bcaf0c8655a67b4b934e572e5be.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                        </div>
+                        <div>
+                        <p className='text-xl font-semibold'>{selfInfo.username}</p>
+                        <div className='flex flex-row gap-3'>
                         <ModalFollowers followersCount={followersCount} followersText={followerText}></ModalFollowers>
                         <ModalFollowers followersCount={followersCount} followersText={followerText}></ModalFollowers>
-                    <p>Joined {convertTimestampToMonthYear(selfInfo.joinDate)}</p>
-
+                        </div>
+                    <p className='text-[#C7C9CE] text-xs font-medium'><Clock color='#C7C9CE' weight='bold' size={22}></Clock> Member Since {convertTimestampToMonthYear(selfInfo.joinDate)}</p>
                     </div>
-                    <div className='p-4 '>d</div>
+                    <div className='grid grid-rows-[40fr_50fr]'> 
+                      <div className='flex gap-3 p-2'>
+                            <div className='edit-button cursor-pointer w-20 h-9 bg-red-600  rounded-xl flex justify-center items-center gap-2 text-sm font-medium text-[#C7C9CE] '><PencilSimple weight='bold' size={22}></PencilSimple> <div>Edit</div></div>
+                         <div className='flex items-center cursor-pointer'><DotsThreeVertical size={30} weight='bold'></DotsThreeVertical></div>
+                        </div> 
+    
+                    </div>
+                    </div>
+                    <div className='p-4 grid grid-cols-[68fr_32fr] gap-5'>
+                      <div className=' text-[#C7C9CE] text-sm font-medium'>{selfInfo.aboutMe}Over eighteen months, I played a pivotal role ithe project culminated in developing a robust design system, solidifying the platform's visual consistency.</div>
+                      <div className='flex justify-around items-center'>
+                      <InstagramLogo size={24} weight='fill'></InstagramLogo>
+                      <YoutubeLogo size={24} weight='fill'></YoutubeLogo>
+                      <XLogo size={24} weight='fill'></XLogo>
+                      <TwitchLogo size={24} weight='fill'></TwitchLogo>
+                      <GithubLogo size={24} weight='fill'></GithubLogo>
+                      </div>
+                    </div>
                 </div>
                 </>
             )}

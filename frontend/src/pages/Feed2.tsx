@@ -76,7 +76,7 @@ function Feed2() {
             <div className='pt-4 px-10 font-medium flex flex-col gap-3 '>Featured Portals
                 {portals.map((portal, index) => (
                     <div key={index} className='portal-element border-2 border-customGray rounded-xl p-4 w-96 h-40 '
-                    style={{ backgroundImage: `url(${portal.s})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    style={{ backgroundImage: `url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFx9ycqzSiehlKBCMmzUjDQatfLpCa9-jD9w&s)`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                         <div className='flex gap-3 mb-3'>
                             <div className='cursor-pointer bg-green-700 w-10 h-10 rounded-lg '></div>
                             <div className='flex flex-col'>
