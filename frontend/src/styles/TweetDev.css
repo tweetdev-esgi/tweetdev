@@ -97,3 +97,9 @@ pre {
   .likes, .comments{
     cursor: pointer;
   }
+
+.spidercat{
+    background-image: 
+    url("../assets/introduction.jpg");
+    color: aqua;
+}

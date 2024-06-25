@@ -11,6 +11,7 @@ function Header() {
                 <a className="header_logo-link" href="/">
                     TweetDev
                 </a>
+                <input size={35} className="ml-6 rounded-xl text-sm p-2  bg-[#131720] border-solid border-2 border-[#1C222D] " type="search" name="searchbar" id="searchbar" placeholder="🔍 Search" />
             </div>
             <nav className="header_navbar">
                 <ul className="header_nav-menu">
@@ -38,6 +39,7 @@ function Header() {
                 )}
                 </ul>
             </nav>
+            
         </header>
         </div>
     );

@@ -4,17 +4,12 @@
     margin-left: 30vw;
 }
 
-.auth-form {
-    color: black;
-}
 
 .auth-label {
-    color: black;
     text-align: right;
 }
 
 .auth-input {
-    color: black;
     height: 37%;
     width: 100%;
     border-radius: 5px;

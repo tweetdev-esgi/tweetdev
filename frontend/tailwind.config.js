@@ -5,7 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customGray: '#222936',
+        skyBlue: '#38bdf8',
+      },
+      backgroundImage: {
+        'spidercat': "url('src/assets/spidercat.png')",
+      }
+    },
   },
   plugins: [],
 }
