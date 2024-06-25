@@ -15,37 +15,33 @@ export default createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomePage />,
-        
+        element: <Feed />,
       },
       {
-        path:"/login",
-        element: <Login />
-      }
-      ,
-      {
-        path:"/signup",
-        element: <Signup />
-      }
-      ,
-      {
-        path:"/logout",
-        element: <Logout />
-      }
-      ,
-      {
-        path:"/profile",
-        element: <Profile2 />
+        path: "/login",
+        element: <Login />,
       },
       {
-        path:"/feed",
-        element: <Feed />
+        path: "/signup",
+        element: <Signup />,
       },
       {
-        path:"/create-tweetdev",
-        element: <CreateTweetDev />
-      }
-      
+        path: "/logout",
+        element: <Logout />,
+      },
+      {
+        path: "/profile",
+        element: <Profile2 />,
+      },
+      {
+        path: "/feed",
+        element: <Feed />,
+      },
+      {
+        path: "/create-tweetdev",
+        element: <CreateTweetDev />,
+      },
+
       // {
       //   path: "/header",
       //   element: <Header />

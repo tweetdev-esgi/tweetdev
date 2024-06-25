@@ -48,6 +48,11 @@ const userShemma = new Schema<User>({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
+    }],
+    following: [{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }]
 
 }, {
@@ -71,6 +76,7 @@ export interface User{
 
     // Online
     followers: any[]
+    following: any[]
 }
 
 export const UserModel: Model<User> = mongoose.model("User", userShemma)

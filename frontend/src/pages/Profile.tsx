@@ -50,6 +50,7 @@ function Profile() {
 
               if(id==null) {
                 const selfInfoData = await fetchSelfInfo(sessionToken);
+                console.log(selfInfoData);
                 setSelfInfo(selfInfoData);
                 setFollowersCount(selfInfoData.followers.length);
                 const selfPostsData = await fetchProfilePosts(sessionToken);
@@ -99,7 +100,6 @@ function Profile() {
             {selfInfo && (
                 <>
                 <div className='profile-card'>
-                <h2>{selfInfo.username}</h2>
                 <p> {selfInfo.aboutMe}</p>
                 <p>Joined {convertTimestampToMonthYear(selfInfo.joinDate)}</p>
                 <ModalFollowers followersCount={followersCount} followersText={followerText}></ModalFollowers>

@@ -58,7 +58,8 @@ export class UserController {
                 backgroundImageUrl: req.body.backgroundImageUrl,
                 aboutMe : req.body.aboutMe,
                 joinDate : req.body.joinDate,
-                followers: []
+                followers: [],
+                following: []
             })
             res.json(user)
 
@@ -300,23 +301,27 @@ export class UserController {
     
         const following_user_id = req.user._id;
         const followed_user_id = req.body.user_id;
-    
         try {
             const followed_user = await UserModel.findById(followed_user_id);
-            if (!followed_user) {
+            const following_user = await UserModel.findById(following_user_id);
+            if (!followed_user || !following_user) {
                 res.status(404).json({ "message": "We can't find this user" });
                 return;
             }
     
             const followIndex = followed_user.followers.indexOf(following_user_id);
-    
+            const followingIndex = following_user.following.indexOf(followed_user_id);
             if (followIndex !== -1) {
                 followed_user.followers.splice(followIndex, 1);
                 await followed_user.save();
+                following_user.following.splice(followingIndex, 1); 
+                await following_user.save();
                 res.status(200).json({ "message": "You have unfollowed this user" });
             } else {
                 followed_user.followers.push(following_user_id);
                 await followed_user.save();
+                following_user.following.push(followed_user_id);
+                await following_user.save();
                 res.status(200).json({ "message": "You are now following this user" });
             }
         } catch (e) {

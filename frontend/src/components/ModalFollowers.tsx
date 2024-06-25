@@ -23,7 +23,7 @@ function ModalFollowers({followersCount,followersText}) {
 
   return (
     <>
-      <p className='followers flex gap-1' onClick={handleShow}> <div className='text-xs'>{followersCount}</div> <div className='text-accentColor font-semibold text-xs flex flex-row-reverse'> {followersText}</div></p>
+      <div className='followers flex gap-1' onClick={handleShow}> <div className='text-xs'>{followersCount}</div> <p className='text-accentColor font-semibold text-xs flex flex-row-reverse'> {followersText}</p></div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Followers</Modal.Title>
