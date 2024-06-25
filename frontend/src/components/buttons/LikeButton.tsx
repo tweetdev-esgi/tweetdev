@@ -11,10 +11,11 @@ function LikeButton({sessionToken,postInfo}) {
   const toggleLike = (postId:string)=>{
       console.log(isLiked);
       setIsLiked(!isLiked);
+      console.log(postId)
       if (sessionToken) {
           (async () => {
               try {
-                  await patchToggleLikePost(sessionToken, {"post_id": postInfo.id});
+                  await patchToggleLikePost(sessionToken, {"post_id": postId});
                   
               } catch (error) {
                   console.error("Error fetching post liked status:", error);
@@ -49,11 +50,11 @@ function LikeButton({sessionToken,postInfo}) {
 
     return (
         <div>
-            <div onClick={() =>toggleLike(postInfo.id)} className='edit-button cursor-pointer px-[12px] py-[6px] bg-accentColor hover:accentColorHover rounded-xl flex justify-center items-center gap-2 text-sm font-medium text-secondaryColor '>
-
-                            {isLiked && <Heart size={16}  weight="fill" />} {}
+            <div onClick={() =>toggleLike(postInfo._id)} className='edit-button hover:accentColorHover cursor-pointer px-[12px] py-[6px] bg-accentColor hover:accentColorHover rounded-xl flex justify-center items-center gap-2 text-sm font-medium text-secondaryColor '>
+                    
+                            {isLiked && <Heart size={16}  weight="fill" />} 
         {!isLiked && <Heart size={16} weight='bold' />} {}
-                 <div className='text-xs'>{}</div></div>
+                 <div className='text-xs'>{likes}</div></div>
 
         </div>
     );

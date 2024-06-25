@@ -52,17 +52,22 @@ function Feed() {
             </div>
             <div className='pt-4 px-10 font-medium flex flex-col gap-3 '>Featured Portals
                 {portals.map((portal, index) => (
-                    <div key={index} className='portal-element border-2 border-componentBorder rounded-xl p-4 w-96 h-40 '
-                    style={{ backgroundImage: `url(${portal.backgroundImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                        <div className='flex gap-3 mb-3'>
-                            <div className='cursor-pointer w-10 h-10 rounded-lg ' 
+                    <div
+                    key={index}
+                    className='relative portal-element border-2 border-componentBorder rounded-xl p-4 w-96 h-40 overflow-hidden'
+                  >
+                    <div
+                      className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all" 
+                      style={{ backgroundImage: `url(${portal.backgroundImageUrl})` }}
+                    ></div>
+                        <div className='flex gap-3 mb-3 '>
+                            <div className='cursor-pointer w-10 h-10 rounded-lg z-10' 
                             style={{ backgroundImage: `url(${portal.profileImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-                            <div className='flex flex-col'>
-                                <div className='cursor-pointer text-sm font-medium leading-normal'>{portal.name}</div>
-                                <div className='inline mt-[-5px]'><span className='text-[13px] font-normal leading-normal'><Users size={18} weight='bold'></Users> {formatPortalers(portal.numberOfPortalers)}</span>
+                            <div className='flex flex-col z-10'>
+                                <div className='cursor-pointer text-sm font-semibold leading-normal '>{portal.name}</div>
+                                <div className='inline mt-[-5px]'><span className='text-[13px] font-semibold leading-normal'><Users size={18} weight='bold'></Users> {formatPortalers(portal.numberOfPortalers)}</span>
 </div>
                             </div>
-                            {/* <div className='cursor-pointer ml-auto'>⋯</div> */}
                         </div>
                     </div>
                 ))}
