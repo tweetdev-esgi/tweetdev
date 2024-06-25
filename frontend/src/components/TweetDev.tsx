@@ -1,99 +1,40 @@
+
+import "../styles/TweetDev.css"
 import React, { useEffect, useState } from 'react';
 import {Heart, ChatCircle} from "@phosphor-icons/react";
 import "../styles/TweetDev.css"
 import { fetchIsPostLiked, patchToggleLikePost } from '../api/post';
 import { getSession } from '../services/sessionService';
-import { Link } from 'react-router-dom';
+import LikeButton from "./buttons/LikeButton";
 function TweetDev({ postInfo}) {
-        const [input, setInput] = useState('');
-        const [likes, setLikes] = useState(postInfo.like.length);
-        const [output, setOutput] = useState('');
-        const [isLiked, setIsLiked] = useState(false);
-        const sessionToken = getSession();
-        const authorUrl = `/profile?id=${postInfo.userId}`;
-        const toggleLike = ()=>{
-            console.log(isLiked);
-            setIsLiked(!isLiked);
-            if (sessionToken) {
-                (async () => {
-                    try {
-                        await patchToggleLikePost(sessionToken, {"post_id": postInfo._id});
-                        
-                    } catch (error) {
-                        console.error("Error fetching post liked status:", error);
-                    }
-                })();
-            }
-            if(isLiked){
-                setLikes(likes-1);
-                
-            }else{
-                setLikes(likes+1);
-            
-            }
-            
-        }
-        const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-            setInput(event.target.value);
-        };
-        useEffect(() => {
-            
-            const sessionToken = getSession();
-            
-            if (sessionToken) {
-                (async () => {
-                    try {
-                        const isLiked = await fetchIsPostLiked(sessionToken, postInfo._id);
-                        
-                        setIsLiked(isLiked.liked);
-                    } catch (error) {
-                        console.error("Error fetching post liked status:", error);
-                    }
-                })();
-            }
-          }, []);
-        const run = () => {
-            setOutput("run");
-        }
-    return (
-        <div className="tweetDev-container">
-            <div className='up'>
-                <div className='author'><a href={authorUrl}>{postInfo.authorName}</a></div>
-                <div className='title'>{postInfo.title}</div>
-            </div>
-            <div className='code'>
-                <pre> {postInfo.description}</pre>
-            </div>
-            <div className='details'>
-                <div className='engagement'>
-                    <div className='likes' onClick={()=>toggleLike()}>{likes } <span className='icon'>       
-                        {isLiked && <Heart size={22}  weight="fill" />} {}
-        {!isLiked && <Heart size={22} />} {}
-  </span></div>
-                    <div className='comments'>{postInfo.comments.length} <span className='icon'><ChatCircle size={22} /></span></div>
-                </div>
-                <div className='specs'>
-                    <div className='format'>{postInfo.format}</div>
-                    <div className='language'>{postInfo.language}</div>
-                </div>
-             
-            </div>
-            <div className='down'>
-                    <div className='input'>
-                    <textarea 
-                        value={input}
-                        onChange={handleChange} id="input" name="input" rows={5} cols={50} placeholder='Enter input here'>
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const sessionToken = getSession();
+  const authorUrl = `/profile?id=${postInfo.userId}`;
 
-</textarea>
-                    </div>
-                    <div className='run'><button onClick={()=>run()} className='run-button'>RUN</button></div>
-                    <div className='result'>
-                    
-                    <textarea 
-                        value={output} readOnly id="result" name="result" rows={5} cols={50} placeholder='Result'>
-</textarea></div>
+  const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+      setInput(event.target.value);
+  };
+ 
+    return (
+        <div className='bg-[#1c212e] border-2 border-componentBorder rounded-xl p-4 '>
+           
+            <div className="flex gap-3 mb-3 ">
+                  <div
+                    className="cursor-pointer bg-green-700 w-10 h-10 rounded-lg"
+                  ></div>
+                  <div className="flex flex-col">
+                    <div className="text-sm font-normal leading-normal ">NFTs</div>
+                    <div className='inline mt-[-5px]'><span className=" text-[13px] font-normal leading-normal">Paschyz</span>
+                    <span className='text-[13px] font-normal text-gray-400'>  21m</span></div>
+                  </div>
+                  <div className='cursor-pointer ml-auto'>⋯</div>
                 </div>
+                <p className='text-xs text-secondaryColor leading-relaxed mb-0'>Over eighteen months, I played a pivotal role in redesigning and enhancing a social network's web application. As the company's first designer, I established a design-centric approach, collaborating closely with the founders and development team. This endeavor involved a ground-up redesign of the web application and a comprehensive revamp of the brand's visual identity. I introduced user-friendly features tailored for a non-tech-savvy audience in the web3 environment— the project culminated in developing a robust design system, solidifying the platform's visual consistency.</p>
+                <div className="flex mt-2"><LikeButton sessionToken={sessionToken}  postInfo={postInfo}></LikeButton></div>
+                
         </div>
+
     );
 }
 

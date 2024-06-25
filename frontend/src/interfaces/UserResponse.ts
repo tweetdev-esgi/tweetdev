@@ -1,7 +1,8 @@
 interface UserResponse {
     aboutMe: string;
     followers: string[];
-    image: string;
+    profileImageUrl: string;
+    backgroundImageUrl : string;
     joinDate: string; 
     login: string;
     password: string;

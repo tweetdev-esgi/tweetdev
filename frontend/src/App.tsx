@@ -11,11 +11,11 @@ function App() {
   return (
       <AuthProvider>
       <Toaster/>
-      <div>
+      <div  className="color-fontColor">
       <Header></Header>
       
       </div>      
-      <div className="app-container" >
+      <div className="app-container color-fontColor bg-bodyBg" >
         <Outlet />
 
         </div>

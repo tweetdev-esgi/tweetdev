@@ -7,8 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        customGray: '#222936',
-        skyBlue: '#38bdf8',
+        accentColor:'#355cc9',
+        accentColorHover:'#2a4eaa',
+        fontColor:"#FFFFFF",
+        secondaryColor:"#C7C9CE",
+        componentBorder: '#222936',
+        searchBorder:'#1C222D',
+        headerBorder:'#17191C',
+        headerBg:'#06070B',
+        bodyBg :'#131720'
       },
       backgroundImage: {
         'spidercat': "url('src/assets/spidercat.png')",
