@@ -33,7 +33,7 @@ export class UserController {
         "login" : "string",
         "password" : "string",
         "username" : "string",
-        "image" : "string",
+        "profileImageUrl" : "string",
         "aboutMe" : "string",
         "joinDate" : "string",
     }
@@ -54,7 +54,8 @@ export class UserController {
                 username : req.body.username,
                 roles:[this.guestRole],
                 posts: [],
-                image: req.body.image,
+                profileImageUrl: req.body.profileImageUrl,
+                backgroundImageUrl: req.body.backgroundImageUrl,
                 aboutMe : req.body.aboutMe,
                 joinDate : req.body.joinDate,
                 followers: []
@@ -75,7 +76,8 @@ export class UserController {
 
     readonly paramsUpdateUser = {
         "password" : "string | undefined",
-        "image": "string | undefined",
+        "profileImageUrl": "string | undefined",
+        "backgroundImageUrl": "string | undefined",
         "aboutMe" : "string | undefined",
     }
 

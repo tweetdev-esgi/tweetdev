@@ -28,9 +28,13 @@ const userShemma = new Schema<User>({
         required: true
     }],
     // User personal infos
-    image: {
+    profileImageUrl: {
         type: Schema.Types.String,
         required: true
+    },
+    backgroundImageUrl:{
+        type: Schema.Types.String,
+        required: false
     },
     aboutMe: {
         type: Schema.Types.String,
@@ -60,13 +64,13 @@ export interface User{
     posts: Post[]
 
     // User personal infos
-    image: string
+    profileImageUrl: string
+    backgroundImageUrl:string
     aboutMe: string
     joinDate: Date
 
     // Online
     followers: any[]
-
 }
 
 export const UserModel: Model<User> = mongoose.model("User", userShemma)
