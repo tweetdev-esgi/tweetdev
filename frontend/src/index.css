@@ -23,3 +23,11 @@
   font-family: "Inter", Arial, sans-serif;
   color: var(--font-color);
 }
+
+img,svg{
+  display: inline;
+}
+
+.border{
+  border: 1px solid black !important;
+}

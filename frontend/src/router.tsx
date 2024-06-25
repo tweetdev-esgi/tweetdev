@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Feed from "./pages/Feed";
 import CreateTweetDev from "./pages/CreateTweetDev";
 import Feed2 from "./pages/Feed2";
+import Profile2 from "./pages/Profile2";
 export default createBrowserRouter([
   {
     path: "/",
@@ -35,7 +36,7 @@ export default createBrowserRouter([
       ,
       {
         path:"/profile",
-        element: <Profile />
+        element: <Profile2 />
       },
       {
         path:"/feed",

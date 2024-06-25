@@ -23,7 +23,7 @@ function ModalFollowers({followersCount,followersText}) {
 
   return (
     <>
-      <a className='followers' onClick={handleShow}>{followersCount} {followersText}</a>
+      <p className='followers' onClick={handleShow}>{followersCount} {followersText}</p>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Followers</Modal.Title>
