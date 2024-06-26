@@ -16,7 +16,7 @@ function TweetDev({ postInfo }) {
   };
 
   return (
-    <div className="bg-[#1c212e] border-2 border-componentBorder rounded-xl p-4 ">
+    <div className="bg-[#1c212e] border-2 border-componentBorder rounded-xl p-6 ">
       <div className="flex gap-3 mb-3 ">
         <div className="cursor-pointer bg-green-700 w-10 h-10 rounded-lg"></div>
         <div className="flex flex-col">
@@ -35,7 +35,7 @@ function TweetDev({ postInfo }) {
           <span>⋯</span>
         </div>
       </div>
-      <p className="text-xs text-secondaryColor leading-relaxed mb-0">
+      <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
         Over eighteen months, I played a pivotal role in redesigning and
         enhancing a social network's web application. As the company's first
         designer, I established a design-centric approach, collaborating closely
@@ -46,7 +46,7 @@ function TweetDev({ postInfo }) {
         project culminated in developing a robust design system, solidifying the
         platform's visual consistency.
       </p>
-      <div className="flex mt-2">
+      <div className="flex mt-2 ">
         <LikeButton
           sessionToken={sessionToken}
           postInfo={postInfo}

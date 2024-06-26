@@ -41,48 +41,52 @@ function Feed() {
     return numberOfPortalers;
   }
   return (
-    <div className="feed-container grid grid-cols-[1fr_2fr_1.5fr] gap-4 p-12 mt-6">
-      <Favorites></Favorites>
-      <div className="flex flex-col gap-3">
+    <div className="feed-container grid grid-cols-[1fr_2.5fr_1.5fr] gap-4 p-12 mt-6">
+      <div className="hidden sm:block">
+        <Favorites></Favorites>
+      </div>
+      <div className="flex flex-col gap-3 shrink-0 col-span-3  sm:col-span-2  lg:col-span-1">
         {posts.map((post, index) => (
           // <TweetDev key={index} postInfo={post} />
           <TweetDev postInfo={post} key={index} />
         ))}
       </div>
-      <div className="pt-4 px-10 font-medium flex flex-col gap-3 ">
-        Featured Portals
-        {portals.map((portal, index) => (
-          <div
-            key={index}
-            className="relative portal-element border-2 border-componentBorder rounded-xl p-4 w-96 h-40 overflow-hidden"
-          >
+      <div className="hidden lg:block">
+        <div className="pt-4 px-6 text-lg font-medium flex flex-col gap-3">
+          Featured Portals
+          {portals.map((portal, index) => (
             <div
-              className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all"
-              style={{ backgroundImage: `url(${portal.backgroundImageUrl})` }}
-            ></div>
-            <div className="flex gap-3 mb-3 ">
+              key={index}
+              className="relative portal-element border-2 border-componentBorder rounded-xl p-4 h-40 overflow-hidden"
+            >
               <div
-                className="cursor-pointer w-10 h-10 rounded-lg z-10"
-                style={{
-                  backgroundImage: `url(${portal.profileImageUrl})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
+                className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all"
+                style={{ backgroundImage: `url(${portal.backgroundImageUrl})` }}
               ></div>
-              <div className="flex flex-col z-10">
-                <div className="cursor-pointer text-sm font-semibold leading-normal ">
-                  {portal.name}
-                </div>
-                <div className="inline mt-[-5px]">
-                  <span className="text-[13px] font-semibold leading-normal">
-                    <Users size={18} weight="bold"></Users>{" "}
-                    {formatPortalers(portal.numberOfPortalers)}
-                  </span>
+              <div className="flex gap-3 mb-3 ">
+                <div
+                  className="cursor-pointer w-10 h-10 rounded-lg z-10"
+                  style={{
+                    backgroundImage: `url(${portal.profileImageUrl})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                ></div>
+                <div className="flex flex-col z-10">
+                  <div className="cursor-pointer text-sm font-semibold leading-normal ">
+                    {portal.name}
+                  </div>
+                  <div className="inline mt-[-5px]">
+                    <span className="text-[13px] font-semibold leading-normal">
+                      <Users size={18} weight="bold"></Users>{" "}
+                      {formatPortalers(portal.numberOfPortalers)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

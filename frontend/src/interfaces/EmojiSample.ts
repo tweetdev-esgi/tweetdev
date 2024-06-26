@@ -1,7 +1,7 @@
 export const EmojiSample = [
       {
           name: "heart",
-          img_url_static: "https://s6.ezgif.com/tmp/ezgif-6-4012ccc751.png",
+          img_url_static: "https://cdn.discordapp.com/attachments/1157269425796435998/1255375965081833522/ezgif-1-fd42221efc.png?ex=667ce779&is=667b95f9&hm=c03352f4023a7c4891f357fdbada860cde828709509fd00cf84edf0851f992d4&",
           img_url_animated: "https://www.emojiall.com/images/60/microsoft-teams/2764-fe0f.png",
         },
       {
@@ -11,7 +11,7 @@ export const EmojiSample = [
       },
     {
       name: "fire",
-      img_url_static: "https://s6.ezgif.com/tmp/ezgif-6-29a6028d89.png",
+      img_url_static: "https://media.discordapp.net/attachments/1157269425796435998/1255376498454560820/ezgif-1-9b376efac5.png?ex=667ce7f8&is=667b9678&hm=bddc25253b2508e719168e53235bcd98d4c0bc0d336fd18e136506077f4fd8f9&=&format=webp&quality=lossless",
       img_url_animated: "https://www.emojiall.com/images/60/microsoft-teams/1f525.png",
     },
     {

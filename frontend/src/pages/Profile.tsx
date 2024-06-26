@@ -126,7 +126,7 @@ function Profile() {
           <div className="hidden lg:block">
             <Favorites></Favorites>
           </div>
-          <div className="profile-card border-2 border-componentBorder rounded-xl grid grid-rows-[60fr_20fr_15fr] h-[700px] mr-6 col-span-2 lg:col-span-1">
+          <div className="profile-card border-2 border-componentBorder rounded-xl grid grid-rows-[60fr_25fr_15fr] h-[600px] mr-6 col-span-2 lg:col-span-1">
             <div
               className="border-b-2 border-componentBorder rounded-t-xl"
               style={{
@@ -135,10 +135,10 @@ function Profile() {
                 backgroundPosition: "center",
               }}
             ></div>
-            <div className="p-2 border-b-2 border-componentBorder grid grid-cols-[23fr_80fr_20fr]">
+            <div className="border-b-2 border-componentBorder grid grid-cols-[15fr_67fr_18fr]">
               <div className="flex justify-center">
                 <div
-                  className="h-[160px] w-[160px] border-4 border-cyan-400 rounded-full mt-[-60px]"
+                  className="h-[180px] w-[180px] border-4 border-cyan-400 rounded-full mt-[-60px] ml-6 mr-2"
                   style={{
                     backgroundImage: `url(${selfInfo.profileImageUrl})`,
                     backgroundSize: "cover",
@@ -146,8 +146,8 @@ function Profile() {
                   }}
                 ></div>
               </div>
-              <div>
-                <p className="text-xl font-semibold">{selfInfo.username}</p>
+              <div className="flex flex-col gap-3 p-4">
+                <p className="text-xl font-semibold ">{selfInfo.username}</p>
                 <div className="flex flex-row gap-3">
                   <ModalFollowers
                     followersCount={followingCount}
@@ -183,7 +183,7 @@ function Profile() {
                 </div>
               </div>
             </div>
-            <div className="p-4 grid grid-cols-[68fr_32fr] gap-5">
+            <div className="p-6 grid grid-cols-[68fr_32fr] gap-5">
               <div className=" text-secondaryColor text-sm font-medium">
                 {selfInfo.aboutMe}Over eighteen months, I played a pivotal role
                 ithe project culminated in developing a robust design system,
