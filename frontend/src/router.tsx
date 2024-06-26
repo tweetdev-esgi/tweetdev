@@ -7,7 +7,6 @@ import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
 import CreateTweetDev from "./pages/CreateTweetDev";
 import Feed from "./pages/Feed";
-import Profile2 from "./pages/Profile2";
 export default createBrowserRouter([
   {
     path: "/",
@@ -31,7 +30,7 @@ export default createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <Profile2 />,
+        element: <Profile />,
       },
       {
         path: "/feed",

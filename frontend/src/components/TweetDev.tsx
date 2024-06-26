@@ -1,6 +1,6 @@
 import "../styles/TweetDev.css";
 import React, { useEffect, useState } from "react";
-import { Heart, ChatCircle } from "@phosphor-icons/react";
+import { Heart, ChatCircle, Plus } from "@phosphor-icons/react";
 import "../styles/TweetDev.css";
 import { fetchIsPostLiked, patchToggleLikePost } from "../api/post";
 import { getSession } from "../services/sessionService";

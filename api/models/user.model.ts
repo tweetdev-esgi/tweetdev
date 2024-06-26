@@ -68,13 +68,11 @@ export interface User{
     roles: Role[]
     posts: Post[]
 
-    // User personal infos
     profileImageUrl: string
     backgroundImageUrl:string
     aboutMe: string
     joinDate: Date
 
-    // Online
     followers: any[]
     following: any[]
 }
