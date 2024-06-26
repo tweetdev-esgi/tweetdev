@@ -23,7 +23,7 @@ function TweetDev({ postInfo }) {
           <div className="text-sm font-normal leading-normal ">NFTs</div>
           <div className="inline mt-[-5px]">
             <span className=" text-[13px] font-normal leading-normal">
-              Paschyz
+              {postInfo.authorName}
             </span>
             <span className="text-[13px] font-normal text-gray-400"> 21m</span>
           </div>
@@ -36,15 +36,7 @@ function TweetDev({ postInfo }) {
         </div>
       </div>
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
-        Over eighteen months, I played a pivotal role in redesigning and
-        enhancing a social network's web application. As the company's first
-        designer, I established a design-centric approach, collaborating closely
-        with the founders and development team. This endeavor involved a
-        ground-up redesign of the web application and a comprehensive revamp of
-        the brand's visual identity. I introduced user-friendly features
-        tailored for a non-tech-savvy audience in the web3 environment— the
-        project culminated in developing a robust design system, solidifying the
-        platform's visual consistency.
+        {postInfo.description}
       </p>
       <div className="flex mt-2 ">
         <LikeButton
