@@ -102,10 +102,10 @@ export const fetchPosts = async (token: string, fetchAllPosts: boolean): Promise
   };
 
 
-  export const patchToggleLikePost = async (token: string, postId: any): Promise<any> => {
+  export const patchToggleLikePost = async (token: string, likeInfo: any): Promise<any> => {
     try {
       const response = await axios.patch(`${API_BASE_URL}/post/like`,
-        postId,
+        likeInfo,
         {
         headers: {
           'Content-Type': 'application/json',

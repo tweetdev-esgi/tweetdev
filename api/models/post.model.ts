@@ -1,6 +1,17 @@
 import mongoose, { Schema, Model } from "mongoose";
 import { User } from "./user.model";
 import { Comment } from "./comment.model";
+const likeSchema = new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    emojiIndex: {
+        type: Schema.Types.Number,
+        required: true
+    }
+}, { _id: false });
 
 const postShemma = new Schema<Post>({
     title: {
@@ -11,11 +22,7 @@ const postShemma = new Schema<Post>({
         type: Schema.Types.String,
         required: true
     },
-    like: [{
-        type: Schema.Types.ObjectId,
-        def: "User",
-        required: true
-    }],
+    like: [likeSchema], 
     comments: [{
         type: Schema.Types.ObjectId,
         ref: "Comment",
@@ -52,12 +59,15 @@ const postShemma = new Schema<Post>({
     versionKey: false,
     collection: "Posts"
 })
-
+export interface Like {
+    userId: string;
+    emojiIndex: number;
+}
 export interface Post{
     _id: string
     title: string |undefined
     description: string
-    like: User[]
+    like: Like[]
     comments: Comment[]
     creationDate : Date
     userId: string

@@ -111,6 +111,7 @@ export class PostController {
     likePost = async (req: Request, res: Response): Promise<void> => {
         try {
             const post = await PostModel.findById(req.body.post_id);
+            const emojiIndex = req.body.emojiIndex;
             if (!post) {
                 res.status(404).json({ "message": "Post not found" });
                 return;
@@ -120,10 +121,15 @@ export class PostController {
                 return;
             }
     
-            const userLikedIndex = post.like.findIndex(l => String(l._id) === String(req.user?._id));
+            const userLikedIndex = post.like.findIndex(l => String(l.userId) === String(req.user?._id));
     
             if (userLikedIndex === -1) {
-                post.like.push(req.user);
+                post.like.push(
+                    {
+                        userId: req.user?._id,
+                        emojiIndex: emojiIndex
+                    }
+                );
                 await post.save();
                 res.status(200).json({ "message": "Post liked" });
             } else {
@@ -226,13 +232,17 @@ export class PostController {
                 res.status(403).end();
                 return;
             }
-
-            const isLiked = post.like.some(user => String(user._id) === String(req.user?._id));
-            res.status(200).json({ liked: isLiked });
+    
+            const like = post.like.find(user => String(user.userId) === String(req.user?._id));
+            const isLiked = !!like;
+            const emojiIndex = like ? like.emojiIndex : null;
+    
+            res.status(200).json({ liked: isLiked, emojiIndex: emojiIndex });
         } catch (err) {
             res.status(500).json({ "message": "Internal Server Error" });
         }
     };
+    
     getFollowedUsersPosts = async (req: Request, res: Response): Promise<void> => {
         try {
             const userId = req.user?._id;
