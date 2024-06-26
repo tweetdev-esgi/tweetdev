@@ -234,6 +234,28 @@ export class UserController {
         res.status(200).json(user)
     }
   
+    getOneUserByUsername = async (req: Request, res: Response): Promise<void> => {
+        const username = req.query.username as string;
+    
+        try {
+            const user = await UserModel.findOne({ username });
+    
+            if (!user) {
+                res.status(404).json({ message: 'User not found' });
+                return;
+            }
+    
+            user.password = '';
+            user.roles = [];
+    
+            res.status(200).json(user);
+        } catch (error) {
+            console.error('Error retrieving user:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+  
+
 
     readonly queryGetPost = {
         "user_id" : "string | undefined"
@@ -484,6 +506,7 @@ export class UserController {
         router.get('/me', checkUserToken(), this.me.bind(this))
         router.get('/count', checkUserToken(), checkUserRole(RolesEnums.admin), this.getAllUsers.bind(this))
         router.get('/one', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUser.bind(this))
+        router.get('/one-by-username', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUserByUsername.bind(this))
         router.get('/role', checkUserToken(), checkUserRole(RolesEnums.admin), this.getRoles.bind(this))
         router.get('/post', checkUserToken(), checkQuery(this.queryGetPost), this.getAllPost.bind(this))
         router.get('/all', checkUserToken(), this.getAllUsersInfo.bind(this))

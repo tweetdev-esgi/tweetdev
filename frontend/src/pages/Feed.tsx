@@ -57,15 +57,15 @@ function Feed() {
           {portals.map((portal, index) => (
             <div
               key={index}
-              className="relative portal-element border-2 border-componentBorder rounded-xl p-4 h-40 overflow-hidden"
+              className="relative portal-element border-2 border-componentBorder rounded-xl p-5 h-40 overflow-hidden "
             >
               <div
                 className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all"
                 style={{ backgroundImage: `url(${portal.backgroundImageUrl})` }}
               ></div>
-              <div className="flex gap-3 mb-3 ">
+              <div className="flex gap-3  items-center">
                 <div
-                  className="cursor-pointer w-10 h-10 rounded-lg z-10"
+                  className="cursor-pointer w-12 h-12 rounded-lg z-10"
                   style={{
                     backgroundImage: `url(${portal.profileImageUrl})`,
                     backgroundSize: "cover",
@@ -77,7 +77,7 @@ function Feed() {
                     {portal.name}
                   </div>
                   <div className="inline mt-[-5px]">
-                    <span className="text-[13px] font-semibold leading-normal">
+                    <span className="text-[12px] font-semibold leading-normal">
                       <Users size={18} weight="bold"></Users>{" "}
                       {formatPortalers(portal.numberOfPortalers)}
                     </span>

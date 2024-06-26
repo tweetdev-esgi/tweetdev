@@ -55,6 +55,36 @@ export const fetchUserInfo = async (token: string, userId:string) => {
   }
 };
 
+
+
+export const getUserInfoByUsername = async (token: string, username:string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/one-by-username`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      params: {
+        username: username
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching self info:", error);
+    throw error;
+  }
+};
+
+export const fetchUserInfoByUsername = async (token: string, username:string) => {
+  try {
+    const userData = await getUserInfoByUsername(token, username);
+    return userData;
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    throw error;
+  }
+};
+
 export const updateUser = async (token: string, userInfo: any): Promise<any> => {
   try {
     const response = await axios.patch(

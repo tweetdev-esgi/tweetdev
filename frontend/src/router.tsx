@@ -29,6 +29,10 @@ export default createBrowserRouter([
         element: <Logout />,
       },
       {
+        path: "/profile/:username",
+        element: <Profile />,
+      },
+      {
         path: "/profile",
         element: <Profile />,
       },
