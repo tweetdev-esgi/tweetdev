@@ -146,6 +146,9 @@ export class UserController {
     
 
     me = async (req:Request, res: Response) => {
+        if (req.user){
+            req.user.password = "";
+        }
         res.json(req.user)
     }
 

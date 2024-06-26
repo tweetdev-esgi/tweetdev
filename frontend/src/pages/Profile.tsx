@@ -6,7 +6,10 @@ import {
   fetchUserInfoByUsername,
   followUser,
 } from "../api/user";
-import { getSession } from "../services/sessionService";
+import {
+  getLocalStorageItemByName,
+  getSession,
+} from "../services/sessionService";
 import { convertTimestampToMonthYear, defaultUser } from "../utils/utils";
 import "../styles/Profile.css";
 import { fetchProfilePosts } from "../api/post";
@@ -33,35 +36,23 @@ import ModalFollowers from "../components/ModalFollowers";
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
 
-  const [selfPosts, setSelfPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  const [isFollowed, setIsFollowed] = useState(false);
   const followerText = followersCount > 1 ? "Followers" : "Follower";
   const sessionToken = getSession();
   const [notFoundUser, setNotFoundUser] = useState("");
   let { username } = useParams();
+  const [sessionUsername, setSessionUsername] = useState("");
+
   const id = userInfo._id;
-  const isUserFollowed = async () => {
-    if (sessionToken && id) {
-      try {
-        const response = await fetchIsUserFollowed(sessionToken, id);
-        return response.isFollowed;
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    }
-  };
-  const showFollowersModal = () => {
-    console.log("show followers modal");
-  };
 
   useEffect(() => {
-    console.log(username);
+    const getSessionUsername = getLocalStorageItemByName("username");
+    setSessionUsername(getSessionUsername);
     const fetchData = async () => {
       try {
-        setIsFollowed(await isUserFollowed());
         if (sessionToken) {
           if (username == undefined) {
             const selfInfoData = await fetchSelfInfo(sessionToken);
@@ -69,7 +60,7 @@ function Profile() {
             setFollowersCount(selfInfoData.followers.length);
             setFollowingCount(selfInfoData.following.length);
             const selfPostsData = await fetchProfilePosts(sessionToken);
-            setSelfPosts(selfPostsData);
+            setPosts(selfPostsData);
           } else {
             try {
               const userInfoData = await fetchUserInfoByUsername(
@@ -83,7 +74,7 @@ function Profile() {
                 sessionToken,
                 userInfoData._id
               );
-              setSelfPosts(selfPostsData);
+              setPosts(selfPostsData);
             } catch (error) {
               setNotFoundUser("This account doesn’t exist");
               console.error("Error fetching self info:", error);
@@ -99,31 +90,27 @@ function Profile() {
     fetchData();
   }, []);
 
-  const follow = async () => {
-    if (isFollowed) {
-      setFollowersCount(followersCount - 1);
-    } else {
-      setFollowersCount(followersCount + 1);
-    }
-    setIsFollowed(!isFollowed);
-    if (sessionToken && id) {
-      try {
-        const response = await fetchIsUserFollowed(sessionToken, id);
-        console.log(response);
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-      console.log(fetchIsUserFollowed(sessionToken, id));
-      followUser(sessionToken, id);
-    }
-  };
-
   const incrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter + 1);
   };
 
   const decrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter - 1);
+  };
+
+  const renderButton = () => {
+    if (username) {
+      return username === sessionUsername ? (
+        <EditButton selfInfo={userInfo} />
+      ) : (
+        <FollowButton
+          increment={incrementFollowers}
+          decrement={decrementFollowers}
+          id={id}
+        />
+      );
+    }
+    return <EditButton selfInfo={userInfo} />;
   };
 
   return (
@@ -174,14 +161,7 @@ function Profile() {
               </div>
               <div className="grid grid-rows-[40fr_50fr]">
                 <div className="flex gap-3 p-2">
-                  {!id && <EditButton selfInfo={userInfo}></EditButton>}
-
-                  {id && (
-                    <FollowButton
-                      increment={incrementFollowers}
-                      decrement={decrementFollowers}
-                    ></FollowButton>
-                  )}
+                  {renderButton()}
 
                   <div className="flex items-center cursor-pointer">
                     <DotsThreeVertical
