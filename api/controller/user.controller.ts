@@ -38,42 +38,46 @@ export class UserController {
         "joinDate" : "string",
     }
 
-    subscribe = async (req: Request, res: Response):Promise<void> => {
-
-        const login: string = req.body.login
-        const password: string  = req.body.password
-
-
-        try{
-
-
-            await this.loadGuestRole()
-            const user = await UserModel.create({
-                login,
-                password: SecurityUtils.toSHA512(password),
-                username : req.body.username,
-                roles:[this.guestRole],
-                posts: [],
-                profileImageUrl: req.body.profileImageUrl,
-                backgroundImageUrl: req.body.backgroundImageUrl,
-                aboutMe : req.body.aboutMe,
-                joinDate : req.body.joinDate,
-                followers: [],
-                following: []
-            })
-            res.json(user)
-
-        }catch(err: unknown){
-            const me = err as {[key: string]: unknown}
-            if (me['name'] === "MongoServerError" && me['code'] === 11000){
-                res.status(409).json({"message": "The login is already in use."})
-            }else{
-                console.log(me)
-                res.status(500).end()
-            }
+    subscribe = async (req: Request, res: Response): Promise<void> => {
+        console.log("subscribe launched")
+        const login: string = req.body.login;
+        const password: string = req.body.password;
+      
+        try {
+          await this.loadGuestRole();
+      
+          const user = await UserModel.create({
+            login,
+            password: SecurityUtils.toSHA512(password),
+            username: req.body.username,
+            roles: [this.guestRole],
+            posts: [],
+            profileImageUrl: req.body.profileImageUrl,
+            backgroundImageUrl: req.body.backgroundImageUrl,
+            aboutMe: req.body.aboutMe,
+            joinDate: req.body.joinDate,
+            followers: [],
+            following: []
+          });
+      
+          res.json(user);
+      
+        } catch (err: any) {
+            if (err.name === 'MongoServerError' && err.code === 11000) {
+              const duplicatedField = Object.keys(err.keyValue)[0]; 
+              const errorMessage = duplicatedField === 'login'
+                ? 'The login is already in use.'
+                : duplicatedField === 'username'
+                ? 'The username is already in use.'
+                : 'A unique field is already in use.';
+              
+            res.status(409).json({ message: errorMessage });
+          } else {
+            console.log(err);
+            res.status(500).end();
+          }
         }
-
-    }
+      };
 
     readonly paramsUpdateUser = {
         "password" : "string | undefined",

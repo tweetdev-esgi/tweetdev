@@ -15,7 +15,8 @@ const userShemma = new Schema<User>({
     },
     username: {
         type: Schema.Types.String,
-        required: true
+        unique: true,
+        required: true,
     },
     roles:[{
         type: Schema.Types.ObjectId,
