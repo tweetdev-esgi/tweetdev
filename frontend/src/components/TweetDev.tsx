@@ -3,7 +3,43 @@ import React, { useEffect, useState } from "react";
 import "../styles/TweetDev.css";
 import { getSession } from "../services/sessionService";
 import LikeButton from "./buttons/LikeButton";
+
+import MDEditor from "@uiw/react-md-editor";
+
+
 function TweetDev({ postInfo }) {
+  const [value, setValue] = React.useState(`
+  **Hello world!!!**
+  <img src="https://em-content.zobj.net/source/microsoft-teams/363/waving-hand_1f44b.png" width="30" height="30">
+  >Here's how we used MDEditor npm library to create this component !
+  
+  \`\`\`bash
+  npm i @uiw/react-md-editor
+  \`\`\`
+  
+  then paste this into your React component !
+  
+  \`\`\`js
+  import React from "react";
+  import MDEditor from "@uiw/react-md-editor";
+  
+  export default function App() {
+    const [value, setValue] = React.useState("**Hello world!!!**");
+    return (
+      <div className="container mt-24 p-0 flex flex-col justify-center gap-7 px-5">
+        <div>
+          <h2 className="text-center text-xl font-bold">Create post</h2>
+        </div>
+        <div>
+          <MDEditor value={value} onChange={setValue} />
+          <MDEditor.Markdown source={value} />
+        </div>
+      </div>
+    );
+  }
+  \`\`\`
+  `);
+  
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const sessionToken = getSession();
@@ -36,7 +72,11 @@ function TweetDev({ postInfo }) {
         </div>
       </div>
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
-        {postInfo.description}
+      {/* <div data-color-mode="light">
+
+      <MDEditor.Markdown source={value}  />
+      </div> */}
+      <MDEditor.Markdown source={value} className="p-4 bg-inherit rounded-lg" />
       </p>
       <div className="flex mt-2 ">
         <LikeButton

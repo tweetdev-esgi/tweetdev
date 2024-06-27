@@ -1,7 +1,7 @@
 export const EmojiSample = [
       {
           name: "heart",
-          img_url_static: "https://cdn.discordapp.com/attachments/1157269425796435998/1255375965081833522/ezgif-1-fd42221efc.png?ex=667ce779&is=667b95f9&hm=c03352f4023a7c4891f357fdbada860cde828709509fd00cf84edf0851f992d4&",
+          img_url_static: "https://cdn.discordapp.com/attachments/1157269425796435998/1255375914225631282/ezgif-1-fd42221efc.png?ex=667e38ed&is=667ce76d&hm=dc5c63f2eb595462b8c14a27a8bedd1200232267c0da3c4df4960093dffc1602&",
           img_url_animated: "https://www.emojiall.com/images/60/microsoft-teams/2764-fe0f.png",
         },
       {
@@ -11,7 +11,7 @@ export const EmojiSample = [
       },
     {
       name: "fire",
-      img_url_static: "https://media.discordapp.net/attachments/1157269425796435998/1255376498454560820/ezgif-1-9b376efac5.png?ex=667ce7f8&is=667b9678&hm=bddc25253b2508e719168e53235bcd98d4c0bc0d336fd18e136506077f4fd8f9&=&format=webp&quality=lossless",
+      img_url_static: "https://cdn.discordapp.com/attachments/1157269425796435998/1255897794393145445/ezgif-1-9b376efac5_1.webp?ex=667ecd77&is=667d7bf7&hm=77efa881daf919e139fc8847cde15c6f2855459bef949fc51ee0d2581e05fd12&",
       img_url_animated: "https://www.emojiall.com/images/60/microsoft-teams/1f525.png",
     },
     {
