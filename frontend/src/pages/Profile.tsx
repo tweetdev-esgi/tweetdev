@@ -174,7 +174,7 @@ function Profile() {
             </div>
             <div className="p-6 grid grid-cols-[68fr_32fr] gap-5">
               <div className=" text-secondaryColor text-sm font-medium">
-                {userInfo.aboutMe}
+                {userInfo.description}
                 {notFoundUser}
               </div>
               <div className="flex justify-around items-center">

@@ -28,7 +28,7 @@ export const logout = async (): Promise<void> => {
 };
 
 
-export const subscribe = async (formData: { login: string; password: string, username:string, profileImageUrl:string, backgroundImageUrl:string, aboutMe:string, joinDate:Date }): Promise<any> => {
+export const subscribe = async (formData: { login: string; password: string, username:string, profileImageUrl:string, backgroundImageUrl:string, description:string, joinDate:Date }): Promise<any> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/user/subscribe`, formData, {
       headers: {

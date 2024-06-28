@@ -1,17 +1,14 @@
 export default interface Post {
     authorName: string;
-    comments: string[]; 
-    creationDate: string; 
-    description: string;
-    like: Like[]; 
-    title: string;
-    type: string;
-    userId: string;
-    _id: string;
-    language: string | undefined;
+    content: string
+    like: Like[]
+    comments: any[]
+    creationDate : Date
+    username: string
+    hubname: string | undefined
   }
 
   export interface Like {
-    userId: string;
+    username: string;
     emojiIndex: number;
 }

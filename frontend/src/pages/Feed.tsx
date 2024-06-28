@@ -8,7 +8,8 @@ import Favorites from "../components/Favorites";
 import Portal from "../interfaces/Portal";
 import { Users } from "@phosphor-icons/react";
 import { PortalSample } from "../interfaces/PortalSample";
-import { fetchHubs } from "../api/hubs";
+import { fetchHubs } from "../api/hub";
+import { Hub } from "../interfaces/Hub";
 
 function Feed() {
   const [posts, setPosts] = useState<Post[]>([]);

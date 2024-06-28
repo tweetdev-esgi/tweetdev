@@ -19,33 +19,18 @@ export class PostController {
     }
 
     readonly paramsNewPost = {
-        "title" : "string",
-        "description" : "string"
+        "content" : "string"
     }
 
     newPost = async (req: Request, res: Response): Promise<void> => {
-
         const newPost = await PostModel.create({
-            title: req.body.title,
-            description: req.body.description,
+            content: req.body.content,
             like: [],
             comments: [],
             creationDate: new Date(),
-            userId : req.user?._id,
-            authorName : req.user?.username,
-            type: req.body.type,
-            language: req.body.language,
-            format: req.body.format
+            username : req.user?.username,
+            hubname : req.body.hubname ? req.body.hubname : null,
         })
-
-        try{
-            req.user?.posts.push(newPost)
-            req.user?.save()
-            
-        }catch(err){
-            res.status(500).end()
-            return 
-        }
         
         res.status(201).json(newPost)
         return 
@@ -121,12 +106,12 @@ export class PostController {
                 return;
             }
     
-            const userLikedIndex = post.like.findIndex(l => String(l.userId) === String(req.user?._id));
+            const userLikedIndex = post.like.findIndex(l => String(l.username) === String(req.user?.username));
     
             if (userLikedIndex === -1) {
                 post.like.push(
                     {
-                        userId: req.user?._id,
+                        username: req.user?.username,
                         emojiIndex: emojiIndex
                     }
                 );
@@ -169,15 +154,11 @@ export class PostController {
                 return 
             }
 
-            if (req.user && req.user.posts.some(p =>  String(p._id) !== String(post._id))){
-                req.user.posts = req.user.posts.filter(p => {return String(p) !== String(post._id)})
+
                 post.deleteOne()
-                req.user.save()
+                post.save()
                 res.status(200).json({"message" : "Post deleted"})
                 return 
-            }
-            res.status(401).json({"message" : "You're trying to delete a post that doesn't belong to you."})
-            return 
  
         }catch(err){
             res.status(401).json({"message": "This is not a post Id"})
@@ -194,13 +175,13 @@ export class PostController {
     }
     getSelfPosts = async (req: Request, res: Response): Promise<void> => {
         try {
-            const userId = req.query.userId || req.user?._id;
-            if (!userId) {
+            const username = req.query.username || req.user?.username;
+            if (!username) {
                 res.status(401).json({"message": "Unauthorized"});
                 return;
             }
 
-            const userPosts = await PostModel.find({ userId: userId });
+            const userPosts = await PostModel.find({ username: username });
             res.status(200).json(userPosts);
         } catch (err) {
             res.status(500).json({"message": "An error occurred while retrieving posts"});
@@ -209,13 +190,13 @@ export class PostController {
 
     getUserPosts = async (req: Request, res: Response): Promise<void> => {
         try {
-            const userId = req.query.userId || req.user?._id;
-            if (!userId) {
+            const username = req.query.username || req.user?.username;
+            if (!username) {
                 res.status(401).json({"message": "Unauthorized"});
                 return;
             }
 
-            const userPosts = await PostModel.find({ userId: userId });
+            const userPosts = await PostModel.find({ username: username });
             res.status(200).json(userPosts);
         } catch (err) {
             res.status(500).json({"message": "An error occurred while retrieving posts"});
@@ -233,7 +214,7 @@ export class PostController {
                 return;
             }
     
-            const like = post.like.find(user => String(user.userId) === String(req.user?._id));
+            const like = post.like.find(user => String(user.username) === String(req.user?.username));
             const isLiked = !!like;
             const emojiIndex = like ? like.emojiIndex : null;
     

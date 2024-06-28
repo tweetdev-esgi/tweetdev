@@ -18,8 +18,7 @@ const hubSchema = new Schema<Hub>({
         required: false
     }],
     users:[{
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: Schema.Types.String,
         required: false
     }],
     profileImageUrl: {
@@ -48,7 +47,7 @@ export interface Hub{
     creationDate: Date
     profileImageUrl: string
     coverImageUrl:string
-    users: User[]
+    users: string[]
 }
 
 export const HubModel: Model<Hub> = mongoose.model("Hub", hubSchema)

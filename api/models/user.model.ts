@@ -23,12 +23,6 @@ const userShemma = new Schema<User>({
         ref: "Role",
         required: true
     }],
-    posts: [{
-        type: Schema.Types.ObjectId,
-        ref: "Post",
-        required: true
-    }],
-    // User personal infos
     profileImageUrl: {
         type: Schema.Types.String,
         required: true
@@ -37,7 +31,7 @@ const userShemma = new Schema<User>({
         type: Schema.Types.String,
         required: false
     },
-    aboutMe: {
+    description: {
         type: Schema.Types.String,
         required: false
     },
@@ -67,11 +61,10 @@ export interface User{
     password: string
     username: string
     roles: Role[]
-    posts: Post[]
 
     profileImageUrl: string
     backgroundImageUrl:string
-    aboutMe: string
+    description: string
     joinDate: Date
 
     followers: any[]

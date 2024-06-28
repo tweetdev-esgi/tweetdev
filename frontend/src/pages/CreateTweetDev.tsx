@@ -2,12 +2,25 @@ import React from "react";
 import MDEditor from "@uiw/react-md-editor";
 import Button from "../components/buttons/Button";
 import { ThumbsUp } from "lucide-react";
+import { createPost } from "../api/post";
+import { getSession } from "../services/sessionService";
 
 export default function CreateTweetDev() {
   const [value, setValue] = React.useState("**Hello world!!!**");
 
+  const sessionToken = getSession();
+
+  const object = {
+    content: value,
+  };
   const submitPost = () => {
-    console.log(value);
+    try {
+      createPost(sessionToken, object);
+      alert("ok");
+    } catch (error) {
+      alert("no ok");
+    }
+    setValue("**Hello world!!!**");
   };
 
   return (

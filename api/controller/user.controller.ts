@@ -34,7 +34,7 @@ export class UserController {
         "password" : "string",
         "username" : "string",
         "profileImageUrl" : "string",
-        "aboutMe" : "string",
+        "description" : "string",
         "joinDate" : "string",
     }
 
@@ -51,10 +51,9 @@ export class UserController {
             password: SecurityUtils.toSHA512(password),
             username: req.body.username,
             roles: [this.guestRole],
-            posts: [],
             profileImageUrl: req.body.profileImageUrl,
             backgroundImageUrl: req.body.backgroundImageUrl,
-            aboutMe: req.body.aboutMe,
+            description: req.body.description,
             joinDate: req.body.joinDate,
             followers: [],
             following: []
@@ -83,7 +82,7 @@ export class UserController {
         "password" : "string | undefined",
         "profileImageUrl": "string | undefined",
         "backgroundImageUrl": "string | undefined",
-        "aboutMe" : "string | undefined",
+        "description" : "string | undefined",
     }
 
     updateUser = async (req: Request, res: Response) => {
@@ -261,23 +260,23 @@ export class UserController {
 
 
     readonly queryGetPost = {
-        "user_id" : "string | undefined"
+        "username" : "string | undefined"
     }
 
     getAllPost = async (req:Request, res:Response): Promise<void> => {
 
-        if (!req.query.user_id && req.user){
-            res.status(200).json((await req.user.populate("posts")).posts)
+        if (!req.query.username && req.user){
+            res.status(200).json(await PostModel.find({ username:req.user.username}));
             return
         }
 
         try{
-            const user = await UserModel.findById(req.query.user_id).populate("posts")
+            const user = await UserModel.find({ username:req.query.username});
             if (!user){
                 res.status(404).json({'message': "User not found"})
                 return 
             }
-            res.status(200).json(user.posts)
+            res.status(200).json(await PostModel.find({ username:req.query.username}));
             return 
         }catch(err){
             res.status(500).json({'message': "Server error"})

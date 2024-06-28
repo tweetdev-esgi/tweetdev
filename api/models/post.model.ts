@@ -1,9 +1,10 @@
 import mongoose, { Schema, Model } from "mongoose";
 import { User } from "./user.model";
 import { Comment } from "./comment.model";
+
 const likeSchema = new Schema({
-    userId: {
-        type: Schema.Types.ObjectId,
+    username: {
+        type: Schema.Types.String,
         ref: "User",
         required: true
     },
@@ -14,11 +15,7 @@ const likeSchema = new Schema({
 }, { _id: false });
 
 const postShemma = new Schema<Post>({
-    title: {
-        type: Schema.Types.String, 
-        required: true
-    },
-    description:{
+    content:{
         type: Schema.Types.String,
         required: true
     },
@@ -26,33 +23,18 @@ const postShemma = new Schema<Post>({
     comments: [{
         type: Schema.Types.ObjectId,
         ref: "Comment",
-        required: true
+        required: false
     }],
     creationDate: {
         type: Schema.Types.Date,
         required: true
     },
-    userId: {
+    username: {
         type: Schema.Types.String,
         required: true
     },
-    type: {
+    hubname: {
         type: Schema.Types.String,
-        enum: ['tweet', 'tweetdev'],
-        required: true
-    },
-    authorName: {
-        type: Schema.Types.String,
-        required: true
-    },
-    language: {
-        type: Schema.Types.String,
-        enum: ['python', 'javascript'],
-        required: false
-    },
-    format: {
-        type: Schema.Types.String,
-        enum: ['text', 'image'],
         required: false
     }
 }, {
@@ -60,21 +42,17 @@ const postShemma = new Schema<Post>({
     collection: "Posts"
 })
 export interface Like {
-    userId: string;
+    username: string;
     emojiIndex: number;
 }
 export interface Post{
     _id: string
-    title: string |undefined
-    description: string
+    content: string
     like: Like[]
     comments: Comment[]
     creationDate : Date
-    userId: string
-    authorName: string
-    type: 'tweet' | 'tweetdev'
-    language: 'python' | 'javascript'
-    format: 'text' | 'image'
+    username: string
+    hubname: string | undefined
 }
 
 

@@ -1,26 +1,28 @@
-import { useEffect, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
-import { updateUser } from '../api/user';
-import { getSession } from '../services/sessionService';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
+import { updateUser } from "../api/user";
+import { getSession } from "../services/sessionService";
+import toast from "react-hot-toast";
 
-function ModalProfileEdit({selfInfo}: {selfInfo: UserResponse}) {
+function ModalProfileEdit({ selfInfo }: { selfInfo: UserResponse }) {
   const [show, setShow] = useState(false);
   const [userInfo, setUserInfo] = useState({
     username: "",
-    aboutMe: "",
+    description: "",
   });
-  
+
   useEffect(() => {
     setUserInfo({
       username: selfInfo.username,
-      aboutMe: selfInfo.aboutMe,
+      description: selfInfo.description,
     });
   }, [selfInfo]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setUserInfo({
       ...userInfo,
@@ -28,25 +30,22 @@ function ModalProfileEdit({selfInfo}: {selfInfo: UserResponse}) {
     });
   };
 
-  const handleClose = () => 
-    {
-      setShow(false);
-    }
+  const handleClose = () => {
+    setShow(false);
+  };
 
-   const handleSave = (userInfo:any) => 
-    {
-      updateUser(getSession(),userInfo);
-      
-  
-      toast.success("Changes done !", { duration: 1000 });
-  
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
+  const handleSave = (userInfo: any) => {
+    updateUser(getSession(), userInfo);
+
+    toast.success("Changes done !", { duration: 1000 });
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
   const handleShow = () => {
     setShow(true);
-  }
+  };
 
   return (
     <>
@@ -60,25 +59,25 @@ function ModalProfileEdit({selfInfo}: {selfInfo: UserResponse}) {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3" controlId="username" >
+            <Form.Group className="mb-3" controlId="username">
               <Form.Label>Name</Form.Label>
               <Form.Control
-                type='text'
+                type="text"
                 autoFocus
                 name="username"
                 value={userInfo.username}
                 onChange={handleInputChange}
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="description"
-            >
+            <Form.Group className="mb-3" controlId="description">
               <Form.Label>Description</Form.Label>
-              <Form.Control as="textarea" rows={3} 
-                name="aboutMe"
-                value={userInfo.aboutMe}
-                onChange={handleInputChange}/>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                value={userInfo.description}
+                onChange={handleInputChange}
+              />
             </Form.Group>
           </Form>
         </Modal.Body>

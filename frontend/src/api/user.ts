@@ -85,6 +85,17 @@ export const fetchUserInfoByUsername = async (token: string, username:string) =>
   }
 };
 
+
+export const fetchUserProfilePictureByUsername = async (token: string, username:string) => {
+  try {
+    const userData = await getUserInfoByUsername(token, username);
+    return userData.profileImageUrl;
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    throw error;
+  }
+};
+
 export const updateUser = async (token: string, userInfo: any): Promise<any> => {
   try {
     const response = await axios.patch(

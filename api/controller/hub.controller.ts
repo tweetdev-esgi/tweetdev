@@ -22,6 +22,25 @@ export class HubController {
         return 
     }
 
+    getHubByName = async (req:Request, res:Response): Promise<void> => {
+        const name = req.query.name as string;
+
+        try {
+            const hub = await HubModel.findOne({ name });
+    
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+    
+    
+            res.status(200).json(hub);
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
     readonly createHubBody = {
         "name" : "string",
         "description" : "string",
@@ -30,7 +49,7 @@ export class HubController {
     }
 
     createHub = async (req:Request, res:Response): Promise<void> => {
-
+        if(req.user)
         try {
             const name = req.body.name;
             const description = req.body.description;
@@ -44,7 +63,8 @@ export class HubController {
             description:description,
             profileImageUrl:profileImageUrl,
             coverImageUrl:coverImageUrl,
-            creationDate:creationDate
+            creationDate:creationDate,
+            users:[req.user.username]
         })
         res.json(hub)
             }catch(err: any){
@@ -63,10 +83,32 @@ export class HubController {
     }}
 
 
+    getHubsByUsername = async (req:Request, res:Response): Promise<void> => {
+        const users = req.query.username as string;
+
+        try {
+            const hub = await HubModel.find({ users });
+    
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+    
+    
+            res.status(200).json(hub);
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllHubs.bind(this))
+        router.get('/all', checkUserToken(), this.getHubsByUsername.bind(this))
         router.post('/create', checkUserToken(),express.json(),checkBody(this.createHubBody), this.createHub.bind(this))
+        router.get('/by-name', checkUserToken(), this.getHubByName.bind(this))
+
         return router
     }
 }

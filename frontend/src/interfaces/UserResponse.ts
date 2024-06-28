@@ -1,5 +1,5 @@
 interface UserResponse {
-    aboutMe: string;
+  description: string;
     followers: string[];
     profileImageUrl: string;
     backgroundImageUrl : string;

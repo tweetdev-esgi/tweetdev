@@ -9,7 +9,7 @@ function EditButton({ selfInfo }: { selfInfo: UserResponse }) {
   const [show, setShow] = useState(false);
   const [userInfo, setUserInfo] = useState({
     username: "",
-    aboutMe: "",
+    description: "",
     profileImageUrl: "",
     backgroundImageUrl: "",
   });
@@ -17,7 +17,7 @@ function EditButton({ selfInfo }: { selfInfo: UserResponse }) {
   useEffect(() => {
     setUserInfo({
       username: selfInfo.username,
-      aboutMe: selfInfo.aboutMe,
+      description: selfInfo.description,
       profileImageUrl: selfInfo.profileImageUrl,
       backgroundImageUrl: selfInfo.backgroundImageUrl,
     });
@@ -79,8 +79,8 @@ function EditButton({ selfInfo }: { selfInfo: UserResponse }) {
               <Form.Control
                 as="textarea"
                 rows={3}
-                name="aboutMe"
-                value={userInfo.aboutMe}
+                name="description"
+                value={userInfo.description}
                 onChange={handleInputChange}
               />
             </Form.Group>
