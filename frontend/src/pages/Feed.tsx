@@ -63,7 +63,6 @@ function Feed() {
       </div>
       <div className="flex flex-col gap-3 shrink-0 col-span-3  sm:col-span-2  lg:col-span-1">
         {posts.map((post, index) => (
-          // <TweetDev key={index} postInfo={post} />
           <TweetDev postInfo={post} key={index} />
         ))}
       </div>

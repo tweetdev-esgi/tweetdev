@@ -4,6 +4,7 @@ import Button from "../components/buttons/Button";
 import { ThumbsUp } from "lucide-react";
 import { createPost } from "../api/post";
 import { getSession } from "../services/sessionService";
+import toast from "react-hot-toast";
 
 export default function CreateTweetDev() {
   const [value, setValue] = React.useState("**Hello world!!!**");
@@ -16,9 +17,10 @@ export default function CreateTweetDev() {
   const submitPost = () => {
     try {
       createPost(sessionToken, object);
-      alert("ok");
+
+      toast.success("Post created !", { duration: 1000 });
     } catch (error) {
-      alert("no ok");
+      toast.error("Error creation post !", { duration: 1000 });
     }
     setValue("**Hello world!!!**");
   };
