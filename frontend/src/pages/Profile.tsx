@@ -32,6 +32,7 @@ import {
 import EditButton from "../components/buttons/EditButton";
 import FollowButton from "../components/buttons/FollowButton";
 import ModalFollowers from "../components/ModalFollowers";
+import TweetDev from "../components/TweetDev";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
@@ -72,7 +73,7 @@ function Profile() {
               setFollowingCount(userInfoData.following.length);
               const selfPostsData = await fetchProfilePosts(
                 sessionToken,
-                userInfoData._id
+                userInfoData.username
               );
               setPosts(selfPostsData);
             } catch (error) {
@@ -185,6 +186,11 @@ function Profile() {
                 <GithubLogo size={24} weight="fill"></GithubLogo>
               </div>
             </div>
+          </div>
+          <div className=" -mt-20 mr-6 flex flex-col gap-4  col-span-2 lg:col-start-2">
+            {posts.reverse().map((post, index) => (
+              <TweetDev postInfo={post} key={index} />
+            ))}
           </div>
         </>
       )}
