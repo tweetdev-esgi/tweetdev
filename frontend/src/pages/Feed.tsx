@@ -8,10 +8,11 @@ import Favorites from "../components/Favorites";
 import Portal from "../interfaces/Portal";
 import { Users } from "@phosphor-icons/react";
 import { PortalSample } from "../interfaces/PortalSample";
+import { fetchHubs } from "../api/hubs";
 
 function Feed() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [portals, setPortals] = useState<Portal[]>(PortalSample);
+  const [portals, setPortals] = useState<Hub[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,17 +29,31 @@ function Feed() {
         console.error("Error fetching posts:", error);
       }
     };
+    const fetchHubsData = async () => {
+      try {
+        const sessionToken = getSession();
 
+        if (sessionToken) {
+          const hubsData = await fetchHubs(sessionToken);
+          setPortals(hubsData);
+        } else {
+          console.error("Error fetching posts");
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
     fetchData();
+    fetchHubsData();
   }, []);
 
-  function formatPortalers(numberOfPortalers: number) {
-    if (numberOfPortalers >= 1000000) {
-      return (numberOfPortalers / 1000000).toFixed(1) + "M";
-    } else if (numberOfPortalers >= 1000) {
-      return (numberOfPortalers / 1000).toFixed(1) + "k";
+  function formatNumber(number: number) {
+    if (number >= 1000000) {
+      return (number / 1000000).toFixed(1) + "M";
+    } else if (number >= 1000) {
+      return (number / 1000).toFixed(1) + "k";
     }
-    return numberOfPortalers;
+    return number;
   }
   return (
     <div className="feed-container grid grid-cols-[1fr_2.5fr_1.5fr] gap-4 p-12 mt-6">
@@ -53,7 +68,7 @@ function Feed() {
       </div>
       <div className="hidden lg:block">
         <div className="pt-4 px-6 text-lg font-medium flex flex-col gap-3">
-          Featured Portals
+          Featured Hubs
           {portals.map((portal, index) => (
             <div
               key={index}
@@ -61,7 +76,7 @@ function Feed() {
             >
               <div
                 className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all"
-                style={{ backgroundImage: `url(${portal.backgroundImageUrl})` }}
+                style={{ backgroundImage: `url(${portal.coverImageUrl})` }}
               ></div>
               <div className="flex gap-3  items-center">
                 <div
@@ -79,7 +94,7 @@ function Feed() {
                   <div className="inline mt-[-5px]">
                     <span className="text-[12px] font-semibold leading-normal">
                       <Users size={18} weight="bold"></Users>{" "}
-                      {formatPortalers(portal.numberOfPortalers)}
+                      {formatNumber(portal.users.length)}
                     </span>
                   </div>
                 </div>

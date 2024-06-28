@@ -16,7 +16,7 @@ function Favorites(props) {
             size={23}
             color="#C7C9CE"
           ></ApplePodcastsLogo>{" "}
-          Portals
+          Hubs
         </h2>
         <div className="flex flex-col gap-3 mt-3 ">
           {portals.map((portal, index) => (

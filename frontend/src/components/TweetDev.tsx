@@ -6,7 +6,6 @@ import LikeButton from "./buttons/LikeButton";
 
 import MDEditor from "@uiw/react-md-editor";
 
-
 function TweetDev({ postInfo }) {
   const [value, setValue] = React.useState(`
   **Hello world!!!**
@@ -39,7 +38,7 @@ function TweetDev({ postInfo }) {
   }
   \`\`\`
   `);
-  
+
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const sessionToken = getSession();
@@ -72,11 +71,14 @@ function TweetDev({ postInfo }) {
         </div>
       </div>
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
-      {/* <div data-color-mode="light">
+        {/* <div data-color-mode="light">
 
       <MDEditor.Markdown source={value}  />
       </div> */}
-      <MDEditor.Markdown source={value} className="p-4 bg-inherit rounded-lg" />
+        <MDEditor.Markdown
+          source={value}
+          className="p-4 bg-inherit rounded-lg"
+        />
       </p>
       <div className="flex mt-2 ">
         <LikeButton

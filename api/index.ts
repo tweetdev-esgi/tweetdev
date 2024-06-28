@@ -8,6 +8,7 @@ import { AuthController, UserController } from './controller'
 import { StartService } from './service'
 import { PostController } from './controller/post.controller'
 import { MessageController } from './controller/message.controller'
+import { HubController } from './controller/hub.controller'
 const cors = require('cors');
 import * as dotenv from "dotenv";
 dotenv.config({ path:'../.env' });
@@ -25,9 +26,8 @@ const startServer = async (): Promise<void> => {
     await StartService.userRoles()
     
     const app = express()
-    // Specify allowed origins explicitly
     const corsOptions = {
-        origin: 'http://localhost:4000', // Update with your Angular application's URL
+        origin: 'http://localhost:4000', 
     };
     app.use(cors(corsOptions));
   
@@ -43,15 +43,15 @@ const startServer = async (): Promise<void> => {
     const authController = new AuthController() 
     const postController = new PostController()
     const messageController = new MessageController()
+    const hubController = new HubController()
     
-    // This call to the function is out of place because if we put StartService.createUsers() after StartService.userRoles(), 
-    //      then the creation doesn't work because the program is trying to create a user while the creation role is not finished.
     await StartService.createUsers()
 
     app.use(userController.path, userController.buildRouter())
     app.use(authController.path, authController.buildRouter())
     app.use(postController.path, postController.buildRouter())
     app.use(messageController.path, messageController.buildRouter())
+    app.use(hubController.path, hubController.buildRouter())
 
     app.listen(process.env.PORT, () => {
         console.log(`Server up on PORT : ${process.env.PORT}`)
