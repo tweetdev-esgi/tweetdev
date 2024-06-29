@@ -13,7 +13,7 @@ import {
 import { convertTimestampToMonthYear, defaultUser } from "../utils/utils";
 import "../styles/Profile.css";
 import { fetchProfilePosts } from "../api/post";
-import { Post } from "../interfaces";
+import { IPost } from "../interfaces";
 import { useLocation, useParams } from "react-router-dom";
 import Favorites from "../components/Favorites";
 import {
@@ -32,12 +32,12 @@ import {
 import EditButton from "../components/buttons/EditButton";
 import FollowButton from "../components/buttons/FollowButton";
 import ModalFollowers from "../components/ModalFollowers";
-import TweetDev from "../components/TweetDev";
+import Post from "../components/Post";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
@@ -187,9 +187,9 @@ function Profile() {
               </div>
             </div>
           </div>
-          <div className=" -mt-20 mr-6 flex flex-col gap-4  col-span-2 lg:col-start-2">
+          <div className=" -mt-20 mr-10 flex flex-col gap-4  col-span-2 lg:col-start-2">
             {posts.reverse().map((post, index) => (
-              <TweetDev postInfo={post} key={index} />
+              <Post postInfo={post} key={index} />
             ))}
           </div>
         </>

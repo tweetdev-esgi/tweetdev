@@ -49,10 +49,10 @@ function Header() {
               <>
                 <li className="header_nav-item">
                   <a
-                    href="/create-tweetdev"
+                    href="/create-post"
                     className="header_nav-link text-fontColor"
                   >
-                    Create TweetDev
+                    Create Post
                   </a>
                 </li>
                 <li className="header_nav-item">

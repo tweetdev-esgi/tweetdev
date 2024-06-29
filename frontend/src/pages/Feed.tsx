@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../styles/Feed.css";
 import { getSession } from "../services/sessionService";
 import { fetchPosts } from "../api/post";
-import { Post } from "../interfaces";
-import TweetDev from "../components/TweetDev";
+import { IPost } from "../interfaces";
+import Post from "../components/Post";
 import Favorites from "../components/Favorites";
 import Portal from "../interfaces/Portal";
 import { Users } from "@phosphor-icons/react";
@@ -12,7 +12,7 @@ import { fetchHubs } from "../api/hub";
 import { Hub } from "../interfaces/Hub";
 
 function Feed() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [portals, setPortals] = useState<Hub[]>([]);
 
   useEffect(() => {
@@ -61,13 +61,13 @@ function Feed() {
       <div className="hidden sm:block">
         <Favorites></Favorites>
       </div>
-      <div className="flex flex-col gap-3 shrink-0 col-span-3  sm:col-span-2  lg:col-span-1">
+      <div className="flex flex-col gap-3 col-span-3  sm:col-span-2  lg:col-span-1 shrink-1 flex-shrink">
         {posts.map((post, index) => (
-          <TweetDev postInfo={post} key={index} />
+          <Post postInfo={post} key={index} />
         ))}
       </div>
       <div className="hidden lg:block">
-        <div className="pt-4 px-6 text-lg font-medium flex flex-col gap-3">
+        <div className="pt-4 px-6 text-lg font-medium flex flex-col gap-3 shrink-0 min-w-96">
           Featured Hubs
           {portals.map((portal, index) => (
             <div

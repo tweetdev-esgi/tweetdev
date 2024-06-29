@@ -1,12 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import { HomePage } from "./pages/index";
 import App from "./App";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
-import CreateTweetDev from "./pages/CreateTweetDev";
 import Feed from "./pages/Feed";
+import CreatePost from "./pages/CreatePost";
 export default createBrowserRouter([
   {
     path: "/",
@@ -41,8 +40,8 @@ export default createBrowserRouter([
         element: <Feed />,
       },
       {
-        path: "/create-tweetdev",
-        element: <CreateTweetDev />,
+        path: "/create-post",
+        element: <CreatePost />,
       },
 
       // {

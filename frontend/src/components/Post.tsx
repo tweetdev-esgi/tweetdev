@@ -1,6 +1,5 @@
-import "../styles/TweetDev.css";
+import "../styles/Post.css";
 import React, { useEffect, useState } from "react";
-import "../styles/TweetDev.css";
 import { getSession } from "../services/sessionService";
 import LikeButton from "./buttons/LikeButton";
 import { Dot } from "lucide-react";
@@ -10,7 +9,7 @@ import { convertTimeToPostTime } from "../utils/utils";
 import { fetchUserProfilePictureByUsername } from "../api/user";
 import { fetchHubByName } from "../api/hub";
 
-function TweetDev({ postInfo }) {
+function Post({ postInfo }) {
   const [value, setValue] = React.useState(`
   **Hello world!!!**
   <img src="https://em-content.zobj.net/source/microsoft-teams/363/waving-hand_1f44b.png" width="30" height="30">
@@ -189,7 +188,7 @@ function TweetDev({ postInfo }) {
   );
 }
 
-export default TweetDev;
+export default Post;
 {
   /* <div data-color-mode="light">
 

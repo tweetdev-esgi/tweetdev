@@ -6,7 +6,7 @@ import { createPost } from "../api/post";
 import { getSession } from "../services/sessionService";
 import toast from "react-hot-toast";
 
-export default function CreateTweetDev() {
+export default function CreatePost() {
   const [value, setValue] = React.useState("**Hello world!!!**");
 
   const sessionToken = getSession();
