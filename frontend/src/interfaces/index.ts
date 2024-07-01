@@ -1,3 +1,3 @@
-import Post from "./Post";
+import IPost from "./IPost";
 
-export type {Post}
+export type {IPost}

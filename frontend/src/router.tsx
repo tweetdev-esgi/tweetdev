@@ -6,6 +6,7 @@ import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
 import Feed from "./pages/Feed";
 import CreatePost from "./pages/CreatePost";
+import Hub from "./pages/Hub";
 export default createBrowserRouter([
   {
     path: "/",
@@ -42,6 +43,10 @@ export default createBrowserRouter([
       {
         path: "/create-post",
         element: <CreatePost />,
+      },
+      {
+        path: "/hub/:name",
+        element: <Hub />,
       },
 
       // {

@@ -13,6 +13,7 @@ export default {
         fontColor:"#FFFFFF",
         secondaryColor:"#C7C9CE",
         componentBorder: '#222936',
+        componentBg:"#1c212e",
         searchBorder:'#1C222D',
         headerBorder:'#17191C',
         headerBg:'#06070B',

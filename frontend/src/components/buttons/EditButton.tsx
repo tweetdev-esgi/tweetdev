@@ -59,10 +59,10 @@ function EditButton({ selfInfo }: { selfInfo: UserResponse }) {
         <PencilSimple weight="bold" size={22}></PencilSimple> <div>Edit</div>
       </div>
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton className="bg-[#1c212e]">
+        <Modal.Header closeButton className="bg-componentBg">
           <Modal.Title>Edit profile</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="bg-[#1c212e]">
+        <Modal.Body className="bg-componentBg">
           <Form>
             <Form.Group className="mb-3" controlId="username">
               <Form.Label>Name</Form.Label>
@@ -106,16 +106,16 @@ function EditButton({ selfInfo }: { selfInfo: UserResponse }) {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer className="bg-[#1c212e]">
+        <Modal.Footer className="bg-componentBg">
           <Button
-            className="bg-[#1c212e]"
+            className="bg-componentBg"
             variant="secondary"
             onClick={handleClose}
           >
             Close
           </Button>
           <Button
-            className="bg-[#1c212e]"
+            className="bg-componentBg"
             variant="primary"
             onClick={() => handleSave(userInfo)}
           >

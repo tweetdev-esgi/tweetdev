@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  fetchIsUserFollowed,
-  fetchSelfInfo,
-  fetchUserInfo,
-  fetchUserInfoByUsername,
-  followUser,
-} from "../api/user";
+import { fetchSelfInfo, fetchUserInfoByUsername } from "../api/user";
 import {
   getLocalStorageItemByName,
   getSession,
@@ -132,7 +126,7 @@ function Profile() {
                 backgroundPosition: "center",
               }}
             ></div>
-            <div className="border-b-2 border-componentBorder grid grid-cols-[15fr_67fr_18fr]">
+            <div className="border-b-2 bg-componentBg border-componentBorder grid grid-cols-[15fr_67fr_18fr]">
               <div className="flex justify-center">
                 <div
                   className="h-[180px] w-[180px] border-4 border-cyan-400 rounded-full mt-[-60px] ml-6 mr-2"
@@ -173,7 +167,7 @@ function Profile() {
                 </div>
               </div>
             </div>
-            <div className="p-6 grid grid-cols-[68fr_32fr] gap-5">
+            <div className="p-6 bg-componentBg grid grid-cols-[68fr_32fr] gap-5">
               <div className=" text-secondaryColor text-sm font-medium">
                 {userInfo.description}
                 {notFoundUser}
