@@ -1,4 +1,4 @@
-export interface Hub{
+export interface IHub{
     _id: string
     name: string
     posts: string[]
