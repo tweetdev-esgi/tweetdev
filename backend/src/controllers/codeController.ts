@@ -1,13 +1,13 @@
-import {Request, Response} from 'express';
-import {saveCodeService} from '../services/codeService';
+import { Request, Response } from 'express';
+import { saveCodeService } from '../services/codeService';
 import fs from 'fs';
-import path from "path";
-import {exec} from "child_process";
+import path from 'path';
+import { exec } from 'child_process';
 
 const saveCode = async (req: Request, res: Response) => {
-    const {name, code, language} = req.body;
+    const { name, code, language } = req.body;
     try {
-        await saveCodeService({name, code, language});
+        await saveCodeService({ name, code, language });
         res.status(200).send('Code saved successfully');
     } catch (error) {
         console.error('Error saving code:', error);
@@ -16,47 +16,69 @@ const saveCode = async (req: Request, res: Response) => {
 };
 
 export const executeCode = async (req: Request, res: Response) => {
-    const {language, code} = req.body;
+    const { language, code } = req.body;
 
     if (!language || !code) {
-        return res.status(400).json({message: "Language and code are required"});
+        return res.status(400).json({ message: 'Language and code are required' });
     }
 
-    const fileName = `code.${language}`;
-    const filePath = path.join('/app', fileName);
+    const uniqueId = Date.now(); // Generate a unique ID based on the current timestamp
+    const fileName = `code_${uniqueId}.${language}`;
+
+    let folderPath = '';
+
+    switch (language) {
+        case 'js':
+            folderPath = path.join(__dirname, '../../code/javascript');
+            break;
+        case 'ts':
+            folderPath = path.join(__dirname, '../../code/typescript');
+            break;
+        case 'py':
+            folderPath = path.join(__dirname, '../../code/python');
+            break;
+        case 'java':
+            folderPath = path.join(__dirname, '../../code/java');
+            break;
+        default:
+            return res.status(400).json({ message: 'Unsupported language' });
+    }
+
+    const filePath = path.join(folderPath, fileName);
 
     try {
-        // eecrire le code dans un fichier temporaire
+        // Write the code to a temporary file
         fs.writeFileSync(filePath, code);
 
+        // Determine the appropriate Docker run command based on the language
         let command = '';
         switch (language) {
-            case 'javascript':
-                command = `docker-compose run --rm javascript node /app/runner.js`;
+            case 'js':
+                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh javascript /app/${fileName}`;
                 break;
-            case 'typescript':
-                command = `docker-compose run --rm typescript ts-node /app/runner.ts`;
+            case 'ts':
+                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh typescript /app/${fileName}`;
                 break;
-            case 'python':
-                command = `docker-compose run --rm python python /app/runner.py`;
+            case 'py':
+                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh python /app/${fileName}`;
                 break;
             case 'java':
-                command = `docker-compose run --rm java java /app/Runner`;
+                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh java /app/${fileName}`;
                 break;
             default:
-                return res.status(400).json({message: "Unsupported language"});
-        }// docker run avec le nom de mon code plus le language
-        //'docker', 'run', '--rm', '-v', chemain_dans_ta_machine', 'image_docker_name', 'node' container_path
+                return res.status(400).json({ message: 'Unsupported language' });
+        }
 
-        // executer le code dans le conteneur Docker
+        // Execute the code inside the Docker container
         exec(command, (error, stdout, stderr) => {
             if (error) {
-                return res.status(500).json({message: stderr});
+                return res.status(500).json({ message: stderr });
             }
-            return res.json({output: stdout});
+            return res.json({ output: stdout });
         });
     } catch (error) {
-        return res.status(500).json({message: "Error executing code"});
+        console.error('Error executing code:', error);
+        return res.status(500).json({ message: 'Error executing code' });
     }
 };
 
