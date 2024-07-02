@@ -21,7 +21,7 @@ const connectDB = async () => {
     }
 };
 
-connectDB();
+connectDB().then(r => console.log('Connected to MongoDB mamen'));
 
 app.use('/api', codeRoutes);
 

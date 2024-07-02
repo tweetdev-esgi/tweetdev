@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
-import { Box, HStack } from "@chakra-ui/react";
+import {Box, Button, HStack} from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import LanguageSelector from "./LanguageSelector";
 import { CODE_SNIPPETS } from "../constants";
 import Output from "./Output";
 import FileUploader from "./FileUploader";
 import SaveCode from "./SaveCode.tsx";
-import { saveCode } from "../api.tsx";
+import {executeCode, saveCode} from "../api";
 
 const CodeEditor: React.FC = () => {
     const editorRef = useRef<any>(null);
@@ -41,6 +41,18 @@ const CodeEditor: React.FC = () => {
         }
     };
 
+    const handleRunCode = async () => {
+        if (!editorRef.current) return;
+
+        const sourceCode = editorRef.current.getValue();
+        try {
+            const result = await executeCode(language, sourceCode);
+            console.log("Execution result:", result);
+        } catch (error) {
+            console.error("Error executing code:", error);
+        }
+    };
+
     return (
         <Box>
             <HStack>
@@ -65,6 +77,7 @@ const CodeEditor: React.FC = () => {
                 </Box>
                 <Output editorRef={editorRef} language={language} />
             </HStack>
+            <Button onClick={handleRunCode}>Run Code</Button>
         </Box>
     );
 };
