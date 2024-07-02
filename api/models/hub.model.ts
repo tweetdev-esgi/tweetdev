@@ -12,11 +12,6 @@ const hubSchema = new Schema<Hub>({
         type: Schema.Types.String,
         required: false
     },
-    posts: [{
-        type: Schema.Types.ObjectId,
-        ref: "Post",
-        required: false
-    }],
     users:[{
         type: Schema.Types.String,
         required: false
@@ -42,7 +37,6 @@ const hubSchema = new Schema<Hub>({
 export interface Hub{
     _id: string
     name: string
-    posts: Post[]
     description: string
     creationDate: Date
     profileImageUrl: string

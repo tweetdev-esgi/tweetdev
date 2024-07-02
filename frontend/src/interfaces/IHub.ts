@@ -3,7 +3,7 @@ export interface IHub{
     name: string
     posts: string[]
     description: string
-    creationDate: Date
+    creationDate: string
     profileImageUrl: string
     coverImageUrl:string
     users: string[]

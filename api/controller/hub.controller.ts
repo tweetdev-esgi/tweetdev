@@ -101,6 +101,25 @@ export class HubController {
             res.status(500).json({ message: 'Internal server error' });
         }
     };
+    getHubPosts = async (req:Request, res:Response): Promise<void> => {
+        const hubByName = req.query.name as string;
+
+        try {
+            const hub = await HubModel.find({ hubByName });
+    
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+    
+    
+            res.status(200).json(await PostModel.find({ hubname:req.query.name}));
+
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
 
     buildRouter = (): Router => {
         const router = express.Router()
@@ -108,6 +127,7 @@ export class HubController {
         router.get('/all', checkUserToken(), this.getHubsByUsername.bind(this))
         router.post('/create', checkUserToken(),express.json(),checkBody(this.createHubBody), this.createHub.bind(this))
         router.get('/by-name', checkUserToken(), this.getHubByName.bind(this))
+        router.get('/posts', checkUserToken(), this.getHubPosts.bind(this))
 
         return router
     }

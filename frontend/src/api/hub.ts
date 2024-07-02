@@ -55,3 +55,29 @@ export const fetchHubs = async (token: string): Promise<any> => {
     }
   };
 
+  export const getHubPosts = async (token: string, name:string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/hub/posts?name=${name}`, {
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching hubs:", error);
+      throw error;
+    }
+  };
+
+  
+  export const fetchHubPosts = async (token: string, name:string): Promise<any> => {
+    try {
+        let hubsData = await getHubPosts(token, name);  
+        return hubsData;
+    } catch (error) {
+        console.error("Error fetching hubs:", error);
+        throw error;
+    }
+  };
