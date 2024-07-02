@@ -10,11 +10,16 @@ import { Users } from "@phosphor-icons/react";
 import { PortalSample } from "../interfaces/PortalSample";
 import { fetchHubs } from "../api/hub";
 import { IHub } from "../interfaces/IHub";
+import { useNavigate } from "react-router-dom";
 
 function Feed() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [portals, setPortals] = useState<IHub[]>([]);
 
+  const navigate = useNavigate();
+  const navigateTo = (location: string) => {
+    navigate(location);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -86,9 +91,13 @@ function Feed() {
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
+                  onClick={() => navigateTo(`/hub/${portal.name}`)}
                 ></div>
                 <div className="flex flex-col z-10">
-                  <div className="cursor-pointer text-sm font-semibold leading-normal ">
+                  <div
+                    className="cursor-pointer text-sm font-semibold leading-normal "
+                    onClick={() => navigateTo(`/hub/${portal.name}`)}
+                  >
                     {portal.name}
                   </div>
                   <div className="inline mt-[-5px]">

@@ -121,6 +121,61 @@ export class HubController {
         }
     };
 
+    toggleFollowHub = async (req:Request, res:Response): Promise<void> => {
+        const name = req.query.name as string;
+        const user = req.user;
+      
+        if (!user) {
+          throw new Error('User not found');
+        }
+        try {
+            const hub = await HubModel.findOne({ name });
+    
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+    
+            const userIndex = hub.users.indexOf(user.username);
+            if (userIndex !== -1) {
+                hub.users.splice(userIndex, 1);
+                await hub.save();
+                res.status(200).json({ message: 'User unfollowed the hub' });
+            } else {
+                hub.users.push(user.username);
+                await hub.save();
+                res.status(200).json({ message: 'User followed the hub' });
+            }
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
+
+    isHubFollowed = async (req:Request, res:Response): Promise<void> => {
+        const name = req.query.name as string;
+        const user = req.user;
+      
+        if (!user) {
+          throw new Error('User not found');
+        }
+        try {
+            const hub = await HubModel.findOne({ name });
+    
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+    
+            const isFollowed = hub.users.some(userFollowing=> String(userFollowing) ==String(user.username))
+
+            res.status(200).json({ isFollowed });
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllHubs.bind(this))
@@ -128,6 +183,8 @@ export class HubController {
         router.post('/create', checkUserToken(),express.json(),checkBody(this.createHubBody), this.createHub.bind(this))
         router.get('/by-name', checkUserToken(), this.getHubByName.bind(this))
         router.get('/posts', checkUserToken(), this.getHubPosts.bind(this))
+        router.put('/follow', checkUserToken(), this.toggleFollowHub.bind(this))
+        router.get('/is-followed', checkUserToken(), this.isHubFollowed.bind(this))
 
         return router
     }

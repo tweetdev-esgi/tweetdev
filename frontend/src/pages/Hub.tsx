@@ -9,6 +9,7 @@ import Post from "../components/Post";
 import IPost from "../interfaces/IPost";
 import { Clock, DotsThreeVertical } from "@phosphor-icons/react";
 import ModalFollowers from "../components/ModalFollowers";
+import FollowHubButton from "../components/buttons/FollowHubButton";
 
 function Hub() {
   const [posts, setPosts] = useState<IPost[]>([]);
@@ -22,7 +23,7 @@ function Hub() {
   const sessionToken = getSession();
   const [hub, setHub] = useState<IHub>({
     _id: "",
-    name: "r",
+    name: "",
     posts: [],
     description: "",
     creationDate: "",
@@ -30,6 +31,15 @@ function Hub() {
     coverImageUrl: "",
     users: [],
   });
+
+  const incrementFollowers = () => {
+    setFollowersCount((prevCounter) => prevCounter + 1);
+  };
+
+  const decrementFollowers = () => {
+    setFollowersCount((prevCounter) => prevCounter - 1);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -96,6 +106,11 @@ function Hub() {
               </div>
               <div className="grid grid-rows-[40fr_50fr]">
                 <div className="flex gap-3 p-2">
+                  <FollowHubButton
+                    increment={incrementFollowers}
+                    decrement={decrementFollowers}
+                    name={hub.name}
+                  />
                   <div className="flex items-center cursor-pointer">
                     <DotsThreeVertical
                       size={30}

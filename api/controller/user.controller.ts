@@ -1,5 +1,5 @@
 import { Document, Model } from "mongoose"
-import { PostModel, Role, RoleModel, SessionModel, User, UserModel } from "../models"
+import { HubModel, PostModel, Role, RoleModel, SessionModel, User, UserModel } from "../models"
 import { Router, Response, Request} from "express"
 import * as express from 'express'
 import { SecurityUtils } from "../utils"
@@ -499,6 +499,24 @@ export class UserController {
         }
     };
 
+    getUserHubs = async (req:Request, res:Response): Promise<void> => {
+        
+        const user = req.user;
+      
+        if (!user) {
+          throw new Error('User not found');
+        }
+        try {
+            const hub = await HubModel.find({users:user.username});
+            
+            res.status(200).json(hub);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ "message": "Internal Server Error" });
+        }
+    };
+
+    
     buildRouter = (): Router => {
         
         const router = express.Router()
@@ -515,11 +533,13 @@ export class UserController {
         router.get('/sessions', checkUserToken(), this.getAllSession.bind(this))
         router.get('/is-liked', checkUserToken(), this.isUserFollowed.bind(this))
         router.post('/unfollow',checkUserToken(), checkQuery(this.queryUnfollow),this.unfollow.bind(this))
+        router.get('/hubs', checkUserToken(), this.getUserHubs.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateUser), this.updateUser.bind(this))
         router.patch('/validate', express.json(), checkUserToken(), checkQuery(this.queryValidatePost), this.validatePost.bind(this))
         router.patch('/role', express.json(), checkUserToken(), checkUserRole(RolesEnums.admin), checkBody(this.paramsGiveRole), this.addRole.bind(this))
         router.post('/follows', express.json(), checkUserToken(), checkBody(this.queryFollow), this.follow.bind(this))
         router.delete('/me', checkUserToken(), this.deleteMe.bind(this))
+        
         router.delete('/one', checkUserToken(), checkUserRole(RolesEnums.admin), this.deleteOneUser.bind(this))
         return router
     }

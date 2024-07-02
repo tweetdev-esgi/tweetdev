@@ -169,7 +169,7 @@ function Post({ postInfo }) {
   };
 
   return (
-    <div className="bg-[#1c212e] border-2 border-componentBorder rounded-xl p-6 ">
+    <div className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 ">
       {renderPostingInfo()}
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
         <MDEditor.Markdown

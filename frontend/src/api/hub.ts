@@ -81,3 +81,48 @@ export const fetchHubs = async (token: string): Promise<any> => {
         throw error;
     }
   };
+
+  export const getIsHubFollowedBySelf = async (token: string, name:string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/hub/is-followed?name=${name}`, {
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching hubs:", error);
+      throw error;
+    }
+  };
+
+  
+  export const fetchIsHubFollowedBySelf = async (token: string, name:string): Promise<any> => {
+    try {
+        let hubsData = await getIsHubFollowedBySelf(token, name);  
+        return hubsData;
+    } catch (error) {
+        console.error("Error fetching hubs:", error);
+        throw error;
+    }
+  };
+
+  export const toggleFollowHub = async (token: string, name:string): Promise<any> => {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/hub/follow?name=${name}`,  
+        {},  
+         {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error following:", error);
+      throw error;
+    }
+  };
+  

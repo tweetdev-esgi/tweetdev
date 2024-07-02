@@ -178,3 +178,28 @@ export const getFollowers = async (token: string, id: string): Promise<any> => {
   }
 };
 
+
+export const getUserHubs = async (token: string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/hubs`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching self hubs:", error);
+    throw error;
+  }
+};
+
+export const fetchUserHubs = async (token: string) => {
+  try {
+    const userData = await getUserHubs(token);
+    return userData;
+  } catch (error) {
+    console.error("Error fetching user hubs:", error);
+    throw error;
+  }
+};
