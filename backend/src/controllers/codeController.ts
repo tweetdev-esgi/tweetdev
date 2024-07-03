@@ -27,14 +27,14 @@ export const executeCode = async (req: Request, res: Response) => {
 
     let folderPath = '';
 
-    switch (language) {
-        case 'js':
+    switch (language) { //Nommage des langages incorrect /!\ TODO: A corriger
+        case 'javascript':
             folderPath = path.join(__dirname, '../../code/javascript');
             break;
-        case 'ts':
+        case 'typescript':
             folderPath = path.join(__dirname, '../../code/typescript');
             break;
-        case 'py':
+        case 'python':
             folderPath = path.join(__dirname, '../../code/python');
             break;
         case 'java':
@@ -52,18 +52,18 @@ export const executeCode = async (req: Request, res: Response) => {
 
         // Determine the appropriate Docker run command based on the language
         let command = '';
-        switch (language) {
-            case 'js':
-                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh javascript /app/${fileName}`;
+        switch (language) { //Nommage des langages incorrect /!\ TODO: A corriger
+            case 'javascript':
+                command = `docker run --rm -v ${filePath}:/app/${fileName} js-runtime node ./${fileName}`;
                 break;
-            case 'ts':
-                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh typescript /app/${fileName}`;
+            case 'typescript':
+                command = `docker run --rm -v ${filePath}:/app/${fileName.slice(0, -11)}.ts js-runtime ts-node ./${fileName.slice(0, -11)}.ts`;
                 break;
-            case 'py':
-                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh python /app/${fileName}`;
+            case 'python':
+                command = `docker run --rm -v ${filePath}:/app/${fileName} py-runtime python ./${fileName}`;
                 break;
             case 'java':
-                command = `docker run --rm -v ${folderPath}:/app backend /app/runner.sh java /app/${fileName}`;
+                command = `docker run --rm -v ${filePath}:/app/${fileName} java-runtime javac ./${fileName} && java ${fileName.slice(0, -5)}`;
                 break;
             default:
                 return res.status(400).json({ message: 'Unsupported language' });

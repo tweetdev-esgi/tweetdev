@@ -8,7 +8,16 @@ type ExecuteCodeResponse = {
 
 export const executeCode = async (language: string, code: string): Promise<ExecuteCodeResponse> => {
   try {
-    const response = await axios.post(`${API_URL}/executeCode`, { language : language, code : code });
+    const response = await axios.post(`${API_URL}/executeCode`, {
+      language : language,
+      code : code,
+      files: [
+        {
+          content: code,
+        },
+      ],
+    });
+
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

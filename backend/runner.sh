@@ -1,26 +1,25 @@
 #!/bin/bash
-
 # Script pour exécuter le code basé sur le langage et le chemin du fichier
 
 LANGUAGE=$1
-FILE_PATH=$2
+FILE=$2
 
 case $LANGUAGE in
-  "javascript")
-    node $FILE_PATH
+  javascript)
+    node $FILE
     ;;
-  "typescript")
-    ts-node $FILE_PATH
+  typescript)
+    ts-node $FILE
     ;;
-  "python")
-    /app/.venv/bin/python $FILE_PATH
+  python)
+    /app/venv/bin/python $FILE
     ;;
-  "java")
-    javac $FILE_PATH
-    java ${FILE_PATH%.java}
+  java)
+    javac $FILE
+    java ${FILE%.*}
     ;;
   *)
-    echo "Unsupported language"
+    echo "Unsupported language: $LANGUAGE"
     exit 1
     ;;
 esac
