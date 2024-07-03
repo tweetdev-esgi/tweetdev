@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Button, Text, useToast } from "@chakra-ui/react";
 import { executeCode } from "../api";
+import RunCodeButton from "./RunButton.tsx";
 
 const Output = ({ editorRef, language }) => {
     const toast = useToast();
@@ -8,42 +9,19 @@ const Output = ({ editorRef, language }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    const runCode = async () => {
-        if (!editorRef.current) return;
-        const sourceCode = editorRef.current.getValue();
-        try {
-            setIsLoading(true);
-            const result = await executeCode(language, sourceCode);
-            setOutput(result.output.split("\n"));
-            setIsError(!!result.stderr);
-            console.log("Execution result:", result);
-        } catch (error) {
-            console.error("Error executing code:", error);
-            toast({
-                title: "An error occurred.",
-                description: error.message || "Unable to run code",
-                status: "error",
-                duration: 6000,
-            });
-        }finally {
-            setIsLoading(false);
-        }
-    };
-
     return (
         <Box w="50%">
             <Text mb={2} fontSize="lg">
                 Output
             </Text>
-            <Button
-                variant="outline"
-                colorScheme="green"
-                mb={4}
+            <RunCodeButton
+                editorRef={editorRef}
+                language={language}
                 isLoading={isLoading}
-                onClick={runCode}
-            >
-                Run Code
-            </Button>
+                setIsLoading={setIsLoading}
+                setIsError={setIsError}
+                setOutput={setOutput}
+            />
             <Box
                 height="75vh"
                 p={2}
