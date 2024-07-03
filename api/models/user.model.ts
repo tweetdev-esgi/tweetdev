@@ -40,13 +40,11 @@ const userShemma = new Schema<User>({
         required: true
     },
     followers: [{
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: Schema.Types.String,
         required: true
     }],
     following: [{
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: Schema.Types.String,
         required: true
     }]
 

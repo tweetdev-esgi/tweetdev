@@ -318,27 +318,27 @@ export class UserController {
     }
 
     readonly queryFollow = {
-        "user_id" : "string | undefined"
+        "username" : "string"
     }
 
     follow = async (req: Request, res: Response): Promise<void> => {
-        if (!req.user || req.user._id == req.body.user_id) {
+        if (!req.user || req.user.username == req.body.username) {
             res.status(400).json({ "message": "You can't follow yourself" });
             return;
         }
     
-        const following_user_id = req.user._id;
-        const followed_user_id = req.body.user_id;
+        const following_user_username = req.user.username;
+        const followed_user_username = req.body.username;
         try {
-            const followed_user = await UserModel.findById(followed_user_id);
-            const following_user = await UserModel.findById(following_user_id);
+            const following_user = await UserModel.findOne({"username":following_user_username});
+            const followed_user = await UserModel.findOne({"username":followed_user_username});
             if (!followed_user || !following_user) {
                 res.status(404).json({ "message": "We can't find this user" });
                 return;
             }
     
-            const followIndex = followed_user.followers.indexOf(following_user_id);
-            const followingIndex = following_user.following.indexOf(followed_user_id);
+            const followIndex = followed_user.followers.indexOf(following_user_username);
+            const followingIndex = following_user.following.indexOf(followed_user_username);
             if (followIndex !== -1) {
                 followed_user.followers.splice(followIndex, 1);
                 await followed_user.save();
@@ -346,52 +346,23 @@ export class UserController {
                 await following_user.save();
                 res.status(200).json({ "message": "You have unfollowed this user" });
             } else {
-                followed_user.followers.push(following_user_id);
+                followed_user.followers.push(following_user_username);
                 await followed_user.save();
-                following_user.following.push(followed_user_id);
+                following_user.following.push(followed_user_username);
                 await following_user.save();
                 res.status(200).json({ "message": "You are now following this user" });
             }
         } catch (e) {
             console.log(e);
-            res.status(400).json({ "message": "This is not a user's ID" });
+            res.status(400).json({ "message": "This is not a user's username" });
             return;
         }
     };
 
-    readonly queryUnfollow={
-        "user_id" : "string"
-    }
-
-    unfollow = async (req: Request, res: Response): Promise<void> => {
-        // Logic to unfollow a user
-      
-        // Assuming you have the user ID of the user to unfollow in req.body.userId
-        const userIdToUnfollow = req.query.user_id;
-      
-        console.log("id",userIdToUnfollow);
-        try {
-            if (req.user && req.user.followers) {
-                console.log("user:",req.user)
-
-                // Filter out the user with the specified ID from req.user.follow
-                req.user.followers = req.user.followers.filter((userId) => userId.toString() !== userIdToUnfollow);
-                console.log("follows;",req.user.followers)
-              } 
-              req.user?.save() // Send a success response if the unfollowing was successful
-          res.status(200).json({ message: 'Unfollowed user successfully' });
-        } catch (error) {
-          // Handle any errors that occurred during the unfollowing process
-          console.error('Error unfollowing user:', error);
-          res.status(500).json({ error: 'Failed to unfollow user' });
-        }
-      };
-      
-
 
       getFollowers = async (req: Request, res: Response): Promise<void> => {
         try {
-            const user = await UserModel.findById(req.query.user_id);
+            const user = await UserModel.findOne({"username":req.query.username});
             if (!user) {
                 res.status(404).json({ "message": "User not found" });
                 return;
@@ -479,19 +450,19 @@ export class UserController {
                 return;
             }
     
-            const userIdToCheck = req.query.id;
-            if (!userIdToCheck || typeof userIdToCheck !== "string") {
+            const userToCheck = req.query.username;
+            if (!userToCheck || typeof userToCheck !== "string") {
                 res.status(400).json({ "message": "Invalid or missing user ID" });
                 return;
             }
     
-            const user = await UserModel.findById(userIdToCheck);
+            const user = await UserModel.findOne({"username":userToCheck});
             if (!user) {
                 res.status(404).json({ "message": "User not found" });
                 return;
             }
     
-            const isFollowed = user.followers.some(followingUserId => String(followingUserId) === String(req.user?._id));
+            const isFollowed = user.followers.some(followingUser => String(followingUser) === String(req.user?.username));
             res.status(200).json({ isFollowed: isFollowed });
         } catch (err) {
             console.error(err);
@@ -516,13 +487,23 @@ export class UserController {
         }
     };
 
-    
+    getFollowingInfo = async(req:Request, res:Response): Promise<void>=>{
+        const user = req.user;
+        if (!user){
+            res.status(404).json({"message": "User not found"})
+            return
+        }
+        const users = await UserModel.find({ followers: { $regex:`^${ req.user?.username}$` } });
+        res.status(200).json(users);
+    }   
     buildRouter = (): Router => {
         
         const router = express.Router()
         router.post('/get-users-by-ids', express.json(), this.getUsersByIds.bind(this)); 
         router.post(`/subscribe`, express.json(), checkBody(this.paramsLogin), this.subscribe.bind(this))
         router.get('/follow', express.json(), checkUserToken(), this.getFollowers.bind(this))
+        router.get('/following', express.json(), checkUserToken(), this.getFollowingInfo.bind(this))
+
         router.get('/me', checkUserToken(), this.me.bind(this))
         router.get('/count', checkUserToken(), checkUserRole(RolesEnums.admin), this.getAllUsers.bind(this))
         router.get('/one', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUser.bind(this))
@@ -532,7 +513,6 @@ export class UserController {
         router.get('/all', checkUserToken(), this.getAllUsersInfo.bind(this))
         router.get('/sessions', checkUserToken(), this.getAllSession.bind(this))
         router.get('/is-liked', checkUserToken(), this.isUserFollowed.bind(this))
-        router.post('/unfollow',checkUserToken(), checkQuery(this.queryUnfollow),this.unfollow.bind(this))
         router.get('/hubs', checkUserToken(), this.getUserHubs.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateUser), this.updateUser.bind(this))
         router.patch('/validate', express.json(), checkUserToken(), checkQuery(this.queryValidatePost), this.validatePost.bind(this))

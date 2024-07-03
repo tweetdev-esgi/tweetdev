@@ -115,10 +115,10 @@ export const updateUser = async (token: string, userInfo: any): Promise<any> => 
   }
 };
 
-export const followUser = async (token: string, userId:string): Promise<any> => {
+export const followUser = async (token: string, username:string): Promise<any> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/user/follows`,
-      {"user_id":userId}, // No data in the body
+      {"username":username}, 
        {
       headers: {
         'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ export const followUser = async (token: string, userId:string): Promise<any> => 
   }
 };
 
-export const getIsUserFollowed = async (token: string, id: string): Promise<any> => {
+export const getIsUserFollowed = async (token: string, username: string): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/user/is-liked`, {
       headers: {
@@ -140,7 +140,7 @@ export const getIsUserFollowed = async (token: string, id: string): Promise<any>
         'Authorization': `Bearer ${token}`
       },
       params: {
-        id: id
+        username: username
       }
     });
     return response.data;
@@ -160,7 +160,7 @@ export const fetchIsUserFollowed = async (token: string, id: string) => {
   }
 };
 
-export const getFollowers = async (token: string, id: string): Promise<any> => {
+export const getFollowers = async (token: string, username: string): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/user/follow`, {
       headers: {
@@ -168,7 +168,7 @@ export const getFollowers = async (token: string, id: string): Promise<any> => {
         'Authorization': `Bearer ${token}`
       },
       params: {
-        user_id: id
+        username: username
       }
     });
     return response.data;
@@ -197,6 +197,31 @@ export const getUserHubs = async (token: string): Promise<any> => {
 export const fetchUserHubs = async (token: string) => {
   try {
     const userData = await getUserHubs(token);
+    return userData;
+  } catch (error) {
+    console.error("Error fetching user hubs:", error);
+    throw error;
+  }
+};
+
+export const getFollowing = async (token: string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/following`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching self hubs:", error);
+    throw error;
+  }
+};
+
+export const fetchGetFollowing = async (token: string) => {
+  try {
+    const userData = await getFollowing(token);
     return userData;
   } catch (error) {
     console.error("Error fetching user hubs:", error);

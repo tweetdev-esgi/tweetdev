@@ -6,15 +6,15 @@ import {
 } from "../../services/sessionService";
 import { useLocation } from "react-router-dom";
 import { UserCirclePlus, UserCircleMinus } from "@phosphor-icons/react";
-function FollowButton({ increment, decrement, id }) {
+function FollowButton({ increment, decrement, username }) {
   const sessionToken = getSession();
   const [isFollowed, setIsFollowed] = useState(false);
   const followedText = isFollowed ? "Unfollow" : "Follow";
 
   const isUserFollowed = async () => {
-    if (sessionToken && id) {
+    if (sessionToken && username) {
       try {
-        const response = await fetchIsUserFollowed(sessionToken, id);
+        const response = await fetchIsUserFollowed(sessionToken, username);
         return response.isFollowed;
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -29,8 +29,8 @@ function FollowButton({ increment, decrement, id }) {
       isFollowed ? decrement() : increment();
 
       setIsFollowed(!isFollowed);
-      if (sessionToken && id) {
-        await followUser(sessionToken, id);
+      if (sessionToken && username) {
+        await followUser(sessionToken, username);
       }
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
@@ -47,7 +47,7 @@ function FollowButton({ increment, decrement, id }) {
   };
   useEffect(() => {
     checkIsFollowed();
-  }, [id, sessionToken]);
+  }, [username, sessionToken]);
 
   return (
     <div onClick={() => follow()}>

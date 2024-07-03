@@ -4,7 +4,6 @@ import { getSession } from "../services/sessionService";
 import LikeButton from "./buttons/LikeButton";
 import { Dot } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
-import { useNavigate } from "react-router-dom";
 import { convertTimeToPostTime } from "../utils/utils";
 import { fetchUserProfilePictureByUsername } from "../api/user";
 import { fetchHubByName } from "../api/hub";
@@ -49,7 +48,6 @@ function Post({ postInfo }) {
   const [hubnameProfileImageUrl, setHubnameProfileImageUrl] = useState(null);
   const isPostedinHub = postInfo.hubname ? true : false;
 
-  const navigate = useNavigate();
   const handleChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
@@ -57,8 +55,7 @@ function Post({ postInfo }) {
   };
 
   const navigateTo = (location: string) => {
-    console.log("location profile !!!");
-    navigate(location);
+    window.location.href = location;
   };
 
   const postedTimeIndicator = convertTimeToPostTime(postInfo.creationDate);
@@ -98,7 +95,7 @@ function Post({ postInfo }) {
         <div className="flex gap-3 mb-3 ">
           <div
             className="cursor-pointer bg-green-700 w-10 h-10 rounded-lg"
-            onClick={() => navigateTo(`/profile/${postInfo.username}`)}
+            onClick={() => navigateTo(`/hub/${postInfo.hubname}`)}
             style={{
               backgroundImage: `url(${hubnameProfileImageUrl})`,
               backgroundSize: "cover",

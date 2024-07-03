@@ -1,13 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Portal from "../interfaces/Portal";
 import FavoritesPortalItem from "./FavoritesPortalItem";
 import { ApplePodcastsLogo, Users } from "@phosphor-icons/react";
 import { PortalSample } from "../interfaces/PortalSample";
+import { IHub } from "../interfaces/IHub";
+import { getSession } from "../services/sessionService";
+import { fetchGetFollowing, fetchUserHubs } from "../api/user";
 function Favorites(props) {
   const [portals, setPortals] = useState<Portal[]>(PortalSample);
+  const [hubs, setHubs] = useState<IHub[]>([]);
+  const [users, setUsers] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const sessionToken = getSession();
+    const fetchData = async () => {
+      try {
+        if (sessionToken) {
+          const userHubs = await fetchUserHubs(sessionToken);
+          setHubs(userHubs);
+          const userFollowing = await fetchGetFollowing(sessionToken);
+          setUsers(userFollowing);
+        }
+      } catch (error) {
+        console.error("error while fetching user hubs", error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="flex flex-col gap-6  h-[700px] pt-4 px-6 overflow-auto bg-componentBg rounded-xl ">
-      <h1 className="text-lg font-medium">Favorites</h1>
+      <h1 className="text-lg font-medium">Followed</h1>
       <div className="ml-1 ">
         <h2 className="text-base font-medium text-secondaryColor flex gap-2">
           {" "}
@@ -19,8 +41,8 @@ function Favorites(props) {
           Hubs
         </h2>
         <div className="flex flex-col gap-3 mt-3 ">
-          {portals.map((portal, index) => (
-            <FavoritesPortalItem portal={portal} key={index} />
+          {hubs.map((hub, index) => (
+            <FavoritesPortalItem source={hub} type={"hub"} key={index} />
           ))}
         </div>
       </div>
@@ -29,28 +51,8 @@ function Favorites(props) {
           <Users size={23} weight="bold" color="#C7C9CE"></Users> People
         </h2>
         <div className="flex flex-col gap-2 mt-3 ">
-          {portals.map((portal, index) => (
-            <FavoritesPortalItem portal={portal} key={index} />
-          ))}
-        </div>
-      </div>
-      <div className="ml-1">
-        <h2 className="text-base font-medium text-secondaryColor flex gap-2">
-          <Users size={23} weight="bold" color="#C7C9CE"></Users> People
-        </h2>
-        <div className="flex flex-col gap-2 mt-3 ">
-          {portals.map((portal, index) => (
-            <FavoritesPortalItem portal={portal} key={index} />
-          ))}
-        </div>
-      </div>
-      <div className="ml-1 ">
-        <h2 className="text-base font-medium text-secondaryColor flex gap-2">
-          <Users size={23} weight="bold" color="#C7C9CE"></Users> People
-        </h2>
-        <div className="flex flex-col gap-2 mt-3 ">
-          {portals.map((portal, index) => (
-            <FavoritesPortalItem portal={portal} key={index} />
+          {users.map((user, index) => (
+            <FavoritesPortalItem source={user} type={"user"} key={index} />
           ))}
         </div>
       </div>

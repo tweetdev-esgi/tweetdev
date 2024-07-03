@@ -101,7 +101,7 @@ function Profile() {
         <FollowButton
           increment={incrementFollowers}
           decrement={decrementFollowers}
-          id={id}
+          username={username}
         />
       );
     }
