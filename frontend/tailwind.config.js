@@ -14,6 +14,7 @@ export default {
         secondaryColor:"#C7C9CE",
         componentBorder: '#222936',
         componentBg:"#1c212e",
+        componentBgHover:"#1e2532",
         searchBorder:'#1C222D',
         headerBorder:'#17191C',
         headerBg:'#06070B',

@@ -25,11 +25,11 @@ function FavoritesPortalItem({
     borderRadius: type === "hub" ? "0.5rem" : "9999px",
   };
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 hover:bg-componentBgHover">
       <div
         className="cursor-pointer w-9 h-9 flex-shrink-0"
-        style={containerStyle}
         onClick={handleClick}
+        style={containerStyle}
       ></div>
       <div className="cursor-pointer flex items-center" onClick={handleClick}>
         <p className="text-secondaryColor font-medium text-sm">

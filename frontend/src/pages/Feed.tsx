@@ -77,7 +77,7 @@ function Feed() {
           {portals.map((portal, index) => (
             <div
               key={index}
-              className="relative portal-element border-2 border-componentBorder rounded-xl p-5 h-40 overflow-hidden "
+              className="relative portal-element border-2 border-componentBorder rounded-xl p-5 h-40 overflow-hidden"
             >
               <div
                 className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all"
@@ -85,7 +85,7 @@ function Feed() {
               ></div>
               <div className="flex gap-3  items-center">
                 <div
-                  className="cursor-pointer w-12 h-12 rounded-lg z-10"
+                  className="cursor-pointer w-12 h-12 rounded-lg z-10  "
                   style={{
                     backgroundImage: `url(${portal.profileImageUrl})`,
                     backgroundSize: "cover",
@@ -95,7 +95,7 @@ function Feed() {
                 ></div>
                 <div className="flex flex-col z-10">
                   <div
-                    className="cursor-pointer text-sm font-semibold leading-normal "
+                    className="cursor-pointer text-sm font-semibold leading-normal hover:text-secondaryColor transition-all"
                     onClick={() => navigateTo(`/hub/${portal.name}`)}
                   >
                     {portal.name}

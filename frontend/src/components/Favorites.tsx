@@ -28,7 +28,7 @@ function Favorites(props) {
     fetchData();
   }, []);
   return (
-    <div className="flex flex-col gap-6  h-[700px] pt-4 px-6 overflow-auto bg-componentBg rounded-xl ">
+    <div className="flex flex-col gap-6  h-[700px] pt-4 px-6 overflow-auto bg-componentBg border-2 border-componentBorder rounded-xl ">
       <h1 className="text-lg font-medium">Followed</h1>
       <div className="ml-1 ">
         <h2 className="text-base font-medium text-secondaryColor flex gap-2">

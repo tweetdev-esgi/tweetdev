@@ -107,7 +107,9 @@ function Post({ postInfo }) {
               className="text-sm font-semibold leading-normal cursor-pointer "
               onClick={() => navigateTo(`/profile/${postInfo.username}`)}
             >
-              {postInfo.hubname}
+              <p className="hover:text-secondaryColor transition-all">
+                {postInfo.hubname}
+              </p>
             </div>
             <div className="inline mt-[-5px]  ">
               <span
@@ -166,7 +168,7 @@ function Post({ postInfo }) {
   };
 
   return (
-    <div className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 ">
+    <div className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer">
       {renderPostingInfo()}
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
         <MDEditor.Markdown
