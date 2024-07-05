@@ -8,7 +8,12 @@ function LikeButton({ sessionToken, postInfo }) {
   const [likes, setLikes] = useState(postInfo.like.length);
   const [emojiIndex, setEmojiIndex] = useState(0);
 
-  const toggleLike = (postId: string, emojiIndex: number) => {
+  const toggleLike = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    postId: string,
+    emojiIndex: number
+  ) => {
+    event.stopPropagation();
     setEmojiIndex(emojiIndex);
     console.log(isLiked);
     setIsLiked(!isLiked);
@@ -53,7 +58,7 @@ function LikeButton({ sessionToken, postInfo }) {
   return (
     <div className="flex">
       <div
-        onClick={() => toggleLike(postInfo._id, 0)}
+        onClick={(e) => toggleLike(e, postInfo._id, 0)}
         className="edit-button  hover:bg-accentColorHover cursor-pointer h-8 w-12 bg-accentColor hover:accentColorHover rounded-l-xl flex justify-center items-center gap-1 text-sm font-semibold text-secondaryColor "
       >
         {isLiked && (
@@ -72,8 +77,8 @@ function LikeButton({ sessionToken, postInfo }) {
             {EmojiSample.map((emoji, index) => {
               return (
                 <div
-                  onClick={() => toggleLike(postInfo._id, index)}
-                  className="relative group/emoji hover:scale-[1.7] cursor-pointer transition-all flex items-center "
+                  onClick={(e) => toggleLike(e, postInfo._id, index)}
+                  className="relative group/emoji hover:scale-[1.9] cursor-pointer transition-all flex items-center "
                   key={index}
                 >
                   <img
