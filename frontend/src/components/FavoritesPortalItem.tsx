@@ -25,7 +25,7 @@ function FavoritesPortalItem({
     borderRadius: type === "hub" ? "0.5rem" : "9999px",
   };
   return (
-    <div className="flex gap-2 hover:bg-componentBgHover">
+    <div className="flex gap-2 hover:bg-componentBgHover rounded p-1">
       <div
         className="cursor-pointer w-9 h-9 flex-shrink-0"
         onClick={handleClick}

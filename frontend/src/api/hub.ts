@@ -126,3 +126,18 @@ export const fetchHubs = async (token: string): Promise<any> => {
     }
   };
   
+
+  export const createHub = async (token: string,formData: {  name:string, description:string, profileImageUrl:string, coverImageUrl:string }): Promise<any> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/hub/create`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating hub :", error);
+      throw error;
+    }
+  };
