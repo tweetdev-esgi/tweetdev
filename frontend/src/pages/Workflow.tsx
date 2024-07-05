@@ -15,7 +15,9 @@ import { Save } from "lucide-react";
 import WorkflowSideBar from "../components/workflow/WorkflowSideBar";
 import CustomNode from "../components/workflow/CustomNode";
 import toast from "react-hot-toast";
-import Button from "../components/buttons/Button";
+import CustomButton from "../components/buttons/CustomButton";
+import RunNode from "../components/workflow/RunNode";
+import FinishNode from "../components/workflow/FinishNode";
 
 const initialNodes = [
   {
@@ -28,6 +30,8 @@ const initialNodes = [
 
 const nodeTypes = {
   "custom-node": CustomNode,
+  "run-node": RunNode,
+  "finish-node": FinishNode,
 };
 
 let id = 0;
@@ -38,7 +42,7 @@ const DnDFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { screenToFlowPosition } = useReactFlow();
-  const [rfInstance, setRfInstance] = useState<ReactFlow | null>(null);
+  const [rfInstance, setRfInstance] = useState<typeof ReactFlow | null>(null);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -108,7 +112,11 @@ const DnDFlow = () => {
         >
           <MiniMap />
           <Panel className="" position="bottom-center" onClick={onSave}>
-            <Button color={"#22c55e "} Icon={Save} text={"Save"}></Button>
+            <CustomButton
+              color={"#22c55e "}
+              Icon={Save}
+              text={"Save"}
+            ></CustomButton>
           </Panel>
           <Controls />
           <Background variant="dots" gap={16} size={1} />

@@ -1,3 +1,4 @@
+import { Flag, Play } from "lucide-react";
 import React from "react";
 
 function WorkflowSideBar(props) {
@@ -49,8 +50,8 @@ function WorkflowSideBar(props) {
     },
   ];
 
-  const onDragStart = (event, nodeName) => {
-    event.dataTransfer.setData("application/reactflow", "custom-node");
+  const onDragStart = (event, nodeName, nodeType) => {
+    event.dataTransfer.setData("application/reactflow", nodeType);
 
     event.dataTransfer.setData("application/reactflow/node/name", nodeName);
     event.dataTransfer.effectAllowed = "move";
@@ -64,7 +65,9 @@ function WorkflowSideBar(props) {
         return (
           <div
             className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none"
-            onDragStart={(event) => onDragStart(event, program.name)}
+            onDragStart={(event) =>
+              onDragStart(event, program.name, "custom-node")
+            }
             draggable
           >
             <div className="text-lg font-semibold">{program.name}</div>
@@ -77,6 +80,23 @@ function WorkflowSideBar(props) {
           </div>
         );
       })}
+      <div
+        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
+        onDragStart={(event) => onDragStart(event, "Run", "run-node")}
+        draggable
+      >
+        <Play size={35} color="green"></Play>
+        <p className="font-medium">Run Node</p>
+      </div>
+      <div
+        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
+        onDragStart={(event) => onDragStart(event, "End", "finish-node")}
+        draggable
+      >
+        <Flag size={35} color="#0062ff"></Flag>
+
+        <p className="font-medium">Finish Node</p>
+      </div>
     </div>
   );
 }

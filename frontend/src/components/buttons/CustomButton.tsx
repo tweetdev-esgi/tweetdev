@@ -20,12 +20,12 @@ function lightenColor(color, percent) {
   );
 }
 
-function Button({ Icon, color, text }) {
+function CustomButton({ Icon, color, text }) {
   const lighterColor = lightenColor(color, 75);
   const lighterColorHover = lightenColor(color, 50);
   return (
     <div
-      className="w-fit px-2 py-1 rounded-md flex items-center gap-1 select-none cursor-pointer"
+      className="w-fit px-2 py-1 rounded-md flex items-center gap-1 select-none cursor-pointer align-middle"
       style={{ backgroundColor: lighterColor }}
     >
       <Icon color={color} size={15} />
@@ -43,4 +43,4 @@ function Button({ Icon, color, text }) {
   );
 }
 
-export default Button;
+export default CustomButton;

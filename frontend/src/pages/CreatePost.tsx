@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
-import Button from "../components/buttons/Button";
+import Button from "../components/buttons/CustomButton";
 import { ThumbsUp } from "lucide-react";
 import { createPost } from "../api/post";
 import { getSession } from "../services/sessionService";
