@@ -1,4 +1,4 @@
-import { ApplePodcastsLogo } from "@phosphor-icons/react";
+import { ApplePodcastsLogo, Users } from "@phosphor-icons/react";
 import { Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import CustomButton from "./CustomButton";
@@ -65,7 +65,7 @@ function CreateHubButton(props) {
           ></div>
 
           {/* Modal */}
-          <div className="bg-bodyBg p-4 rounded shadow-lg relative z-10 w-8/12 h-3/5">
+          <div className="bg-bodyBg p-4 rounded shadow-lg relative z-10 w-8/12 h-3/6">
             <div className="flex justify-end">
               <button
                 className="text-secondaryColor font-medium text-sm"
@@ -74,7 +74,7 @@ function CreateHubButton(props) {
                 <X />
               </button>
             </div>
-            <div className="grid grid-cols-[60fr_40fr]">
+            <div className="grid grid-cols-[60fr_40fr] gap-3">
               <div className="p-2 -mt-5 flex flex-col gap-3">
                 <div className="flex gap-3 items-center ml-[3px]">
                   <ApplePodcastsLogo weight="bold" size={36} />
@@ -121,16 +121,44 @@ function CreateHubButton(props) {
                   />
                 </div>
               </div>
-              <div className="flex items-end">
-                <div className="flex gap-2 ml-auto">
+              <div className="flex flex-col justify-between">
+                <div className="relative portal-element border-2 border-componentBorder rounded-xl p-5 h-40 overflow-hidden mt-16">
                   <div
-                    className="border-2 rounded-lg border-componentBorder"
-                    onClick={toggleCreateHubModal}
-                  >
-                    <CustomButtonBig text={"Cancel"} color={""} />
+                    className="absolute inset-0 bg-cover bg-center filter brightness-50 hover:brightness-75 transition-all"
+                    style={{ backgroundImage: `url(${coverImageUrl})` }}
+                  ></div>
+                  <div className="flex gap-3  items-center">
+                    <div
+                      className="cursor-pointer w-12 h-12 rounded-lg z-10  "
+                      style={{
+                        backgroundImage: `url(${profileImageUrl})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    ></div>
+                    <div className="flex flex-col z-10">
+                      <div className="cursor-pointer text-sm font-semibold leading-normal hover:text-secondaryColor transition-all">
+                        {name}
+                      </div>
+                      <div className="inline mt-[-5px]">
+                        <span className="text-[12px] font-semibold leading-normal">
+                          <Users size={18} weight="bold"></Users> 1
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div onClick={handleSubmit}>
-                    <CustomButtonBig text={"Create Hub"} color={"blue"} />
+                </div>
+                <div className="flex">
+                  <div className="flex gap-2 ml-auto">
+                    <div
+                      className="border-2 rounded-lg border-componentBorder"
+                      onClick={toggleCreateHubModal}
+                    >
+                      <CustomButtonBig text={"Cancel"} color={""} />
+                    </div>
+                    <div onClick={handleSubmit}>
+                      <CustomButtonBig text={"Create Hub"} color={"blue"} />
+                    </div>
                   </div>
                 </div>
               </div>
