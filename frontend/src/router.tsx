@@ -10,6 +10,7 @@ import Hub from "./pages/Hub";
 import DetailsPost from "./pages/DetailsPost";
 import Workflow from "./pages/Workflow";
 import CreateProgram from "./pages/CreateProgram";
+import CodeExecution from "./pages/CodeExecution";
 export default createBrowserRouter([
   {
     path: "/",
@@ -62,6 +63,10 @@ export default createBrowserRouter([
       {
         path: "/workflow",
         element: <Workflow />,
+      },
+      {
+        path: "/code",
+        element: <CodeExecution />,
       },
 
       // {
