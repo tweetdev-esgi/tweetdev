@@ -57,6 +57,14 @@ function Header() {
                 </li>
                 <li className="header_nav-item">
                   <a
+                    href="/create-program"
+                    className="header_nav-link text-fontColor"
+                  >
+                    Create Program
+                  </a>
+                </li>
+                <li className="header_nav-item">
+                  <a
                     href="/workflow"
                     className="header_nav-link text-fontColor"
                   >

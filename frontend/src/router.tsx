@@ -9,6 +9,7 @@ import CreatePost from "./pages/CreatePost";
 import Hub from "./pages/Hub";
 import DetailsPost from "./pages/DetailsPost";
 import Workflow from "./pages/Workflow";
+import CreateProgram from "./pages/CreateProgram";
 export default createBrowserRouter([
   {
     path: "/",
@@ -45,6 +46,10 @@ export default createBrowserRouter([
       {
         path: "/create-post",
         element: <CreatePost />,
+      },
+      {
+        path: "/create-program",
+        element: <CreateProgram />,
       },
       {
         path: "/hub/:name",
