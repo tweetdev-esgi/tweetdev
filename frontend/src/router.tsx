@@ -8,7 +8,7 @@ import Feed from "./pages/Feed";
 import CreatePost from "./pages/CreatePost";
 import Hub from "./pages/Hub";
 import DetailsPost from "./pages/DetailsPost";
-import { Workflow } from "lucide-react";
+import Workflow from "./pages/Workflow";
 export default createBrowserRouter([
   {
     path: "/",

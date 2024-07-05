@@ -56,6 +56,14 @@ function Header() {
                   </a>
                 </li>
                 <li className="header_nav-item">
+                  <a
+                    href="/workflow"
+                    className="header_nav-link text-fontColor"
+                  >
+                    Workflow
+                  </a>
+                </li>
+                <li className="header_nav-item">
                   <a href="/profile" className="header_nav-link text-fontColor">
                     Profile
                   </a>
