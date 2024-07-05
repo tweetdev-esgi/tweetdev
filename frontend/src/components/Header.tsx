@@ -56,14 +56,6 @@ function Header() {
                   </a>
                 </li>
                 <li className="header_nav-item">
-                  <a
-                    href="/hub/react"
-                    className="header_nav-link text-fontColor"
-                  >
-                    Hub test
-                  </a>
-                </li>
-                <li className="header_nav-item">
                   <a href="/profile" className="header_nav-link text-fontColor">
                     Profile
                   </a>

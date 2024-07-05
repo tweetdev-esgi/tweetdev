@@ -10,36 +10,36 @@ import { fetchHubByName } from "../api/hub";
 
 function Post({ postInfo }) {
   const [value, setValue] = React.useState(`
-  **Hello world!!!**
-  <img src="https://em-content.zobj.net/source/microsoft-teams/363/waving-hand_1f44b.png" width="30" height="30">
-  >Here's how we used MDEditor npm library to create this component !
-  
-  \`\`\`bash
-  npm i @uiw/react-md-editor
-  \`\`\`
-  
-  then paste this into your React component !
-  
-  \`\`\`js
-  import React from "react";
-  import MDEditor from "@uiw/react-md-editor";
-  
-  export default function App() {
-    const [value, setValue] = React.useState("**Hello world!!!**");
-    return (
-      <div className="container mt-24 p-0 flex flex-col justify-center gap-7 px-5">
-        <div>
-          <h2 className="text-center text-xl font-bold">Create post</h2>
+    **Hello world!!!**
+    <img src="https://em-content.zobj.net/source/microsoft-teams/363/waving-hand_1f44b.png" width="30" height="30">
+    >Here's how we used MDEditor npm library to create this component !
+    
+    \`\`\`bash
+    npm i @uiw/react-md-editor
+    \`\`\`
+    
+    then paste this into your React component !
+    
+    \`\`\`js
+    import React from "react";
+    import MDEditor from "@uiw/react-md-editor";
+    
+    export default function App() {
+      const [value, setValue] = React.useState("**Hello world!!!**");
+      return (
+        <div className="container mt-24 p-0 flex flex-col justify-center gap-7 px-5">
+          <div>
+            <h2 className="text-center text-xl font-bold">Create post</h2>
+          </div>
+          <div>
+            <MDEditor value={value} onChange={setValue} />
+            <MDEditor.Markdown source={value} />
+          </div>
         </div>
-        <div>
-          <MDEditor value={value} onChange={setValue} />
-          <MDEditor.Markdown source={value} />
-        </div>
-      </div>
-    );
-  }
-  \`\`\`
-  `);
+      );
+    }
+    \`\`\`
+    `);
 
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -48,10 +48,12 @@ function Post({ postInfo }) {
   const [hubnameProfileImageUrl, setHubnameProfileImageUrl] = useState(null);
   const isPostedinHub = postInfo.hubname ? true : false;
 
-  const handleChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setInput(event.target.value);
+  const handleChildClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    path: string
+  ) => {
+    event.stopPropagation();
+    navigateTo(path);
   };
 
   const navigateTo = (location: string) => {
@@ -95,7 +97,7 @@ function Post({ postInfo }) {
         <div className="flex gap-3 mb-3 ">
           <div
             className="cursor-pointer bg-green-700 w-10 h-10 rounded-lg"
-            onClick={() => navigateTo(`/hub/${postInfo.hubname}`)}
+            onClick={(e) => handleChildClick(e, `/hub/${postInfo.hubname}`)}
             style={{
               backgroundImage: `url(${hubnameProfileImageUrl})`,
               backgroundSize: "cover",
@@ -105,7 +107,9 @@ function Post({ postInfo }) {
           <div className="flex flex-col">
             <div
               className="text-sm font-semibold leading-normal cursor-pointer "
-              onClick={() => navigateTo(`/profile/${postInfo.username}`)}
+              onClick={(e) =>
+                handleChildClick(e, `/profile/${postInfo.username}`)
+              }
             >
               <p className="hover:text-secondaryColor transition-all">
                 {postInfo.hubname}
@@ -114,7 +118,9 @@ function Post({ postInfo }) {
             <div className="inline mt-[-5px]  ">
               <span
                 className=" text-[14px] text-gray-400 hover:text-white transition-all font-medium leading-normal cursor-pointer"
-                onClick={() => navigateTo(`/profile/${postInfo.username}`)}
+                onClick={(e) =>
+                  handleChildClick(e, `/profile/${postInfo.username}`)
+                }
               >
                 {postInfo.username}
               </span>
@@ -137,7 +143,7 @@ function Post({ postInfo }) {
       <div className="flex gap-3 mb-3 ">
         <div
           className="cursor-pointer bg-blue-700 w-10 h-10 rounded-full"
-          onClick={() => navigateTo(`/profile/${postInfo.username}`)}
+          onClick={(e) => handleChildClick(e, `/profile/${postInfo.username}`)}
           style={{
             backgroundImage: `url(${userProfileImageUrl})`,
             backgroundSize: "cover",
@@ -147,7 +153,9 @@ function Post({ postInfo }) {
         <div className="flex flex-col">
           <div
             className="text-sm font-semibold leading-normal cursor-pointer"
-            onClick={() => navigateTo(`/profile/${postInfo.username}`)}
+            onClick={(e) =>
+              handleChildClick(e, `/profile/${postInfo.username}`)
+            }
           >
             {postInfo.username}
           </div>
@@ -168,7 +176,10 @@ function Post({ postInfo }) {
   };
 
   return (
-    <div className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer">
+    <div
+      className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer"
+      onClick={() => navigateTo("post/" + postInfo._id)}
+    >
       {renderPostingInfo()}
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
         <MDEditor.Markdown
@@ -190,6 +201,6 @@ export default Post;
 {
   /* <div data-color-mode="light">
 
-      <MDEditor.Markdown source={value}  />
-      </div> */
+        <MDEditor.Markdown source={value}  />
+        </div> */
 }

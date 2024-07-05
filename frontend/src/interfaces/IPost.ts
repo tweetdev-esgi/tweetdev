@@ -3,7 +3,7 @@ export default interface IPost {
     content: string
     like: Like[]
     comments: any[]
-    creationDate : Date
+    creationDate : string
     username: string
     hubname: string | undefined
   }
