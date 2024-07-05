@@ -59,7 +59,7 @@ function WorkflowSideBar(props) {
   return (
     <div
       style={{ width: "20vw" }}
-      className="border-2 rounded-lg border-componentBorder bg-componentBg p-6 flex flex-col gap-4"
+      className="border-2 rounded-lg border-componentBorder bg-componentBg p-6 flex flex-col gap-4 max-h-[89vh] overflow-auto"
     >
       {programs.map((program, key) => {
         return (
