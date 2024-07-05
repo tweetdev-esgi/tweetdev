@@ -85,46 +85,109 @@ export class UserController {
         "description" : "string | undefined",
     }
 
+
+    updateUsernameInPosts = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await PostModel.updateMany(
+            { username: oldUsername }, 
+            { username: newUsername } 
+          );
+      
+          console.log('Number of documents matched username:', result.matchedCount);
+          console.log('Number of documents modified username:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating posts:', error);
+        }
+      }
+
+    updateUsernameInFollowers = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await UserModel.updateMany(
+            { followers: oldUsername }, 
+            { $set: { "followers.$": newUsername } }
+          );
+      
+          console.log('Number of documents matched followers:', result.matchedCount);
+          console.log('Number of documents modified followers:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating followers:', error);
+        }
+      };
+
+      updateUsernameInFollowing = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await UserModel.updateMany(
+            { following: oldUsername }, 
+            { $set: { "following.$": newUsername } }
+          );
+      
+          console.log('Number of documents matched following:', result.matchedCount);
+          console.log('Number of documents modified following:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating following:', error);
+        }
+      };
+      updateUsernameInHubUsers = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await HubModel.updateMany(
+            { users: oldUsername }, 
+            { $set: { "users.$": newUsername } }
+          );
+      
+          console.log('Number of documents matched hub users:', result.matchedCount);
+          console.log('Number of documents modified hub users:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating hub users:', error);
+        }
+      };
     updateUser = async (req: Request, res: Response) => {
         const { currentPassword, password, ...userInfo } = req.body;
       
         try {
-          const user = await UserModel.findById(req.user?._id);
-      
+          const user = await UserModel.findOne({username:req.user?.username});
+            const last_username = req.user?.username || "";
           if (!user) {
-            res.status(404).end();
+            res.status(404).end();  
             return;
           }
+          
+
+        //   if (currentPassword) {
+        //     const isCurrentPasswordValid = SecurityUtils.verifySHA512(
+        //       currentPassword,
+        //       user.password
+        //     );
       
-          if (currentPassword) {
-            const isCurrentPasswordValid = SecurityUtils.verifySHA512(
-              currentPassword,
-              user.password
-            );
-      
-            if (!isCurrentPasswordValid) {
-              res.status(400).json({ message: "Current password is incorrect" });
-              return;
-            }
-          }
+        //     if (!isCurrentPasswordValid) {
+        //       res.status(400).json({ message: "Current password is incorrect" });
+        //       return;
+        //     }
+        //   }
       
           let updated_user;
       
           const updateData: any = {
-            ...(password && { password: SecurityUtils.toSHA512(password) }),
+            // ...(password && { password: SecurityUtils.toSHA512(password) }),
             ...userInfo,
           };
-      
+
           try {
-            updated_user = await UserModel.findByIdAndUpdate(
-              req.user?._id,
+            updated_user = await UserModel.findOneAndUpdate(
+                {username:req.user?.username},
               updateData,
               { new: true }
             );
-      
+            
             if (!updated_user) {
               res.status(404).end();
               return;
+            }
+            if(updateData.username){
+                this.updateUsernameInPosts( last_username,updateData.username)
+                this.updateUsernameInFollowers( last_username,updateData.username)
+                this.updateUsernameInFollowing( last_username,updateData.username)
+                this.updateUsernameInHubUsers( last_username,updateData.username)
+                
             }
           } catch (e) {
             console.log(e);

@@ -27,6 +27,7 @@ import EditButton from "../components/buttons/EditButton";
 import FollowButton from "../components/buttons/FollowButton";
 import ModalFollowers from "../components/ModalFollowers";
 import Post from "../components/Post";
+import EditProfileButton from "../components/buttons/EditProfileButton";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
@@ -105,7 +106,7 @@ function Profile() {
         />
       );
     }
-    return <EditButton selfInfo={userInfo} />;
+    return <EditProfileButton />;
   };
 
   return (
