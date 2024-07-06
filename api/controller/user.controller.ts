@@ -153,6 +153,20 @@ export class UserController {
           console.error('Error updating hub admins:', error);
         }
       };
+
+      updateUsernameInPostLikes = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await PostModel.updateMany(
+            { "like.username": oldUsername }, 
+            { $set: { "like.$.username": newUsername } }
+          );
+      
+          console.log('Number of documents matched hub likes:', result.matchedCount);
+          console.log('Number of documents modified hub likes:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating hub likes:', error);
+        }   
+      };
     updateUser = async (req: Request, res: Response) => {
         const { currentPassword, password, ...userInfo } = req.body;
       
@@ -201,6 +215,7 @@ export class UserController {
                 this.updateUsernameInFollowing( last_username,updateData.username)
                 this.updateUsernameInHubUsers( last_username,updateData.username)
                 this.updateUsernameInHubAdmins( last_username,updateData.username)
+                this.updateUsernameInPostLikes ( last_username,updateData.username)
                 
             }
           } catch (e) {
