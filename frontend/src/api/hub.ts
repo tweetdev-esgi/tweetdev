@@ -184,3 +184,23 @@ export const fetchHubs = async (token: string): Promise<any> => {
         throw error;
     }
   };
+
+  export const updateHub = async (token: string,name:string, hubInfo: any,): Promise<any> => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/hub/update?name=${name}`,
+        hubInfo, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating hub info:", error);
+      throw error;
+    }
+  };
+  

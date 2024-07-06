@@ -18,6 +18,7 @@ import FollowHubButton from "../components/buttons/FollowHubButton";
 import CustomButton from "../components/buttons/CustomButton";
 import { Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import EditHubButton from "../components/buttons/EditHubButton";
 
 function Hub() {
   const [posts, setPosts] = useState<IPost[]>([]);
@@ -59,6 +60,7 @@ function Hub() {
       }
     }
   };
+  const updateHub = async () => {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,9 +139,10 @@ function Hub() {
                   {isAdmin && (
                     <>
                       <div className="flex items-center cursor-pointer relative group">
-                        <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block ">
+                        <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
+                          <EditHubButton hub={hub}></EditHubButton>
                           <button
-                            className="text-red-700 font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm "
+                            className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
                             onClick={deleteHub}
                           >
                             <Trash2
@@ -147,7 +150,7 @@ function Hub() {
                               weight="bold"
                               color="#b91c1c"
                             ></Trash2>
-                            Delete Hub
+                            <span className="text-red-700 ">Delete Hub</span>
                           </button>
                         </div>
                         <DotsThreeVertical

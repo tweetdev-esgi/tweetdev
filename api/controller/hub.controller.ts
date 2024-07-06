@@ -229,6 +229,62 @@ export class HubController {
             res.status(500).json({ message: 'Internal server error' });
         }
     };
+
+    updateHubnameInPosts = async (last_name:string, new_name:string) => {
+        const posts = await PostModel.find({hubname:last_name})
+        posts.forEach(async (post) => {
+            post.hubname = new_name
+            await post.save()
+        })
+    }
+    readonly paramsUpdateHub = {
+        "name" : "string",
+        "description" : "string",
+        "profileImageUrl": "string",
+        "coverImageUrl": "string",
+    }
+    updateHub = async (req: Request, res: Response): Promise<void> => {
+        const name = req.query.name as string;
+        const  hubInfo = req.body;
+        const user = req.user;
+        console.log(hubInfo)
+        if (!user) {
+          res.status(401).json({ message: 'User not found' });
+          return;
+        }
+      
+        try {
+          const hub = await HubModel.findOne({ name });
+      
+          if (!hub) {
+            res.status(404).json({ message: 'Hub not found' });
+            return;
+          }
+      
+          if (!hub.admins.includes(user.username)) {
+            res.status(401).json({ message: 'You are not an admin' });
+            return;
+          }
+      
+          const updatedHub = await HubModel.findOneAndUpdate(
+            { name },
+            hubInfo,
+            { new: true }
+          );
+      
+          if (hubInfo && hubInfo.name && hubInfo.name !== name) {
+            this.updateHubnameInPosts(name, hubInfo.name); 
+          }
+      
+          res.status(200).json(updatedHub);
+        } catch (error) {
+          console.error('Error updating hub:', error);
+          res.status(500).json({ message: 'Internal server error' });
+        }
+      };
+
+
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllHubs.bind(this))
@@ -239,6 +295,7 @@ export class HubController {
         router.get('/posts', checkUserToken(), this.getHubPosts.bind(this))
         router.put('/follow', checkUserToken(), this.toggleFollowHub.bind(this))
         router.get('/is-followed', checkUserToken(), this.isHubFollowed.bind(this))
+        router.patch('/update', express.json(), checkUserToken(), this.updateHub.bind(this))
         router.delete('/delete', checkUserToken(), this.deleteHubByName.bind(this))
 
         return router
