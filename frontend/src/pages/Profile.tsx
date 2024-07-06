@@ -36,6 +36,7 @@ import EditHubButton from "../components/buttons/EditHubButton";
 import { Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../provider/AuthProvider";
+import ReadFollowsButton from "../components/buttons/ReadFollowsButton";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
@@ -45,7 +46,7 @@ function Profile() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  const followerText = followersCount > 1 ? "Followers" : "Follower";
+  const followersText = followersCount > 1 ? "Followers" : "Follower";
   const sessionToken = getSession();
   const [notFoundUser, setNotFoundUser] = useState("");
   let { username } = useParams();
@@ -161,25 +162,6 @@ function Profile() {
     );
   };
 
-  const renderThreeDots = () => {
-    return (
-      <>
-        <div className="flex items-center cursor-pointer relative group">
-          <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
-            <button
-              className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
-              onClick={() => deleteUser()}
-            >
-              <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
-              <span className="text-red-700 ">Delete Profile</span>
-            </button>
-          </div>
-          <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
-        </div>
-      </>
-    );
-  };
-
   return (
     <div className="profile-container grid grid-cols-[1fr_3.5fr] gap-4 p-12 mt-6 ">
       {!userInfo && <>Loading...</>}
@@ -211,16 +193,11 @@ function Profile() {
               </div>
               <div className="flex flex-col gap-3 p-4">
                 <p className="text-xl font-semibold ">{userInfo.username}</p>
-                <div className="flex flex-row gap-3">
-                  <ModalFollowers
-                    followersCount={followingCount}
-                    followersText={"Following"}
-                  ></ModalFollowers>
-                  <ModalFollowers
-                    followersCount={followersCount}
-                    followersText={followerText}
-                  ></ModalFollowers>
-                </div>
+                <ReadFollowsButton
+                  followingCount={followingCount}
+                  followersCount={followingCount}
+                  followersText={followersText}
+                ></ReadFollowsButton>
                 <p className="text-secondaryColor text-xs font-medium">
                   <Clock color="#C7C9CE" weight="bold" size={22}></Clock> Member
                   Since {convertTimestampToMonthYear(userInfo.joinDate)}
