@@ -34,6 +34,7 @@ export default function EditProfileButton(props) {
       const sessionToken = getSession();
       const update = await updateUser(sessionToken, hubData);
       toast.success("profile updated successfully");
+      window.location.href = "";
     } catch (error) {
       toast.error("error while updating profile");
     }
