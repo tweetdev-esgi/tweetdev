@@ -157,3 +157,44 @@ export const fetchPosts = async (token: string, fetchAllPosts: boolean): Promise
       throw error;
     }
   };
+
+  export const deletePostById = async (token: string,postId:string): Promise<any> => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/post?id=${postId}`, {
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating hub :", error);
+      throw error;
+    }
+  };
+
+  export const getIsPostDeletable = async (token: string, postId: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/post/is-deletable?id=${postId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+
+  export const fetchIsPostDeletable = async (token: string, postId: string) => {
+    try {
+      const postsData = await getIsPostDeletable(token, postId);
+      return postsData;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };

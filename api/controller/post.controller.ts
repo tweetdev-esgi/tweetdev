@@ -1,11 +1,11 @@
-import { Document, Model } from "mongoose"
+import mongoose, { Document, Model } from "mongoose"
 import { Post, PostModel } from "../models/post.model"
 import * as express from "express"
 import { Router, Response, Request } from "express"
 import { checkBody, checkUserRole, checkUserToken } from "../middleware"
 import { RolesEnums } from "../enums"
 import { checkQuery } from "../middleware/query.middleware"
-import { CommentModel, UserModel } from "../models"
+import { CommentModel, HubModel, UserModel } from "../models"
 
 export class PostController {
 
@@ -94,7 +94,12 @@ export class PostController {
     }
 
     likePost = async (req: Request, res: Response): Promise<void> => {
+        if (!mongoose.Types.ObjectId.isValid(req.body.post_id)) {
+            res.status(400).json({ message: 'Invalid Post ID format' });
+            return; 
+        }
         try {
+            
             const post = await PostModel.findById(req.body.post_id);
             const emojiIndex = req.body.emojiIndex;
             if (!post) {
@@ -165,7 +170,59 @@ export class PostController {
             return 
         }
     }
+    deletePostById = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const username = req.user?.username;
     
+        if (!id) {
+            res.status(400).json({ message: 'Post ID is required' });
+            return;
+        }
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid Post ID format' });
+            return;
+        }
+    
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
+        }
+    
+        try {
+            const post = await PostModel.findById(id);
+    
+            if (!post) {
+                res.status(404).json({ message: 'Post not found' });
+                return;
+            }
+    
+            if (post.username === username) {
+                await post.deleteOne();
+                res.status(200).json({ message: `Post ${id} deleted` });
+                return;
+            }
+            
+            if (post.hubname) {
+                const hub = await HubModel.findOne({ name: post.hubname });
+    
+                if (!hub) {
+                    res.status(404).json({ message: 'Hub not found' });
+                    return;
+                }
+    
+                if (hub.admins.includes(username)) {
+                    await post.deleteOne();
+                    res.status(200).json({ message: `Post ${id} deleted` }); 
+                    return;
+                }
+            }else {
+                res.status(401).json({ message: 'You are not the owner' });
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
 
 
     getAllPosts = async (req:Request, res:Response): Promise<void> => {
@@ -203,8 +260,13 @@ export class PostController {
         }
     }
     isPostLikedByUser = async (req: Request, res: Response): Promise<void> => {
+        const post_id = req.query.post_id;
+        if (!mongoose.Types.ObjectId.isValid(post_id as string)) {
+            res.status(400).json({ message: 'Invalid Post ID format' });
+            return;
+        }
         try {
-            const post = await PostModel.findById(req.query.post_id);
+            const post = await PostModel.findById(post_id);
             if (!post) {
                 res.status(404).json({ "message": "Post not found" });
                 return;
@@ -249,18 +311,70 @@ export class PostController {
             res.status(500).json({ "message": "Internal Server Error" });
         }
     };
+
+
+
+    isPostDeletable = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const username = req.user?.username;
+    
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
+        }
+    
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid Post ID format' });
+            return;
+        }
+    
+        try {
+            const post = await PostModel.findById(id);
+    
+            if (!post) {
+                res.status(404).json({ message: 'Post not found' });
+                return;
+            }
+    
+            if (post.username === username) {
+                res.status(200).json(true);
+                return;
+            }
+    
+            if (post.hubname) {
+                const hub = await HubModel.findOne({ name: post.hubname });
+    
+                if (!hub) {
+                    res.status(404).json({ message: 'Hub not found' });
+                    return;
+                }
+    
+                if (hub.admins.includes(username)) {
+                    res.status(200).json(true); 
+                    return;
+                }
+            }
+    
+            res.status(200).json(false);
+        } catch (error) {
+            console.error('Error retrieving post or hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), checkUserRole(RolesEnums.guest), checkQuery(this.queryPostId), this.getOnePost.bind(this))
         router.get('/all', checkUserToken(), this.getAllPosts.bind(this))
         router.get('/followed-users-posts', checkUserToken(), this.getFollowedUsersPosts.bind(this)); 
         router.get('/user-posts', checkUserToken(), this.getUserPosts.bind(this))
+        router.get('/is-deletable', checkUserToken(), this.isPostDeletable.bind(this))
         router.get('/like', checkUserToken(),checkQuery(this.queryPostId), this.nbrLike.bind(this))
         router.get('/is-liked', checkUserToken(), this.isPostLikedByUser.bind(this)); 
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewPost), this.newPost.bind(this))
         router.post('/comment', express.json(), checkUserToken(), checkBody(this.paramsComment), this.addComment.bind(this))
         router.patch('/like', express.json(), checkUserToken(), checkBody(this.paramsLike), this.likePost.bind(this))
-        router.delete('/', checkUserToken(), checkQuery(this.queryPostId), this.deletePost.bind(this))
+        router.delete('/', checkUserToken(), checkQuery(this.queryPostId), this.deletePostById.bind(this))
         return router
     }
 }

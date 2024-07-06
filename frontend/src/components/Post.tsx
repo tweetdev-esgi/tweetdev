@@ -2,11 +2,18 @@ import "../styles/Post.css";
 import React, { useEffect, useState } from "react";
 import { getSession } from "../services/sessionService";
 import LikeButton from "./buttons/LikeButton";
-import { Dot } from "lucide-react";
+import { Dot, Trash2 } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
 import { convertTimeToPostTime } from "../utils/utils";
 import { fetchUserProfilePictureByUsername } from "../api/user";
 import { fetchHubByName } from "../api/hub";
+import { DotsThreeVertical } from "@phosphor-icons/react";
+import {
+  deletePostById,
+  fetchIsPostDeletable,
+  getIsPostDeletable,
+} from "../api/post";
+import toast from "react-hot-toast";
 
 function Post({ postInfo }) {
   const [value, setValue] = React.useState(`
@@ -47,7 +54,7 @@ function Post({ postInfo }) {
   const [userProfileImageUrl, setUserProfileImageUrl] = useState(null);
   const [hubnameProfileImageUrl, setHubnameProfileImageUrl] = useState(null);
   const isPostedinHub = postInfo.hubname ? true : false;
-
+  const [isDeletable, setIsDeletable] = useState(false);
   const handleChildClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     path: string
@@ -62,6 +69,21 @@ function Post({ postInfo }) {
 
   const postedTimeIndicator = convertTimeToPostTime(postInfo.creationDate);
 
+  const deletePost = async (event) => {
+    event.stopPropagation();
+    try {
+      const deletePostResponse = await deletePostById(
+        sessionToken,
+        postInfo._id
+      );
+      toast.success("Deleted post !");
+
+      window.location.href = "/";
+    } catch (error) {
+      toast.error("Error deleting post ");
+    }
+  };
+
   useEffect(() => {
     const fetchHub = async () => {
       try {
@@ -70,6 +92,14 @@ function Post({ postInfo }) {
         const response = await fetchHubByName(sessionToken, cleanString);
         console.log(response.profileImageUrl);
         setHubnameProfileImageUrl(response.profileImageUrl);
+
+        const isDeletableResponse = await fetchIsPostDeletable(
+          sessionToken,
+          postInfo._id
+        );
+        console.log(postInfo._id);
+        console.log(isDeletable);
+        setIsDeletable(isDeletableResponse);
       } catch (error) {
         console.error("Failed to fetch user profile picture:", error);
       }
@@ -130,12 +160,22 @@ function Post({ postInfo }) {
               </span>
             </div>
           </div>
-          <div className="cursor-pointer ml-auto relative group">
-            <div className="absolute w-64 h-64 bg-white rounded-sm z-10 top-0 right-0 hidden group-hover:block">
-              rfeqsd
-            </div>
-            <span>⋯</span>
-          </div>
+          {isDeletable && (
+            <>
+              <div className="flex items-center cursor-pointer relative group ml-auto">
+                <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block ">
+                  <button
+                    className="text-red-700 font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm "
+                    onClick={(e) => deletePost(e)}
+                  >
+                    <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
+                    Delete Post
+                  </button>
+                </div>
+                <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+              </div>
+            </>
+          )}
         </div>
       );
     }
@@ -165,12 +205,22 @@ function Post({ postInfo }) {
             </span>
           </div>
         </div>
-        <div className="cursor-pointer ml-auto relative group">
-          <div className="absolute w-64 h-64 bg-white rounded-sm z-10 top-0 right-0 hidden group-hover:block">
-            rfeqsd
-          </div>
-          <span>⋯</span>
-        </div>
+        {isDeletable && (
+          <>
+            <div className="flex items-center cursor-pointer relative group ml-auto">
+              <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block ">
+                <button
+                  className="text-red-700 font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm "
+                  onClick={(e) => deletePost(e)}
+                >
+                  <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
+                  Delete Post
+                </button>
+              </div>
+              <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+            </div>
+          </>
+        )}
       </div>
     );
   };
