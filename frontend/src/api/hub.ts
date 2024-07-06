@@ -141,3 +141,46 @@ export const fetchHubs = async (token: string): Promise<any> => {
       throw error;
     }
   };
+
+  export const deleteHubByName = async (token: string,name:string): Promise<any> => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/hub/delete?name=${name}`, {
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating hub :", error);
+      throw error;
+    }
+  };
+
+  export const getIsAdminHub = async (token: string, name:string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/hub/is-admin?name=${name}`, {
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching hubs:", error);
+      throw error;
+    }
+  };
+
+  
+  export const fetchIsAdminHub = async (token: string, name:string): Promise<any> => {
+    try {
+        let hubsData = await getIsAdminHub(token, name);
+        return hubsData;
+    } catch (error) {
+        console.error("Error fetching hubs:", error);
+        throw error;
+    }
+  };

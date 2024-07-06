@@ -23,6 +23,7 @@ export default function CreatePost() {
       createPost(sessionToken, object);
 
       toast.success("Post created !", { duration: 1000 });
+      window.location.href = "/";
     } catch (error) {
       toast.error("Error creation post !", { duration: 1000 });
     }

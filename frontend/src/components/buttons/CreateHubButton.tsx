@@ -33,6 +33,7 @@ function CreateHubButton(props) {
       const sessionToken = getSession();
       const create = await createHub(sessionToken, hubData);
       toast.success("hub created successfully");
+      window.location.href = "/";
     } catch (error) {
       toast.error("error while creating hub");
     }

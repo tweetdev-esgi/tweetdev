@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Favorites from "../components/Favorites";
-import { fetchHubByName, fetchHubPosts } from "../api/hub";
+import {
+  deleteHubByName,
+  fetchHubByName,
+  fetchHubPosts,
+  fetchIsAdminHub,
+} from "../api/hub";
 import { getSession } from "../services/sessionService";
 import { IHub } from "../interfaces/IHub";
 import { convertTimestampToMonthYear } from "../utils/utils";
@@ -10,6 +15,9 @@ import IPost from "../interfaces/IPost";
 import { Clock, DotsThreeVertical } from "@phosphor-icons/react";
 import ModalFollowers from "../components/ModalFollowers";
 import FollowHubButton from "../components/buttons/FollowHubButton";
+import CustomButton from "../components/buttons/CustomButton";
+import { Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 function Hub() {
   const [posts, setPosts] = useState<IPost[]>([]);
@@ -21,6 +29,7 @@ function Hub() {
 
   const followerText = followersCount > 1 ? "Followers" : "Follower";
   const sessionToken = getSession();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [hub, setHub] = useState<IHub>({
     _id: "",
     name: "",
@@ -39,6 +48,17 @@ function Hub() {
   const decrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter - 1);
   };
+  const deleteHub = async () => {
+    if (name) {
+      try {
+        const deleteResponse = deleteHubByName(sessionToken, name);
+        toast.success("deleted hub !");
+        window.location.href = "/";
+      } catch (error) {
+        toast.error("error deleting hub");
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,18 +70,21 @@ function Hub() {
           setHub(hubData);
           const postsData = await fetchHubPosts(sessionToken, name);
           setPosts(postsData);
-          console.log(postsData);
           setFollowersCount(hubData.users.length);
+
+          const isAdminResponse = await fetchIsAdminHub(sessionToken, name);
+          setIsAdmin(isAdminResponse);
         }
       } catch (error) {
         setNotFoundHub("This hub doesn’t exist");
         console.error("Error fetching hub info:", error);
       }
     };
-    console.log(name);
     fetchData();
   }, []);
-
+  useEffect(() => {
+    console.log("isAdmin:", isAdmin);
+  }, [isAdmin]);
   return (
     <div className="profile-container grid grid-cols-[1fr_3.5fr] gap-4 p-12 mt-6 ">
       {!hub && <>Loading...</>}
@@ -111,12 +134,29 @@ function Hub() {
                     decrement={decrementFollowers}
                     name={hub.name}
                   />
-                  <div className="flex items-center cursor-pointer">
-                    <DotsThreeVertical
-                      size={30}
-                      weight="bold"
-                    ></DotsThreeVertical>
-                  </div>
+                  {isAdmin && (
+                    <>
+                      <div className="flex items-center cursor-pointer relative group">
+                        <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block ">
+                          <button
+                            className="text-red-700 font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm "
+                            onClick={deleteHub}
+                          >
+                            <Trash2
+                              size={20}
+                              weight="bold"
+                              color="#b91c1c"
+                            ></Trash2>
+                            Delete Hub
+                          </button>
+                        </div>
+                        <DotsThreeVertical
+                          size={30}
+                          weight="bold"
+                        ></DotsThreeVertical>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -41,6 +41,57 @@ export class HubController {
         }
     };
 
+    isAdmin = async (req:Request, res:Response): Promise<void> => {
+        const name = req.query.name as string;
+
+        const username = req.user?.username;
+        try {
+            if (username){
+                const hub = await HubModel.findOne({ name });
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+            const isAdmin = hub.admins.includes(username);
+    
+            res.status(200).json(isAdmin);
+            }else{
+                res.status(401).json({ message: 'You are not logged in' });
+            }
+            
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
+    deleteHubByName = async (req:Request, res:Response): Promise<void> => {
+        const name = req.query.name as string;
+        const username = req.user?.username;
+        try {
+            const hub = await HubModel.findOne({ name });
+    
+            if (!hub) {
+                res.status(404).json({ message: 'Hub not found' });
+                return;
+            }
+            if(username){
+                if(hub.admins.includes(username)){
+                    await HubModel.deleteOne({name})
+                    res.status(200).json({ message: `Hub ${name} deleted` });
+                }
+                else{
+                    res.status(401).json({ message: 'You are not an admin' });
+                }
+            }else{
+                res.status(401).json({ message: 'You are not logged in' });
+            }
+        } catch (error) {
+            console.error('Error retrieving hub:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
     readonly createHubBody = {
         "name" : "string",
         "description" : "string",
@@ -56,7 +107,7 @@ export class HubController {
             const profileImageUrl = req.body.profileImageUrl;
             const coverImageUrl = req.body.coverImageUrl;
             const creationDate = new Date();
-
+            const admins = [req.user.username]
 
         const hub = await HubModel.create({
             name:name,
@@ -64,7 +115,8 @@ export class HubController {
             profileImageUrl:profileImageUrl,
             coverImageUrl:coverImageUrl,
             creationDate:creationDate,
-            users:[req.user.username]
+            users:[req.user.username],
+            admins:admins
         })
         res.json(hub)
             }catch(err: any){
@@ -180,11 +232,13 @@ export class HubController {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllHubs.bind(this))
         router.get('/all', checkUserToken(), this.getHubsByUsername.bind(this))
+        router.get('/is-admin', checkUserToken(), this.isAdmin.bind(this))
         router.post('/create', checkUserToken(),express.json(),checkBody(this.createHubBody), this.createHub.bind(this))
         router.get('/by-name', checkUserToken(), this.getHubByName.bind(this))
         router.get('/posts', checkUserToken(), this.getHubPosts.bind(this))
         router.put('/follow', checkUserToken(), this.toggleFollowHub.bind(this))
         router.get('/is-followed', checkUserToken(), this.isHubFollowed.bind(this))
+        router.delete('/delete', checkUserToken(), this.deleteHubByName.bind(this))
 
         return router
     }

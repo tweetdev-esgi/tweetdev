@@ -53,7 +53,7 @@ function FollowHubButton({ increment, decrement, name }) {
 
   return (
     <div onClick={() => follow()}>
-      <div className="edit-button cursor-pointer px-[12px] py-2 bg-accentColor hover:accentColorHover rounded-xl flex justify-center items-center gap-2 text-sm font-medium text-secondaryColor ">
+      <div className="edit-button cursor-pointer px-[12px] py-2 hover:bg-accentColorHover bg-accentColor hover:accentColorHover rounded-xl flex justify-center items-center gap-2 text-sm font-medium text-secondaryColor ">
         {isFollowed && (
           <>
             <UserCircleMinus weight="bold" size={22}></UserCircleMinus>{" "}

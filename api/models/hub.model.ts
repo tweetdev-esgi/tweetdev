@@ -1,6 +1,4 @@
 import mongoose, { Schema, Model } from "mongoose";
-import { Post } from "./post.model";
-import { User } from "./user.model";
 
 const hubSchema = new Schema<Hub>({
     name: {
@@ -27,7 +25,12 @@ const hubSchema = new Schema<Hub>({
     creationDate : {
         type: Schema.Types.Date,
         required: true
-    }
+    },
+    admins : [{
+        type: Schema.Types.String,
+        required: false
+    }],
+
 
 }, {
     versionKey: false,
@@ -42,6 +45,7 @@ export interface Hub{
     profileImageUrl: string
     coverImageUrl:string
     users: string[]
+    admins:string[]
 }
 
 export const HubModel: Model<Hub> = mongoose.model("Hub", hubSchema)
