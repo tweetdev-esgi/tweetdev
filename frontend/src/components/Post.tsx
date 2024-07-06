@@ -228,7 +228,7 @@ function Post({ postInfo }) {
   return (
     <div
       className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer"
-      onClick={() => navigateTo("post/" + postInfo._id)}
+      onClick={() => navigateTo("/post/" + postInfo._id)}
     >
       {renderPostingInfo()}
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
