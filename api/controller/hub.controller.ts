@@ -78,6 +78,7 @@ export class HubController {
             if(username){
                 if(hub.admins.includes(username)){
                     await HubModel.deleteOne({name})
+                    await PostModel.deleteMany({hubname:name})
                     res.status(200).json({ message: `Hub ${name} deleted` });
                 }
                 else{
