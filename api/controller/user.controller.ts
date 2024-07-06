@@ -481,20 +481,111 @@ export class UserController {
             res.status(500).json({ "message": "Internal Server Error" });
         }
     };
+    deleteUsernameInPosts = async (username: string) => {
+      try {
+          const result = await PostModel.deleteMany(
+              { username: username }
+          );
+  
+          console.log('Number of documents deleted posts:', result.deletedCount);
+      } catch (error) {
+          console.error('Error deleting username in posts:', error);
+      }
+  }
+  
+  deleteUsernameInFollowers = async (username: string) => {
+      try {
+          const result = await UserModel.updateMany(
+              { followers: username },
+              { $pull: { followers: username } }
+          );
+  
+          console.log('Number of documents matched followers:', result.matchedCount);
+          console.log('Number of documents modified followers:', result.modifiedCount);
+      } catch (error) {
+          console.error('Error deleting username in followers:', error);
+      }
+  };
+  
+  deleteUsernameInFollowing = async (username: string) => {
+      try {
+          const result = await UserModel.updateMany(
+              { following: username },
+              { $pull: { following: username } }
+          );
+  
+          console.log('Number of documents matched following:', result.matchedCount);
+          console.log('Number of documents modified following:', result.modifiedCount);
+      } catch (error) {
+          console.error('Error deleting username in following:', error);
+      }
+  };
+  
+  deleteUsernameInHubUsers = async (username: string) => {
+      try {
+          const result = await HubModel.updateMany(
+              { users: username },
+              { $pull: { users: username } }
+          );
+  
+          console.log('Number of documents matched hub users:', result.matchedCount);
+          console.log('Number of documents modified hub users:', result.modifiedCount);
+      } catch (error) {
+          console.error('Error deleting username in hub users:', error);
+      }
+  };
+  
+  deleteUsernameInHubAdmins = async (username: string) => {
+      try {
+          const result = await HubModel.updateMany(
+              { admins: username },
+              { $pull: { admins: username } }
+          );
+  
+          console.log('Number of documents matched hub admins:', result.matchedCount);
+          console.log('Number of documents modified hub admins:', result.modifiedCount);
+      } catch (error) {
+          console.error('Error deleting username in hub admins:', error);
+      }
+  };
+  
+  deleteUsernameInPostLikes = async (username: string) => {
+      try {
+          const result = await PostModel.updateMany(
+              { "like.username": username },
+              { $pull: { like: { username: username } } }
+          );
+  
+          console.log('Number of documents matched post likes:', result.matchedCount);
+          console.log('Number of documents modified post likes:', result.modifiedCount);
+      } catch (error) {
+          console.error('Error deleting username in post likes:', error);
+      }
+  };
+  
      deleteMe = async (req: Request, res: Response) => {
         try {
           const user = req.user;
-      
+          const username = user?.username
           if (!user) {
-            throw new Error('User not found'); // or handle it differently based on your requirements
+            throw new Error('User not found'); 
           }
-      
-          // Delete the user document from MongoDB
-          await UserModel.findByIdAndDelete(user._id);
-          // Respond with the deleted user information
-          res.json(user);
+          if (!username) {
+            throw new Error('Username not found'); 
+          }
+          this.deleteUsernameInPosts(username)
+          this.deleteUsernameInFollowers(username)
+          this.deleteUsernameInFollowing(username)
+          this.deleteUsernameInHubUsers(username)
+          this.deleteUsernameInHubAdmins(username)
+          this.deleteUsernameInPostLikes(username)
+
+          await UserModel.deleteOne( {user:user.username});
+
+
+
+          res.status(200).json(user);
         } catch (error) {
-          // Handle any errors that may occur during the deletion process
           res.status(500).json({ error: 'Internal Server Error' });
         }
       };

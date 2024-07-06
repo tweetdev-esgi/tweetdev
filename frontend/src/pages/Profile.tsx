@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { fetchSelfInfo, fetchUserInfoByUsername } from "../api/user";
+import {
+  deleteSelf,
+  fetchSelfInfo,
+  fetchUserInfoByUsername,
+} from "../api/user";
 import {
   getLocalStorageItemByName,
   getSession,
@@ -28,10 +32,15 @@ import FollowButton from "../components/buttons/FollowButton";
 import ModalFollowers from "../components/ModalFollowers";
 import Post from "../components/Post";
 import EditProfileButton from "../components/buttons/EditProfileButton";
+import EditHubButton from "../components/buttons/EditHubButton";
+import { Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { useAuth } from "../provider/AuthProvider";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
 
+  const { logoutAndClearToken } = useAuth();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
@@ -43,6 +52,17 @@ function Profile() {
   const [sessionUsername, setSessionUsername] = useState("");
 
   const id = userInfo._id;
+
+  const deleteUser = () => {
+    try {
+      deleteSelf(sessionToken);
+      toast.success("Deleted User !");
+      logoutAndClearToken();
+      window.location.href = "/login";
+    } catch (error) {
+      toast.error("Error Deleting User");
+    }
+  };
 
   useEffect(() => {
     const getSessionUsername = getLocalStorageItemByName("username");
@@ -97,7 +117,22 @@ function Profile() {
   const renderButton = () => {
     if (username) {
       return username === sessionUsername ? (
-        <EditButton selfInfo={userInfo} />
+        <>
+          <EditProfileButton />
+
+          <div className="flex items-center cursor-pointer relative group">
+            <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
+              <button
+                className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
+                onClick={() => deleteUser()}
+              >
+                <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
+                <span className="text-red-700 ">Delete Profile</span>
+              </button>
+            </div>
+            <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+          </div>
+        </>
       ) : (
         <FollowButton
           increment={incrementFollowers}
@@ -106,7 +141,43 @@ function Profile() {
         />
       );
     }
-    return <EditProfileButton />;
+    return (
+      <>
+        <EditProfileButton />
+
+        <div className="flex items-center cursor-pointer relative group">
+          <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
+            <button
+              className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
+              onClick={() => deleteUser()}
+            >
+              <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
+              <span className="text-red-700 ">Delete Profile</span>
+            </button>
+          </div>
+          <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+        </div>
+      </>
+    );
+  };
+
+  const renderThreeDots = () => {
+    return (
+      <>
+        <div className="flex items-center cursor-pointer relative group">
+          <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
+            <button
+              className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
+              onClick={() => deleteUser()}
+            >
+              <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
+              <span className="text-red-700 ">Delete Profile</span>
+            </button>
+          </div>
+          <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+        </div>
+      </>
+    );
   };
 
   return (
@@ -156,16 +227,7 @@ function Profile() {
                 </p>
               </div>
               <div className="grid grid-rows-[40fr_50fr]">
-                <div className="flex gap-3 p-2">
-                  {renderButton()}
-
-                  <div className="flex items-center cursor-pointer">
-                    <DotsThreeVertical
-                      size={30}
-                      weight="bold"
-                    ></DotsThreeVertical>
-                  </div>
-                </div>
+                <div className="flex gap-3 p-2">{renderButton()}</div>
               </div>
             </div>
             <div className="p-6 bg-componentBg grid grid-cols-[68fr_32fr] gap-5">

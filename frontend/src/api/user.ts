@@ -228,3 +228,18 @@ export const fetchGetFollowing = async (token: string) => {
     throw error;
   }
 };
+
+export const deleteSelf = async (token: string): Promise<any> => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/user/me`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting self :", error);
+    throw error;
+  }
+};
