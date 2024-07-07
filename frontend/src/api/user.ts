@@ -243,3 +243,30 @@ export const deleteSelf = async (token: string): Promise<any> => {
     throw error;
   }
 };
+
+
+export const getFollowUsers = async (token: string,username:string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/follow-info?username=${username}`, {
+
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching self hubs:", error);
+    throw error;
+  }
+};
+
+export const fetchGetFollowUsers = async (token: string,username: string) => {
+  try {
+    const userData = await getFollowUsers(token,username);
+    return userData;
+  } catch (error) {
+    console.error("Error fetching user hubs:", error);
+    throw error;
+  }
+};

@@ -1,40 +1,47 @@
 import { ApplePodcastsLogo, Users } from "@phosphor-icons/react";
 import { Pencil, Plus, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomButton from "./CustomButton";
 import CustomButtonBig from "./CustomButtonBig";
 import { createHub } from "../../api/hub";
 import { getSession } from "../../services/sessionService";
 import toast from "react-hot-toast";
-import { updateUser } from "../../api/user";
+import { fetchGetFollowUsers, updateUser } from "../../api/user";
 import ModalFollowers from "../ModalFollowers";
 
 export default function ReadFollowsButton({
   followingCount,
   followersCount,
   followersText,
+  username,
 }) {
   const [isCreateHubModalOpen, setIsCreateHubModalOpen] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const toggleCreateHubModal = () => {
     setIsCreateHubModalOpen((prevState) => !prevState);
   };
 
-  const handleSubmit = async () => {
-    const hubData = {
-      username,
-      description,
-      profileImageUrl,
-      coverImageUrl,
-    };
-    try {
+  useEffect(() => {
+    const fetchUsersRelated = async () => {
       const sessionToken = getSession();
-      const update = await updateUser(sessionToken, hubData);
-      toast.success("profile updated successfully");
-      window.location.href = "";
-    } catch (error) {
-      toast.error("error while updating profile");
-    }
-  };
+      if (!sessionToken) {
+        console.log("No session token found");
+        return;
+      }
+      try {
+        console.log("Fetching follow info for username:", username);
+        const followInfo = await fetchGetFollowUsers(sessionToken, username);
+        setFollowers(followInfo.followersUsers);
+        setFollowing(followInfo.followingUsers);
+        console.log("Fetched follow info:", followInfo);
+      } catch (error) {
+        console.error("Failed to fetch user profile picture:", error);
+      }
+    };
+
+    fetchUsersRelated();
+  }, [username]);
 
   return (
     <div>
@@ -58,7 +65,7 @@ export default function ReadFollowsButton({
           ></div>
 
           {/* Modal */}
-          <div className="bg-bodyBg p-4 rounded shadow-lg relative z-10 w-8/12 h-3/6">
+          <div className="bg-bodyBg p-4 rounded shadow-lg relative z-10 w-8/12  h-3/6">
             <div className="flex justify-end">
               <button
                 className="text-secondaryColor font-medium text-sm"
@@ -67,17 +74,77 @@ export default function ReadFollowsButton({
                 <X />
               </button>
             </div>
-            <div className="">
-              <div className="p-2 -mt-5 flex flex-col gap-3">
-                <div className="flex gap-3 items-center ml-[3px]">
-                  <ApplePodcastsLogo weight="bold" size={36} />
-                  <h2 className="text-lg font-semibold">Followers</h2>
+            <div className="p-2 -mt-5 flex flex-col gap-3">
+              <div className="flex gap-3 items-center ml-[3px]">
+                <ApplePodcastsLogo weight="bold" size={36} />
+                <h2 className="text-lg font-semibold">Followers</h2>
+              </div>
+              <p className="text-secondaryColor">
+                Explore your connections and discover your network!
+              </p>
+              <div className="grid grid-cols-2 mt-2">
+                <div className="following ">
+                  <p className="text-center font-medium text-secondaryColor">
+                    Following{" "}
+                  </p>
+                  <div className="p-6 flex flex-col gap-4">
+                    {following.map((user, key) => {
+                      return (
+                        <div className="flex gap-3">
+                          <div
+                            className="cursor-pointer bg-blue-700 w-10 h-10 rounded-full"
+                            style={{
+                              backgroundImage: `url(${user.profileImageUrl})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                            }}
+                          ></div>
+                          <div className="flex flex-col">
+                            <div className="text-sm font-semibold leading-normal cursor-pointer">
+                              {user.username}
+                            </div>
+                            <div className="inline mt-[-5px]">
+                              <span className="text-[13px] font-medium text-gray-400">
+                                {/* {user.joinDate} */}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <p className="text-secondaryColor">
-                  Explore your connections and discover your network!
-                </p>
-
-                <p>following </p>
+                <div className="followers">
+                  <p className="text-center font-medium text-secondaryColor">
+                    Followers{" "}
+                  </p>
+                  <div className="p-6">
+                    {followers.map((user, key) => {
+                      return (
+                        <div className="flex gap-3">
+                          <div
+                            className="cursor-pointer bg-blue-700 w-10 h-10 rounded-full"
+                            style={{
+                              backgroundImage: `url(${user.profileImageUrl})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                            }}
+                          ></div>
+                          <div className="flex flex-col">
+                            <div className="text-sm font-semibold leading-normal cursor-pointer">
+                              {user.username}
+                            </div>
+                            <div className="inline mt-[-5px]">
+                              <span className="text-[13px] font-medium text-gray-400">
+                                {/* {user.joinDate} */}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

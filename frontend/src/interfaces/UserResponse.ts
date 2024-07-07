@@ -1,6 +1,7 @@
 interface UserResponse {
   description: string;
     followers: string[];
+    following:string[];
     profileImageUrl: string;
     backgroundImageUrl : string;
     joinDate: string; 

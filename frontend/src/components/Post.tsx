@@ -92,17 +92,16 @@ function Post({ postInfo }) {
         const response = await fetchHubByName(sessionToken, cleanString);
         console.log(response.profileImageUrl);
         setHubnameProfileImageUrl(response.profileImageUrl);
-
-        const isDeletableResponse = await fetchIsPostDeletable(
-          sessionToken,
-          postInfo._id
-        );
-        console.log(postInfo._id);
-        console.log(isDeletable);
-        setIsDeletable(isDeletableResponse);
       } catch (error) {
         console.error("Failed to fetch user profile picture:", error);
       }
+    };
+    const fetchIsDeletable = async () => {
+      const isDeletableResponse = await getIsPostDeletable(
+        sessionToken,
+        postInfo._id
+      );
+      setIsDeletable(isDeletableResponse);
     };
     const fetchUserProfileImage = async () => {
       try {
@@ -115,9 +114,8 @@ function Post({ postInfo }) {
         console.error("Failed to fetch user profile picture:", error);
       }
     };
-    if (isPostedinHub) {
-      fetchHub();
-    }
+    fetchIsDeletable();
+    fetchHub();
     fetchUserProfileImage();
   }, [sessionToken, postInfo.username]);
 

@@ -45,14 +45,12 @@ function Profile() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [followersText, setFollowersText] = useState("Follower");
 
-  const followersText = followersCount > 1 ? "Followers" : "Follower";
   const sessionToken = getSession();
   const [notFoundUser, setNotFoundUser] = useState("");
   let { username } = useParams();
   const [sessionUsername, setSessionUsername] = useState("");
-
-  const id = userInfo._id;
 
   const deleteUser = () => {
     try {
@@ -105,7 +103,11 @@ function Profile() {
       }
     };
     fetchData();
-  }, []);
+  }, [sessionToken, username]);
+
+  useEffect(() => {
+    setFollowersText(followersCount > 1 ? "Followers" : "Follower");
+  }, [followersCount]);
 
   const incrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter + 1);
@@ -195,8 +197,9 @@ function Profile() {
                 <p className="text-xl font-semibold ">{userInfo.username}</p>
                 <ReadFollowsButton
                   followingCount={followingCount}
-                  followersCount={followingCount}
+                  followersCount={followersCount}
                   followersText={followersText}
+                  username={username}
                 ></ReadFollowsButton>
                 <p className="text-secondaryColor text-xs font-medium">
                   <Clock color="#C7C9CE" weight="bold" size={22}></Clock> Member

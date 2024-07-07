@@ -1,9 +1,10 @@
 import "../styles/Header.css";
 import { useAuth } from "../provider/AuthProvider";
 import { MagnifyingGlass } from "@phosphor-icons/react";
+import { getLocalStorageItemByName } from "../services/sessionService";
 function Header() {
   const { isLoggedIn } = useAuth();
-
+  const username = getLocalStorageItemByName("username");
   return (
     <div>
       <header className="header border-2 border-headerBorder bg-headerBg">
@@ -77,7 +78,10 @@ function Header() {
                   </a>
                 </li>
                 <li className="header_nav-item">
-                  <a href="/profile" className="header_nav-link text-fontColor">
+                  <a
+                    href={`/profile/${encodeURIComponent(username)}`}
+                    className="header_nav-link text-fontColor"
+                  >
                     Profile
                   </a>
                 </li>

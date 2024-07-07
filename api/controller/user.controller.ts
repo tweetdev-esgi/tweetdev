@@ -679,6 +679,38 @@ export class UserController {
         const users = await UserModel.find({ followers: { $regex:`^${ req.user?.username}$` } });
         res.status(200).json(users);
     }   
+    getFollowUsers = async (req: Request, res: Response): Promise<void> => {
+        const usernameQuery = req.query.username as string;
+    
+        if (!usernameQuery) {
+            res.status(400).json({ message: "Username query parameter is required" });
+            return;
+        }
+    
+        try {
+            const user = await UserModel.findOne({ username: usernameQuery });
+    
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+    
+            const followingUsernames = user.following;
+            const followersUsernames = user.followers;
+    
+            const followingUsers = await UserModel.find({ username: { $in: followingUsernames } });
+            const followersUsers = await UserModel.find({ username: { $in: followersUsernames } });
+    
+            const response = {
+                followingUsers,
+                followersUsers
+            };
+    
+            res.status(200).json(response);
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error });
+        }
+    };
     buildRouter = (): Router => {
         
         const router = express.Router()
@@ -686,7 +718,7 @@ export class UserController {
         router.post(`/subscribe`, express.json(), checkBody(this.paramsLogin), this.subscribe.bind(this))
         router.get('/follow', express.json(), checkUserToken(), this.getFollowers.bind(this))
         router.get('/following', express.json(), checkUserToken(), this.getFollowingInfo.bind(this))
-
+        router.get('/follow-info', express.json(), checkUserToken(), this.getFollowUsers.bind(this))
         router.get('/me', checkUserToken(), this.me.bind(this))
         router.get('/count', checkUserToken(), checkUserRole(RolesEnums.admin), this.getAllUsers.bind(this))
         router.get('/one', checkUserToken(), checkUserRole(RolesEnums.guest), this.getOneUser.bind(this))
