@@ -1,18 +1,17 @@
 import React, { useRef, useState } from "react";
-import {Box, Button, HStack, useToast} from "@chakra-ui/react";
+import {Box, HStack} from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import LanguageSelector from "./LanguageSelector";
 import { CODE_SNIPPETS } from "../constants";
 import Output from "./Output";
 import FileUploader from "./FileUploader";
 import SaveCode from "./SaveCode.tsx";
-import {executeCode, saveCode} from "../api";
+import { saveCode} from "../api";
 
 const CodeEditor: React.FC = () => {
     const editorRef= useRef<any>(null);
     const [value, setValue] = useState<string>("");
     const [language, setLanguage] = useState<keyof typeof CODE_SNIPPETS>("javascript");
-    const toast = useToast();
 
 
     const onMount = (editor: any) => {

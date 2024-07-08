@@ -25,6 +25,7 @@ docker build -t {nom de l'image} {chemin du Dockerfile}
 Ensuite pour lancer l'exécution on fait la commande 
 ```bash
 docker run --rm -v {chemin du fichier}:/app/{nom du fichier} {nom de l'image} {commande pour exécuter (node / python / ...)} /app/{nom du fichier}
+// exemple : docker run -it --name js-runtime --rm js-runtime /bin/bash
 ```
 
 Pour le docker compose : 

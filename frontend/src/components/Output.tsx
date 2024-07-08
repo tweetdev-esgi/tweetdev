@@ -1,10 +1,8 @@
-import { useState } from "react";
-import { Box, Button, Text, useToast } from "@chakra-ui/react";
-import { executeCode } from "../api";
+import {useState} from "react";
+import {Box, Text} from "@chakra-ui/react";
 import RunCodeButton from "./RunButton.tsx";
 
-const Output = ({ editorRef, language }) => {
-    const toast = useToast();
+const Output = ({editorRef, language}) => {
     const [output, setOutput] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
