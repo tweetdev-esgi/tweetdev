@@ -24,7 +24,6 @@ function DetailsPost() {
     const fetchData = async () => {
       try {
         const sessionToken = getSession();
-
         if (sessionToken && id) {
           const postData = await fetchPostById(sessionToken, id);
           if (postData) {

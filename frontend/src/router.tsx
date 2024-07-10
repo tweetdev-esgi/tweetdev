@@ -57,7 +57,7 @@ export default createBrowserRouter([
         element: <Hub />,
       },
       {
-        path: "/post/:username",
+        path: "/post/:id",
         element: <DetailsPost />,
       },
       {
