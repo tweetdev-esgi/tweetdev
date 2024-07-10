@@ -21,7 +21,7 @@ export default function FinishNode({ id, data }) {
           <button className="" onClick={deleteNode}>
             <CustomButton
               text={"Delete"}
-              color={"#dc2626"}
+              color={"#b91c1c"}
               Icon={Trash2}
             ></CustomButton>
           </button>

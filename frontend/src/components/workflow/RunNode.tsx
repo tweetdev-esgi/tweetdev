@@ -18,17 +18,17 @@ export default function RunNode({ id, data }) {
         position={data.toolbarPosition}
       >
         <div className="flex gap-2">
-          <button className="" onClick={runWorkflow}>
+          {/* <button className="" onClick={runWorkflow}>
             <CustomButton
               text={"Run"}
               color={"#16a34a"}
               Icon={Play}
             ></CustomButton>
-          </button>
+          </button> */}
           <button className="" onClick={deleteNode}>
             <CustomButton
               text={"Delete"}
-              color={"#dc2626"}
+              color={"#b91c1c"}
               Icon={Trash2}
             ></CustomButton>
           </button>

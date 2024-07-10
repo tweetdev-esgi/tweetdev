@@ -21,7 +21,7 @@ function lightenColor(color, percent) {
 }
 
 function CustomButton({ Icon, color, text }) {
-  const lighterColor = lightenColor(color, 75);
+  const lighterColor = lightenColor(color, 80);
   const lighterColorHover = lightenColor(color, 50);
   return (
     <div

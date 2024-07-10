@@ -64,18 +64,39 @@ function WorkflowSideBar(props) {
       {programs.map((program, key) => {
         return (
           <div
-            className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none"
+            className="border-2 rounded-md border-componentBorder p-4 cursor-pointer hover:bg-componentBgHover select-none"
             onDragStart={(event) =>
               onDragStart(event, program.name, "custom-node")
             }
             draggable
           >
-            <div className="text-lg font-semibold">{program.name}</div>
-            <div className="text-sm">{program.inputFileType}</div>
-            <div className="text-sm">{program.outputFileType}</div>
-            <div className="text-sm">Created by {program.authorName}</div>
-            <div className="text-sm text-secondaryColor">
-              {program.creationDate}
+            <div className="flex items-center justify-between ">
+              <div className="flex gap-1 items-center">
+                <div
+                  className="cursor-pointer bg-green-700 w-6 h-6 rounded-full"
+                  // onClick={(e) =>
+                  //   handleChildClick(e, `/hub/${postInfo.hubname}`)
+                  // }
+                  style={{
+                    backgroundImage: `url("sqdqs")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                ></div>
+
+                <div className="text-sm font-medium ">{program.authorName}</div>
+              </div>
+              <div className="text-sm text-secondaryColor">
+                {program.creationDate}
+              </div>
+            </div>
+            <h2 className="text-lg font-semibold text-center break-words whitespace-normal py-6">
+              {" "}
+              {program.name}
+            </h2>
+            <div className=" flex justify-between">
+              <div className="text-sm">{program.inputFileType}</div>
+              <div className="text-sm">{program.outputFileType}</div>
             </div>
           </div>
         );

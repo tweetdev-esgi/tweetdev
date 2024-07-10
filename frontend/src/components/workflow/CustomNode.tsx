@@ -1,23 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { Handle, NodeToolbar, Position, useReactFlow } from "reactflow";
-import { Code, Trash2 } from "lucide-react";
+import { Code, Trash2, Pencil, X } from "lucide-react";
 import CustomButton from "../buttons/CustomButton";
-import { FilePy } from "@phosphor-icons/react";
+import { ApplePodcastsLogo, FilePy } from "@phosphor-icons/react";
+import EditWorkflowButton from "../buttons/EditWorkflowButton";
+import CustomButtonBig from "../buttons/CustomButtonBig";
+import { getSession } from "../../services/sessionService";
+import { updateUser } from "../../api/user";
+import toast from "react-hot-toast";
 export default function CustomNode({ id, data }) {
   const reactFlowInstance = useReactFlow();
   const deleteNode = () => {
     reactFlowInstance.setNodes((nds) => nds.filter((node) => node.id !== id));
   };
+  const [isCreateHubModalOpen, setIsCreateHubModalOpen] = useState(false);
+
+  const toggleCreateHubModal = () => {
+    setIsCreateHubModalOpen((prevState) => !prevState);
+  };
+
   return (
     <>
       <NodeToolbar
         isVisible={data.forceToolbarVisible || undefined}
         position={data.toolbarPosition}
+        className="flex gap-1"
       >
-        <button className="" onClick={deleteNode}>
+        <button>
+          <div className="" onClick={toggleCreateHubModal}>
+            {" "}
+            <CustomButton
+              text={"Edit"}
+              color={"#0062ff"}
+              Icon={Pencil}
+            ></CustomButton>
+          </div>
+        </button>
+        <button className="flex gap-1" onClick={deleteNode}>
           <CustomButton
             text={"Delete"}
-            color={"#dc2626"}
+            color={"#b91c1c"}
             Icon={Trash2}
           ></CustomButton>
         </button>

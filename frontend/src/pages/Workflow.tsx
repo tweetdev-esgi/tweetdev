@@ -11,13 +11,14 @@ import ReactFlow, {
   Panel,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { Save } from "lucide-react";
+import { Play, Save, Trash2 } from "lucide-react";
 import WorkflowSideBar from "../components/workflow/WorkflowSideBar";
 import CustomNode from "../components/workflow/CustomNode";
 import toast from "react-hot-toast";
 import CustomButton from "../components/buttons/CustomButton";
 import RunNode from "../components/workflow/RunNode";
 import FinishNode from "../components/workflow/FinishNode";
+import EditWorkflowButton from "../components/buttons/EditWorkflowButton";
 
 const initialNodes = [
   {
@@ -43,11 +44,6 @@ const DnDFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { screenToFlowPosition } = useReactFlow();
   const [rfInstance, setRfInstance] = useState<typeof ReactFlow | null>(null);
-
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    []
-  );
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -82,6 +78,22 @@ const DnDFlow = () => {
     },
     [screenToFlowPosition]
   );
+  const onConnect = useCallback(
+    (params) => {
+      const { source, target } = params;
+
+      const targetHasInput = edges.some((edge) => edge.target === target);
+
+      const sourceHasOutput = edges.some((edge) => edge.source === source);
+
+      if (!targetHasInput && !sourceHasOutput) {
+        setEdges((eds) => addEdge(params, eds));
+      } else {
+        toast.error("Nodes can only have one input and one output.");
+      }
+    },
+    [edges, setEdges]
+  );
 
   const onSave = useCallback(() => {
     if (rfInstance) {
@@ -90,38 +102,98 @@ const DnDFlow = () => {
       toast.success("Workflow saved successfully");
     }
   }, [rfInstance]);
+  const runWorkflow = () => {
+    const startNode = nodes.find((node) => node.type === "run-node");
+    const endNode = nodes.find((node) => node.type === "finish-node");
 
+    if (!startNode || !endNode) {
+      toast.error("Workflow must have a start and finish node.");
+      return;
+    }
+
+    const nodeNames = [];
+    let currentNode = startNode;
+
+    while (currentNode) {
+      nodeNames.push(currentNode.data.label);
+      const nextEdge = edges.find((edge) => edge.source === currentNode.id);
+      if (!nextEdge) break;
+      currentNode = nodes.find((node) => node.id === nextEdge.target);
+      if (currentNode && currentNode.type === "finish-node") {
+        nodeNames.push(currentNode.data.label);
+        break;
+      }
+    }
+
+    if (currentNode && currentNode.type === "finish-node") {
+      toast.success(`Workflow: ${nodeNames.join(" -> ")}`);
+    } else {
+      toast.error("Workflow does not end with a finish node.");
+    }
+  };
   return (
-    <div className="flex mt-20 gap-2 mx-4">
-      <WorkflowSideBar />
-      <div
-        className="border-2 rounded-lg border-componentBorder bg-componentBg"
-        style={{ width: "80vw", height: "89vh" }}
-        ref={reactFlowWrapper}
-      >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onInit={setRfInstance}
-          onDragOver={onDragOver}
-          fitView
+    <div className="mt-20 mx-4">
+      <div className="flex mb-2 ">
+        <input className="font-medium" type="text" value={"Untiled Workflow"} />
+        <details className="dropdown">
+          <summary className="btn p-0 min-h-0 h-0">Version 1.0</summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+            <li>
+              <a>Version 1</a>
+            </li>
+            <li>
+              <a>Version 2</a>
+            </li>
+          </ul>
+        </details>
+      </div>
+      <div className="flex gap-2">
+        <WorkflowSideBar />
+        <div
+          className="border-2 rounded-lg border-componentBorder bg-componentBg"
+          style={{ width: "80vw", height: "89vh" }}
+          ref={reactFlowWrapper}
         >
-          <MiniMap />
-          <Panel className="" position="bottom-center" onClick={onSave}>
-            <CustomButton
-              color={"#22c55e "}
-              Icon={Save}
-              text={"Save"}
-            ></CustomButton>
-          </Panel>
-          <Controls />
-          <Background variant="dots" gap={16} size={1} />
-        </ReactFlow>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDrop={onDrop}
+            onInit={setRfInstance}
+            onDragOver={onDragOver}
+            fitView
+          >
+            <MiniMap />
+            <Panel className="flex gap-1" position="bottom-center">
+              <div onClick={runWorkflow}>
+                <CustomButton
+                  color={"#3b82f6"}
+                  Icon={Play}
+                  text={"Run Workflow"}
+                />
+              </div>
+              <div onClick={onSave}>
+                <CustomButton
+                  color={"#22c55e "}
+                  Icon={Save}
+                  text={"Save"}
+                ></CustomButton>
+              </div>
+              <div>
+                <CustomButton
+                  color={"#b91c1c"}
+                  Icon={Trash2}
+                  text={"Delete"}
+                ></CustomButton>
+              </div>
+            </Panel>
+            <Controls />
+            <Background variant="dots" gap={16} size={1} />
+          </ReactFlow>
+        </div>
       </div>
     </div>
   );
@@ -132,65 +204,3 @@ export default () => (
     <DnDFlow />
   </ReactFlowProvider>
 );
-
-// import React, { useCallback } from "react";
-// import ReactFlow, {
-//   MiniMap,
-//   Controls,
-//   Background,
-//   useNodesState,
-//   useEdgesState,
-//   addEdge,
-//   Panel,
-// } from "reactflow";
-// import WorkflowSideBar from "../components/WorkflowSideBar";
-// import "reactflow/dist/style.css";
-
-// const initialNodes = [
-//   { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-//   { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-// ];
-// const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
-
-// export default function Workflow() {
-//   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-//   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-//   const onConnect = useCallback(
-//     (params) => setEdges((eds) => addEdge(params, eds)),
-//     [setEdges]
-//   );
-
-//   const addNode = () => {
-//     console.log("add node");
-//   };
-
-//   return (
-//     <div className="flex mt-20 gap-2 mx-4">
-//       <WorkflowSideBar></WorkflowSideBar>
-//       <div
-//         className="border-2 rounded-lg border-componentBorder bg-componentBg"
-//         style={{ width: "80vw", height: "89vh" }}
-//       >
-//         <ReactFlow
-//           nodes={nodes}
-//           edges={edges}
-//           onNodesChange={onNodesChange}
-//           onEdgesChange={onEdgesChange}
-//           onConnect={onConnect}
-//         >
-//           <Controls />
-//           <MiniMap />
-//           <Panel
-//             className="bg-white rounded-lg p-2 text-black font-semibold text-sm cursor-pointer select-none hover:bg-slate-200"
-//             position="bottom-center"
-//             onClick={addNode}
-//           >
-//             Add node
-//           </Panel>
-//           <Background variant="dots" gap={12} size={1} />
-//         </ReactFlow>
-//       </div>
-//     </div>
-//   );
-// }
