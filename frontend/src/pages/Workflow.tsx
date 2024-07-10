@@ -19,7 +19,7 @@ import CustomButton from "../components/buttons/CustomButton";
 import RunNode from "../components/workflow/RunNode";
 import FinishNode from "../components/workflow/FinishNode";
 import EditWorkflowButton from "../components/buttons/EditWorkflowButton";
-
+import UploadNode from "../components/workflow/UploadNode";
 const initialNodes = [
   {
     id: "1",
@@ -29,21 +29,49 @@ const initialNodes = [
   },
 ];
 
+const versions = [
+  {
+    name: "Version 1.0",
+  },
+  {
+    name: "Version 2.0",
+  },
+  {
+    name: "Version 3.0",
+  },
+  {
+    name: "Version 4.0",
+  },
+];
+
 const nodeTypes = {
   "custom-node": CustomNode,
   "run-node": RunNode,
   "finish-node": FinishNode,
+  "upload-node": UploadNode,
 };
 
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const DnDFlow = () => {
+  const [workflowName, setWorkflowName] = useState("Untitled Workflow");
+  const [workflowVersion, setWorkflowVersion] = useState("Version 1.0");
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { screenToFlowPosition } = useReactFlow();
   const [rfInstance, setRfInstance] = useState<typeof ReactFlow | null>(null);
+
+  const handleChange = (e) => {
+    setWorkflowName(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      toast.success(`${workflowName} saved`);
+    }
+  };
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -133,17 +161,24 @@ const DnDFlow = () => {
   };
   return (
     <div className="mt-20 mx-4">
-      <div className="flex mb-2 ">
-        <input className="font-medium" type="text" value={"Untiled Workflow"} />
-        <details className="dropdown">
-          <summary className="btn p-0 min-h-0 h-0">Version 1.0</summary>
+      <div className="flex mb-2 gap-2">
+        <input
+          className="font-medium rounded px-2 outline-none "
+          type="text"
+          value={workflowName}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+        <details className="dropdown ">
+          <summary className="btn px-2 min-h-0 h-6 ">{workflowVersion}</summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-            <li>
-              <a>Version 1</a>
-            </li>
-            <li>
-              <a>Version 2</a>
-            </li>
+            {versions.map((version) => (
+              <li key={version.name}>
+                <a onClick={() => setWorkflowVersion(version.name)}>
+                  {version.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </details>
       </div>

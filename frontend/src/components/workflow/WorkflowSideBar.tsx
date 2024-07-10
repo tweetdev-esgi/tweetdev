@@ -1,4 +1,4 @@
-import { Flag, Play } from "lucide-react";
+import { Flag, Play, Upload } from "lucide-react";
 import React from "react";
 
 function WorkflowSideBar(props) {
@@ -59,12 +59,38 @@ function WorkflowSideBar(props) {
   return (
     <div
       style={{ width: "20vw" }}
-      className="border-2 rounded-lg border-componentBorder bg-componentBg p-6 flex flex-col gap-4 max-h-[89vh] overflow-auto"
+      className="border-2 rounded-lg border-componentBorder bg-componentBg p-4 flex flex-col gap-4 max-h-[89vh] overflow-auto"
     >
+      <div
+        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
+        onDragStart={(event) => onDragStart(event, "Run", "run-node")}
+        draggable
+      >
+        <Play size={35} color="green"></Play>
+        <p className="font-medium">Run Node</p>
+      </div>
+      <div
+        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
+        onDragStart={(event) => onDragStart(event, "End", "finish-node")}
+        draggable
+      >
+        <Flag size={35} color="#0062ff"></Flag>
+
+        <p className="font-medium">Finish Node</p>
+      </div>
+      <div
+        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
+        onDragStart={(event) => onDragStart(event, "Upload", "upload-node")}
+        draggable
+      >
+        <Upload size={35} color="#7a4eea"></Upload>
+
+        <p className="font-medium">Upload Node</p>
+      </div>
       {programs.map((program, key) => {
         return (
           <div
-            className="border-2 rounded-md border-componentBorder p-4 cursor-pointer hover:bg-componentBgHover select-none"
+            className="border-2 rounded-md border-componentBorder p-[13px] cursor-pointer hover:bg-componentBgHover select-none"
             onDragStart={(event) =>
               onDragStart(event, program.name, "custom-node")
             }
@@ -101,23 +127,6 @@ function WorkflowSideBar(props) {
           </div>
         );
       })}
-      <div
-        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
-        onDragStart={(event) => onDragStart(event, "Run", "run-node")}
-        draggable
-      >
-        <Play size={35} color="green"></Play>
-        <p className="font-medium">Run Node</p>
-      </div>
-      <div
-        className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
-        onDragStart={(event) => onDragStart(event, "End", "finish-node")}
-        draggable
-      >
-        <Flag size={35} color="#0062ff"></Flag>
-
-        <p className="font-medium">Finish Node</p>
-      </div>
     </div>
   );
 }
