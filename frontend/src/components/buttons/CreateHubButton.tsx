@@ -158,7 +158,7 @@ function CreateHubButton(props) {
                       <CustomButtonBig text={"Cancel"} color={""} />
                     </div>
                     <div onClick={handleSubmit}>
-                      <CustomButtonBig text={"Create Hub"} color={"blue"} />
+                      <CustomButtonBig text={"Create Hub"} color={"#355cc9"} />
                     </div>
                   </div>
                 </div>

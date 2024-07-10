@@ -156,7 +156,7 @@ export default function EditHubButton({ hub }) {
                       <CustomButtonBig text={"Cancel"} color={""} />
                     </div>
                     <div onClick={handleSubmit}>
-                      <CustomButtonBig text={"Update Hub"} color={"blue"} />
+                      <CustomButtonBig text={"Update Hub"} color={"#355cc9"} />
                     </div>
                   </div>
                 </div>

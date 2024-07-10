@@ -71,7 +71,7 @@ function WorkflowSideBar(props) {
       </div>
       <div
         className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
-        onDragStart={(event) => onDragStart(event, "End", "finish-node")}
+        onDragStart={(event) => onDragStart(event, "Finish", "finish-node")}
         draggable
       >
         <Flag size={35} color="#0062ff"></Flag>
@@ -92,7 +92,7 @@ function WorkflowSideBar(props) {
           <div
             className="border-2 rounded-md border-componentBorder p-[13px] cursor-pointer hover:bg-componentBgHover select-none"
             onDragStart={(event) =>
-              onDragStart(event, program.name, "custom-node")
+              onDragStart(event, program.name, "code-node")
             }
             draggable
           >

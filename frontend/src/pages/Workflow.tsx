@@ -13,7 +13,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { Play, Save, Trash2 } from "lucide-react";
 import WorkflowSideBar from "../components/workflow/WorkflowSideBar";
-import CustomNode from "../components/workflow/CustomNode";
+import CodeNode from "../components/workflow/CodeNode";
 import toast from "react-hot-toast";
 import CustomButton from "../components/buttons/CustomButton";
 import RunNode from "../components/workflow/RunNode";
@@ -23,9 +23,27 @@ import UploadNode from "../components/workflow/UploadNode";
 const initialNodes = [
   {
     id: "1",
-    type: "custom-node",
-    data: { label: "input node" },
-    position: { x: 250, y: 5 },
+    type: "run-node",
+    data: { label: "Run" },
+    position: { x: 0, y: 0 },
+  },
+  {
+    id: "2",
+    type: "upload-node",
+    data: { label: "Upload" },
+    position: { x: 200, y: 0 },
+  },
+  {
+    id: "3",
+    type: "code-node",
+    data: { label: "Code" },
+    position: { x: 400, y: 0 },
+  },
+  {
+    id: "4",
+    type: "finish-node",
+    data: { label: "Finish" },
+    position: { x: 600, y: 0 },
   },
 ];
 
@@ -45,7 +63,7 @@ const versions = [
 ];
 
 const nodeTypes = {
-  "custom-node": CustomNode,
+  "code-node": CodeNode,
   "run-node": RunNode,
   "finish-node": FinishNode,
   "upload-node": UploadNode,
@@ -205,7 +223,7 @@ const DnDFlow = () => {
             <Panel className="flex gap-1" position="bottom-center">
               <div onClick={runWorkflow}>
                 <CustomButton
-                  color={"#3b82f6"}
+                  color={"#355cc9"}
                   Icon={Play}
                   text={"Run Workflow"}
                 />

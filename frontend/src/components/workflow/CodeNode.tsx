@@ -8,7 +8,7 @@ import CustomButtonBig from "../buttons/CustomButtonBig";
 import { getSession } from "../../services/sessionService";
 import { updateUser } from "../../api/user";
 import toast from "react-hot-toast";
-export default function CustomNode({ id, data }) {
+export default function CodeNode({ id, data }) {
   const reactFlowInstance = useReactFlow();
   const deleteNode = () => {
     reactFlowInstance.setNodes((nds) => nds.filter((node) => node.id !== id));
@@ -31,7 +31,7 @@ export default function CustomNode({ id, data }) {
             {" "}
             <CustomButton
               text={"Edit"}
-              color={"#0062ff"}
+              color={"#355cc9"}
               Icon={Pencil}
             ></CustomButton>
           </div>
