@@ -1,35 +1,36 @@
-import React from "react";
-import { Box, Button, Input } from "@chakra-ui/react";
+import React, { useRef } from "react";
+import toast from "react-hot-toast";
 
 interface FileUploaderProps {
   onFileUpload: (file: File) => void;
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
+  const fileInputRef = useRef(null);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       onFileUpload(file);
     }
+    toast.success(file?.name + " uploaded successfully");
   };
-
+  const handleSummaryClick = () => {
+    fileInputRef.current.click();
+  };
   return (
-    <Box mb={4}>
-      <Input
+    <div>
+      <input
         type="file"
-        onChange={handleFileChange}
-        display="none"
         id="file-upload"
+        className="hidden"
+        ref={fileInputRef}
+        onChange={handleFileChange}
       />
-      <Button
-        as="label"
-        htmlFor="file-upload"
-        variant="outline"
-        colorScheme="blue"
-      >
+      <summary className="btn px-2 min-h-0 h-6" onClick={handleSummaryClick}>
         Upload File
-      </Button>
-    </Box>
+      </summary>
+    </div>
   );
 };
 

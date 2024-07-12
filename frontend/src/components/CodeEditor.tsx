@@ -5,12 +5,13 @@ import LanguageSelector from "./LanguageSelector.tsx";
 import { CODE_SNIPPETS } from "../constants.tsx";
 import Output from "./Output.tsx";
 import FileUploader from "./FileUploader.tsx";
-import SaveCode from "./SaveCode.tsx";
+import toast from "react-hot-toast";
 // import { saveCode } from "../api";
 
 const CodeEditor: React.FC = () => {
   const editorRef = useRef<any>(null);
   const [value, setValue] = useState<string>("");
+  const [workflowName, setWorkflowName] = useState("Untitled Program");
   const [language, setLanguage] =
     useState<keyof typeof CODE_SNIPPETS>("javascript");
 
@@ -25,12 +26,12 @@ const CodeEditor: React.FC = () => {
   };
 
   const handleFileUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const fileContent = event.target?.result;
-      setValue(fileContent as string);
-    };
-    reader.readAsText(file);
+    // const reader = new FileReader();
+    // reader.onload = (event) => {
+    //   const fileContent = event.target?.result;
+    //   setValue(fileContent as string);
+    // };
+    // reader.readAsText(file);
   };
 
   const handleSaveCode = async (
@@ -46,11 +47,31 @@ const CodeEditor: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSaveCode;
+
+      toast.success(`${workflowName} saved`);
+    }
+  };
+  const handleChange = (e) => {
+    setWorkflowName(e.target.value);
+  };
   return (
     <Box>
       <HStack>
         <Box w="50%">
-          <LanguageSelector language={language} onSelect={onSelect} />
+          <div className="flex mb-2 gap-2">
+            <input
+              className="font-medium rounded px-2 outline-none "
+              type="text"
+              value={workflowName}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
+
+            <LanguageSelector language={language} onSelect={onSelect} />
+          </div>
           <Editor
             options={{
               minimap: {
@@ -69,7 +90,6 @@ const CodeEditor: React.FC = () => {
         <Output editorRef={editorRef} language={language} />
       </HStack>
       <FileUploader onFileUpload={handleFileUpload} />
-      <SaveCode code={value} language={language} onSave={handleSaveCode} />
     </Box>
   );
 };

@@ -3,15 +3,20 @@ import { Box, Text } from "@chakra-ui/react";
 import RunCodeButton from "./RunButton.tsx";
 
 const Output = ({ editorRef, language }) => {
-  const [output, setOutput] = useState([]);
+  const initialOutput = [
+    "Compilation started...",
+    "Compilation successful.",
+    "Running the code...",
+    "Output:",
+    "Hello, world!",
+  ];
+
+  const [output, setOutput] = useState(initialOutput);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   return (
     <Box w="50%">
-      <Text mb={2} fontSize="lg">
-        Output
-      </Text>
       <RunCodeButton
         editorRef={editorRef}
         language={language}
