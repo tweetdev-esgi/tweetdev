@@ -31,14 +31,8 @@ export const executeCode = async (req: Request, res: Response) => {
         case 'javascript':
             folderPath = path.join(__dirname, '../../code/javascript');
             break;
-        case 'typescript':
-            folderPath = path.join(__dirname, '../../code/typescript');
-            break;
         case 'python':
             folderPath = path.join(__dirname, '../../code/python');
-            break;
-        case 'java':
-            folderPath = path.join(__dirname, '../../code/java');
             break;
         default:
             return res.status(400).json({ message: 'Unsupported language' });
@@ -56,14 +50,8 @@ export const executeCode = async (req: Request, res: Response) => {
             case 'javascript':
                 command = `docker run --rm -v ${filePath}:/app/${fileName} js-runtime node ./${fileName}`;
                 break;
-            case 'typescript':
-                command = `docker run --rm -v ${filePath}:/app/${fileName.slice(0, -11)}.ts js-runtime ts-node ./${fileName.slice(0, -11)}.ts`;
-                break;
             case 'python':
-                command = `docker run --rm -v ${filePath}:/app/${fileName} py-runtime python ./${fileName}`;
-                break;
-            case 'java':
-                command = `docker run --rm -v ${filePath}:/app/${fileName} java-runtime javac ./${fileName} && java ${fileName.slice(0, -5)}`;
+                command = `docker run --rm -v ${filePath}:/app/${fileName} python-runtime python ./${fileName}`;
                 break;
             default:
                 return res.status(400).json({ message: 'Unsupported language' });
