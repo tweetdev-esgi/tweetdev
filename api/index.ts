@@ -4,7 +4,7 @@ import * as morgan from "morgan"
 
 import { Response, Request } from "express"
 import listEndpoints = require('express-list-endpoints')
-import { AuthController, UserController } from './controller'
+import { AuthController, UserController, ProgramController } from './controller'
 import { StartService } from './service'
 import { PostController } from './controller/post.controller'
 import { MessageController } from './controller/message.controller'
@@ -44,7 +44,7 @@ const startServer = async (): Promise<void> => {
     const postController = new PostController()
     const messageController = new MessageController()
     const hubController = new HubController()
-    
+    const programController = new ProgramController()
     await StartService.createUsers()
 
     app.use(userController.path, userController.buildRouter())
@@ -52,6 +52,7 @@ const startServer = async (): Promise<void> => {
     app.use(postController.path, postController.buildRouter())
     app.use(messageController.path, messageController.buildRouter())
     app.use(hubController.path, hubController.buildRouter())
+    app.use(programController.path, programController.buildRouter())
 
     app.listen(process.env.PORT, () => {
         console.log(`Server up on PORT : ${process.env.PORT}`)

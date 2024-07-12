@@ -3,15 +3,15 @@ import { Box, Text } from "@chakra-ui/react";
 import RunCodeButton from "./RunButton.tsx";
 
 const Output = ({ editorRef, language }) => {
-  const initialOutput = [
-    "Compilation started...",
-    "Compilation successful.",
-    "Running the code...",
-    "Output:",
-    "Hello, world!",
-  ];
+  // const initialOutput = [
+  //   "Compilation started...",
+  //   "Compilation successful.",
+  //   "Running the code...",
+  //   "Output:",
+  //   "Hello, world!",
+  // ];
 
-  const [output, setOutput] = useState(initialOutput);
+  const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -33,9 +33,10 @@ const Output = ({ editorRef, language }) => {
         borderRadius={4}
         borderColor={isError ? "red.500" : "#333"}
       >
-        {output
+        {/* {output
           ? output.map((line, i) => <Text key={i}>{line}</Text>)
-          : 'Click "Run Code" to see the output here'}
+          : 'Click "Run Code" to see the output here'} */}
+        {output}
       </Box>
     </Box>
   );

@@ -56,6 +56,7 @@ const CodeEditor: React.FC = () => {
   };
   const handleChange = (e) => {
     setWorkflowName(e.target.value);
+    console.log(value);
   };
   return (
     <Box>
