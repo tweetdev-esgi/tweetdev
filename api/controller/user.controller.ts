@@ -1,5 +1,5 @@
 import { Document, Model } from "mongoose"
-import { HubModel, PostModel, Role, RoleModel, SessionModel, User, UserModel } from "../models"
+import { HubModel, PostModel, ProgramModel, Role, RoleModel, SessionModel, User, UserModel } from "../models"
 import { Router, Response, Request} from "express"
 import * as express from 'express'
 import { SecurityUtils } from "../utils"
@@ -167,6 +167,36 @@ export class UserController {
           console.error('Error updating hub likes:', error);
         }   
       };
+
+    
+      updateUsernameInProgramsLikes = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await ProgramModel.updateMany(
+            { "like.username": oldUsername }, 
+            { $set: { "like.$.username": newUsername } }
+          );
+      
+          console.log('Number of documents matched programs likes:', result.matchedCount);
+          console.log('Number of documents modified programs likes:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating programs likes:', error);
+        }   
+      };
+
+      updateUsernameInPrograms = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await ProgramModel.updateMany(
+            { username: oldUsername }, 
+            { username: newUsername } 
+          );
+      
+          console.log('Number of documents matched username:', result.matchedCount);
+          console.log('Number of documents modified username:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating programs:', error);
+        }
+      }
+
     updateUser = async (req: Request, res: Response) => {
         const { currentPassword, password, ...userInfo } = req.body;
       
@@ -216,7 +246,8 @@ export class UserController {
                 this.updateUsernameInHubUsers( last_username,updateData.username)
                 this.updateUsernameInHubAdmins( last_username,updateData.username)
                 this.updateUsernameInPostLikes ( last_username,updateData.username)
-                
+                this.updateUsernameInPrograms(last_username,updateData.username)
+                this.updateUsernameInProgramsLikes(last_username,updateData.username)
             }
           } catch (e) {
             console.log(e);
@@ -562,7 +593,35 @@ export class UserController {
           console.error('Error deleting username in post likes:', error);
       }
   };
+
+  deleteUsernameInPrograms = async (username: string) => {
+    try {
+        const result = await ProgramModel.deleteMany(
+            { username: username }
+        );
+
+        console.log('Number of documents deleted programs:', result.deletedCount);
+    } catch (error) {
+        console.error('Error deleting username in programs:', error);
+    }
+}
+
   
+  deleteUsernameInProgramLikes = async (username: string) => {
+    try {
+        const result = await ProgramModel.updateMany(
+            { "like.username": username },
+            { $pull: { like: { username: username } } }
+        );
+
+        console.log('Number of documents matched program likes:', result.matchedCount);
+        console.log('Number of documents modified program likes:', result.modifiedCount);
+    } catch (error) {
+        console.error('Error deleting username in program likes:', error);
+    }
+};
+
+
      deleteMe = async (req: Request, res: Response) => {
         try {
           const user = req.user;
@@ -579,6 +638,8 @@ export class UserController {
           this.deleteUsernameInHubUsers(username)
           this.deleteUsernameInHubAdmins(username)
           this.deleteUsernameInPostLikes(username)
+            this.deleteUsernameInPrograms(username)
+            this.deleteUsernameInProgramLikes(username)
 
           await UserModel.deleteOne( {user:user.username});
 

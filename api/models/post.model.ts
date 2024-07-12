@@ -1,18 +1,8 @@
 import mongoose, { Schema, Model } from "mongoose";
 import { User } from "./user.model";
 import { Comment } from "./comment.model";
+import { Like, likeSchema } from "./like.schema";
 
-const likeSchema = new Schema({
-    username: {
-        type: Schema.Types.String,
-        ref: "User",
-        required: true
-    },
-    emojiIndex: {
-        type: Schema.Types.Number,
-        required: true
-    }
-}, { _id: false });
 
 const postShemma = new Schema<Post>({
     content:{
@@ -41,10 +31,6 @@ const postShemma = new Schema<Post>({
     versionKey: false,
     collection: "Posts"
 })
-export interface Like {
-    username: string;
-    emojiIndex: number;
-}
 export interface Post{
     _id: string
     content: string

@@ -27,19 +27,28 @@ function Header() {
         <nav className="header_navbar">
           <ul className="header_nav-menu">
             <li className="header_nav-item">
-              <a href="/feed" className="header_nav-link text-fontColor">
+              <a
+                href="/feed"
+                className="header_nav-link text-fontColor font-medium"
+              >
                 Feed
               </a>
             </li>
             {!isLoggedIn && (
               <>
                 <li className="header_nav-item">
-                  <a href="/login" className="header_nav-link text-fontColor">
+                  <a
+                    href="/login"
+                    className="header_nav-link text-fontColor font-medium"
+                  >
                     Login
                   </a>
                 </li>
                 <li className="header_nav-item">
-                  <a href="/signup" className="header_nav-link text-fontColor">
+                  <a
+                    href="/signup"
+                    className="header_nav-link text-fontColor font-medium"
+                  >
                     Sign up
                   </a>
                 </li>
@@ -51,28 +60,31 @@ function Header() {
                 <li className="header_nav-item">
                   <a
                     href="/create-post"
-                    className="header_nav-link text-fontColor"
+                    className="header_nav-link text-fontColor font-medium"
                   >
                     Create Post
                   </a>
                 </li>
                 <li className="header_nav-item">
                   <a
-                    href="/create-program"
-                    className="header_nav-link text-fontColor"
+                    href="/code"
+                    className="header_nav-link text-fontColor font-medium"
                   >
                     Create Program
                   </a>
                 </li>
                 <li className="header_nav-item">
-                  <a href="/code" className="header_nav-link text-fontColor">
-                    Code execution
+                  <a
+                    href="/programs"
+                    className="header_nav-link text-fontColor font-medium"
+                  >
+                    Browse Programs
                   </a>
                 </li>
                 <li className="header_nav-item">
                   <a
                     href="/workflow"
-                    className="header_nav-link text-fontColor"
+                    className="header_nav-link text-fontColor font-medium"
                   >
                     Workflow
                   </a>
@@ -80,13 +92,16 @@ function Header() {
                 <li className="header_nav-item">
                   <a
                     href={`/profile/${encodeURIComponent(username)}`}
-                    className="header_nav-link text-fontColor"
+                    className="header_nav-link text-fontColor font-medium"
                   >
                     Profile
                   </a>
                 </li>
                 <li className="header_nav-item">
-                  <a href="/logout" className="header_nav-link text-fontColor">
+                  <a
+                    href="/logout"
+                    className="header_nav-link text-fontColor font-medium"
+                  >
                     Log Out
                   </a>
                 </li>
