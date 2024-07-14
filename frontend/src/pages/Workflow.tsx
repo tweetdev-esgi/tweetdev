@@ -145,7 +145,7 @@ const DnDFlow = () => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       console.log(flow);
-      toast.success("Workflow saved successfully");
+      toast.success(`${workflowName} saved successfully`);
     }
   }, [rfInstance]);
   const runWorkflow = () => {

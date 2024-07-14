@@ -1,55 +1,77 @@
 import { Flag, Play, Upload } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getSession } from "../../services/sessionService";
+import { fetchPrograms } from "../../api/programs";
+import { convertTimeToPostTime } from "../../utils/utils";
 
 function WorkflowSideBar(props) {
-  const programs: IProgram[] = [
-    {
-      id: "1",
-      name: "first",
-      creationDate: "2023-01-01",
-      content: "First program content",
-      authorName: "paschyz",
-      inputFileType: "png",
-      outputFileType: "png",
-    },
-    {
-      id: "2",
-      name: "second",
-      creationDate: "2023-02-01",
-      content: "Second program content",
-      authorName: "johnDoe",
-      inputFileType: "jpg",
-      outputFileType: "jpg",
-    },
-    {
-      id: "3",
-      name: "third",
-      creationDate: "2023-03-01",
-      content: "Third program content",
-      authorName: "janeSmith",
-      inputFileType: "gif",
-      outputFileType: "gif",
-    },
-    {
-      id: "4",
-      name: "fourth",
-      creationDate: "2023-04-01",
-      content: "Fourth program content",
-      authorName: "aliceJones",
-      inputFileType: "bmp",
-      outputFileType: "bmp",
-    },
-    {
-      id: "5",
-      name: "fifth",
-      creationDate: "2023-05-01",
-      content: "Fifth program content",
-      authorName: "bobBrown",
-      inputFileType: "tiff",
-      outputFileType: "tiff",
-    },
-  ];
+  // const programs: IProgram[] = [
+  //   {
+  //     id: "1",
+  //     name: "first",
+  //     creationDate: "2023-01-01",
+  //     content: "First program content",
+  //     authorName: "paschyz",
+  //     inputFileType: "png",
+  //     outputFileType: "png",
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "second",
+  //     creationDate: "2023-02-01",
+  //     content: "Second program content",
+  //     authorName: "johnDoe",
+  //     inputFileType: "jpg",
+  //     outputFileType: "jpg",
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "third",
+  //     creationDate: "2023-03-01",
+  //     content: "Third program content",
+  //     authorName: "janeSmith",
+  //     inputFileType: "gif",
+  //     outputFileType: "gif",
+  //   },
+  //   {
+  //     id: "4",
+  //     name: "fourth",
+  //     creationDate: "2023-04-01",
+  //     content: "Fourth program content",
+  //     authorName: "aliceJones",
+  //     inputFileType: "bmp",
+  //     outputFileType: "bmp",
+  //   },
+  //   {
+  //     id: "5",
+  //     name: "fifth",
+  //     creationDate: "2023-05-01",
+  //     content: "Fifth program content",
+  //     authorName: "bobBrown",
+  //     inputFileType: "tiff",
+  //     outputFileType: "tiff",
+  //   },
+  // ];
+  const [programs, setPrograms] = useState<any[]>([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sessionToken = getSession();
+
+        if (sessionToken) {
+          const programsData = await fetchPrograms(sessionToken);
+          setPrograms(programsData);
+        } else {
+          console.error("Error fetching programs");
+        }
+      } catch (error) {
+        console.error("Error fetching programs:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   const onDragStart = (event, nodeName, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
 
@@ -110,10 +132,10 @@ function WorkflowSideBar(props) {
                   }}
                 ></div>
 
-                <div className="text-sm font-medium ">{program.authorName}</div>
+                <div className="text-sm font-medium ">{program.username}</div>
               </div>
               <div className="text-sm text-secondaryColor">
-                {program.creationDate}
+                {convertTimeToPostTime(program.creationDate)}
               </div>
             </div>
             <h2 className="text-lg font-semibold text-center break-words whitespace-normal py-6">
