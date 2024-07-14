@@ -1,26 +1,57 @@
 import { useState } from "react";
 import "../styles/AuthForm.css";
 
-function AuthForm({ title, buttonText, onSubmit }: { title: string, buttonText: string, onSubmit: (formData: any) => void }) {
+function AuthForm({
+  title,
+  buttonText,
+  onSubmit,
+  isSignup,
+}: {
+  title: string;
+  buttonText: string;
+  onSubmit: (formData: any) => void;
+  isSignup: boolean;
+}) {
   const [formData, setFormData] = useState({
     login: "",
-    password: ""
+    password: "",
+    username: "",
   });
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    onSubmit(formData); 
+    onSubmit(formData);
   };
 
+  const displayUsernameField = () => {
+    if (isSignup) {
+      return (
+        <div>
+          <label className="auth-label">Nom d'utilisateur</label>
+          <input
+            className="auth-input"
+            type="text"
+            autoComplete=""
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          <br />
+          <br />
+        </div>
+      );
+    }
+  };
   return (
-    <div className="auth-container">
+    <div className="auth-container mt-20">
       <div className="auth-form">
         <h1 className="auth-title">{title}</h1>
         <form onSubmit={handleSubmit}>
@@ -29,16 +60,16 @@ function AuthForm({ title, buttonText, onSubmit }: { title: string, buttonText: 
             <input
               className="auth-input"
               type="text"
-              autoComplete="identifiant"
+              autoComplete="username"
               name="login"
               value={formData.login}
               onChange={handleChange}
               required
             />
             <br />
-            <br/>
+            <br />
           </div>
-
+          {displayUsernameField()}
           <div>
             <label className="auth-label">Mot de passe</label>
             <input

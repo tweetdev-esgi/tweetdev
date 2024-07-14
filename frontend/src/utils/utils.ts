@@ -6,6 +6,7 @@ export const convertTimestampToMonthYear =(timestamp: string): string =>{
 export const defaultUser: UserResponse = {
   description: "",
     followers: [],
+    following:[],
     profileImageUrl: "",
     backgroundImageUrl:"",
     joinDate: "",

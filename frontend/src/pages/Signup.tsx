@@ -11,7 +11,7 @@ function Signup() {
       await subscribe({
         login: formData.login,
         password: formData.password,
-        username: "test",
+        username: formData.username,
         profileImageUrl:
           "https://cdn.hero.page/0afb509c-1859-4ed9-a529-6c8ea2711b51-aesthetic-anime-and-manga-pfp-from-jujutsu-kaisen-chapter-233-page-3-pfp-3",
         backgroundImageUrl:
@@ -32,6 +32,7 @@ function Signup() {
       title="Inscrivez-vous"
       buttonText="Inscription"
       onSubmit={handleSignupSubmit}
+      isSignup={true}
     />
   );
 }

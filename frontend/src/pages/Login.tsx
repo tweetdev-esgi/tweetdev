@@ -28,6 +28,7 @@ function Login() {
         title="Connectez-vous"
         buttonText="Connexion"
         onSubmit={(formData: any) => handleLoginSubmit(formData)}
+        isSignup={false}
       />
     </div>
   );
