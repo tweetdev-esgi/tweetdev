@@ -9,6 +9,8 @@ import { StartService } from './service'
 import { PostController } from './controller/post.controller'
 import { MessageController } from './controller/message.controller'
 import { HubController } from './controller/hub.controller'
+import { SaveCodeController } from './controller/saveCode.controller';
+
 const cors = require('cors');
 import * as dotenv from "dotenv";
 dotenv.config({ path:'../.env' });
@@ -24,27 +26,28 @@ const startServer = async (): Promise<void> => {
 
 
     await StartService.userRoles()
-    
+
     const app = express()
     const corsOptions = {
-        origin: 'http://localhost:4000', 
+        origin: 'http://localhost:4000',
     };
     app.use(cors(corsOptions));
-  
+
 
     app.use(morgan("short"))
     app.get('/', (req, res) => {
         const response = { message: 'Server is up' };
         res.json(response);
       });
-      
-    
+
+
     const userController = new UserController()
-    const authController = new AuthController() 
+    const authController = new AuthController()
     const postController = new PostController()
     const messageController = new MessageController()
     const hubController = new HubController()
     const programController = new ProgramController()
+    const saveCodeController = new SaveCodeController();
     await StartService.createUsers()
 
     app.use(userController.path, userController.buildRouter())
@@ -53,6 +56,7 @@ const startServer = async (): Promise<void> => {
     app.use(messageController.path, messageController.buildRouter())
     app.use(hubController.path, hubController.buildRouter())
     app.use(programController.path, programController.buildRouter())
+    app.use(saveCodeController.path, saveCodeController.buildRouter());
 
     app.listen(process.env.PORT, () => {
         console.log(`Server up on PORT : ${process.env.PORT}`)
