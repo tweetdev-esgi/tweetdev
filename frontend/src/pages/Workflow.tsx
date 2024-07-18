@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -20,6 +20,8 @@ import RunNode from "../components/workflow/RunNode";
 import FinishNode from "../components/workflow/FinishNode";
 import EditWorkflowButton from "../components/buttons/EditWorkflowButton";
 import UploadNode from "../components/workflow/UploadNode";
+import { getSession } from "../services/sessionService";
+import { fetchWorkflows } from "../api/workflow";
 const initialNodes = [
   {
     id: "1",
@@ -47,21 +49,6 @@ const initialNodes = [
   },
 ];
 
-const versions = [
-  {
-    name: "Version 1.0",
-  },
-  {
-    name: "Version 2.0",
-  },
-  {
-    name: "Version 3.0",
-  },
-  {
-    name: "Version 4.0",
-  },
-];
-
 const nodeTypes = {
   "code-node": CodeNode,
   "run-node": RunNode,
@@ -73,14 +60,24 @@ let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const DnDFlow = () => {
-  const [workflowName, setWorkflowName] = useState("Untitled Workflow");
-  const [workflowVersion, setWorkflowVersion] = useState("Version 1.0");
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const [versions, setVersions] = useState([]);
+
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { screenToFlowPosition } = useReactFlow();
   const [rfInstance, setRfInstance] = useState<typeof ReactFlow | null>(null);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<
+    IWorkflow | undefined
+  >();
 
+  const [workflowName, setWorkflowName] = useState(
+    (selectedWorkflow && selectedWorkflow.name) || "Untitled Workflow"
+  );
+  const [selectedKey, setSelectedKey] = useState(null);
+
+  const [workflows, setWorkflows] = useState<any[]>([]);
   const handleChange = (e) => {
     setWorkflowName(e.target.value);
   };
@@ -141,13 +138,13 @@ const DnDFlow = () => {
     [edges, setEdges]
   );
 
-  const onSave = useCallback(() => {
+  const onSave = () => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       console.log(flow);
       toast.success(`${workflowName} saved successfully`);
     }
-  }, [rfInstance]);
+  };
   const runWorkflow = () => {
     const startNode = nodes.find((node) => node.type === "run-node");
     const endNode = nodes.find((node) => node.type === "finish-node");
@@ -177,6 +174,47 @@ const DnDFlow = () => {
       toast.error("Workflow does not end with a finish node.");
     }
   };
+  const selectWorkflow = (e, workflow, key) => {
+    setSelectedWorkflow(workflow);
+    console.log(workflow);
+    setSelectedKey(key);
+    setWorkflowName(workflow.name);
+    restoreFlow(workflow.versions[0].content);
+    console.log(workflow.versions[0].name);
+    setSelectedVersion(workflow.versions[0].name);
+    setVersions(workflow.versions);
+  };
+
+  const selectVersion = (e, version) => {
+    setSelectedVersion(version.name);
+    console.log(version.content);
+    restoreFlow(version.content);
+  };
+
+  const restoreFlow = async (flow: any) => {
+    if (flow) {
+      setNodes(flow.nodes || []);
+      setEdges(flow.edges || []);
+    }
+  };
+  useEffect(() => {
+    const fetchWorkflow = async () => {
+      try {
+        const sessionToken = getSession();
+
+        if (sessionToken) {
+          const programsData = await fetchWorkflows(sessionToken);
+          setWorkflows(programsData);
+        } else {
+          console.error("Error fetching workflows");
+        }
+      } catch (error) {
+        console.error("Error fetching workflows:", error);
+      }
+    };
+
+    fetchWorkflow();
+  }, []);
   return (
     <div className="mt-20 mx-4">
       <div className="flex mb-2 gap-2">
@@ -188,20 +226,22 @@ const DnDFlow = () => {
           onKeyDown={handleKeyDown}
         />
         <details className="dropdown ">
-          <summary className="btn px-2 min-h-0 h-6 ">{workflowVersion}</summary>
+          <summary className="btn px-2 min-h-0 h-6 ">{selectedVersion}</summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
             {versions.map((version) => (
               <li key={version.name}>
-                <a onClick={() => setWorkflowVersion(version.name)}>
-                  {version.name}
-                </a>
+                <a onClick={(e) => selectVersion(e, version)}>{version.name}</a>
               </li>
             ))}
           </ul>
         </details>
       </div>
       <div className="flex gap-2">
-        <WorkflowSideBar />
+        <WorkflowSideBar
+          workflows={workflows}
+          selectedKey={selectedKey}
+          selectWorkflow={selectWorkflow}
+        />
         <div
           className="border-2 rounded-lg border-componentBorder bg-componentBg"
           style={{ width: "80vw", height: "89vh" }}

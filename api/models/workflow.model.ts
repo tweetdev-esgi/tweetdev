@@ -7,10 +7,6 @@ const workflowSchema = new Schema<Workflow>({
         type: Schema.Types.String,
         required: true,
     },
-    content:{
-        type: Schema.Types.Mixed,
-        required: false
-    },
     like: [likeSchema], 
     username :{
         type: Schema.Types.String,
@@ -33,10 +29,6 @@ const workflowSchema = new Schema<Workflow>({
             type: Schema.Types.Mixed,
             required: true
         },
-        lastUpdated: {
-            type: Schema.Types.Date,
-            required: true
-        },
         creationDate : {
             type: Schema.Types.Date,
             required: true
@@ -50,7 +42,6 @@ const workflowSchema = new Schema<Workflow>({
 export interface Workflow{
     _id: string
     name: string
-    content: any
     username:string
     like: Like[]
     language:string
@@ -58,7 +49,6 @@ export interface Workflow{
     versions: {
         name: string;
         content: any;
-        lastUpdated: Date;
         creationDate: Date;
     }[];
 }

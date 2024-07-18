@@ -127,21 +127,17 @@ export class WorkflowController {
         return 
     }
     readonly workflowsNewProgram = {
-        "content" : "string",
-        "language":"string"
+        "content" : "string"
     }
 
     newWorkflow = async (req: Request, res: Response): Promise<void> => {
         const newWorkflow = await WorkflowModel.create({
             name: req.body.name,
-            content: workflowSample,
             username : req.user?.username,
-            language : req.body.language,
             creationDate: new Date(),
             versions : [{
-                name:"1.O",
+                name:"1.0",
                 content: workflowSample,
-                lastUpdated: new Date(),
                 creationDate: new Date()
             }]
         })
@@ -149,10 +145,56 @@ export class WorkflowController {
         res.status(201).json(newWorkflow)
         return 
     }
+
+    readonly paramsUpdateWorkflow = {
+        "content" : "object",
+    }
+
+    updateWorkflow = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string; 
+        
+        const { content } = req.body;
+    
+        try {
+            const existingWorkflow = await WorkflowModel.findById(id);
+    
+            if (!existingWorkflow) {
+                res.status(404).json({ error: 'Workflow not found' });
+                return;
+            }
+    
+            let nextVersionNumber = 1;
+    
+            if (existingWorkflow.versions.length > 0) {
+                const latestVersion = existingWorkflow.versions[existingWorkflow.versions.length - 1];
+                const latestVersionNumber = parseFloat(latestVersion.name); 
+    
+                if (!isNaN(latestVersionNumber)) {
+                    nextVersionNumber = latestVersionNumber + 0.1;
+                }
+            }
+    
+            const nextVersionName = nextVersionNumber.toFixed(1);
+    
+            existingWorkflow.versions.push({
+                name: nextVersionName,
+                content,
+                creationDate: new Date()
+            });
+    
+            await existingWorkflow.save();
+    
+            res.status(200).json(existingWorkflow);
+        } catch (error) {
+            console.error('Error updating workflow:', error);
+            res.status(500).json({ error: 'Failed to update workflow' });
+        }
+    };
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllWorkflows.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.workflowsNewProgram), this.newWorkflow.bind(this))
+        router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateWorkflow), this.updateWorkflow.bind(this))
 
         return router
     }

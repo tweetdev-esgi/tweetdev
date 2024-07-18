@@ -5,7 +5,7 @@ import { fetchPrograms } from "../../api/programs";
 import { convertTimeToPostTime } from "../../utils/utils";
 import { fetchWorkflows } from "../../api/workflow";
 
-function WorkflowSideBar(props) {
+function WorkflowSideBar({ workflows, selectedKey, selectWorkflow }) {
   // const programs: IProgram[] = [
   //   {
   //     id: "1",
@@ -55,9 +55,6 @@ function WorkflowSideBar(props) {
   // ];
   const [programs, setPrograms] = useState<any[]>([]);
 
-  const [workflows, setWorkflows] = useState<any[]>([]);
-  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
-  const [selectedKey, setSelectedKey] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -73,21 +70,7 @@ function WorkflowSideBar(props) {
         console.error("Error fetching programs:", error);
       }
     };
-    const fetchWorkflow = async () => {
-      try {
-        const sessionToken = getSession();
 
-        if (sessionToken) {
-          const programsData = await fetchWorkflows(sessionToken);
-          setWorkflows(programsData);
-        } else {
-          console.error("Error fetching programs");
-        }
-      } catch (error) {
-        console.error("Error fetching programs:", error);
-      }
-    };
-    fetchWorkflow();
     fetchData();
   }, []);
   const onDragStart = (event, nodeName, nodeType) => {
@@ -97,15 +80,6 @@ function WorkflowSideBar(props) {
     event.dataTransfer.effectAllowed = "move";
   };
 
-  const selectWorkflow = (e, workflow, key) => {
-    if (selectedKey === key) {
-      setSelectedWorkflow(null);
-      setSelectedKey(null);
-    } else {
-      setSelectedWorkflow(workflow);
-      setSelectedKey(key);
-    }
-  };
   return (
     <div
       style={{ width: "20vw" }}
