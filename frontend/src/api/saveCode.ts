@@ -34,7 +34,7 @@ export const deleteCodeByName = async (name: string, token: string): Promise<any
     }
 };
 
-// Récupérer tous les codes sauvegardé
+// Récupérer tous les codes sauvegardés
 export const getAllSaveCodes = async (token: string): Promise<any> => {
     try {
         const response = await axios.get(`${API_BASE_URL}/save-code/all`, {
@@ -50,7 +50,7 @@ export const getAllSaveCodes = async (token: string): Promise<any> => {
     }
 };
 
-// Recuperer un code par son nom
+// Récupérer un code par son nom
 export const getSaveCodeByName = async (name: string, token: string): Promise<any> => {
     try {
         const response = await axios.get(`${API_BASE_URL}/save-code/by-name?name=${name}`, {

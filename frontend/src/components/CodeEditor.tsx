@@ -1,17 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Box, HStack } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
-import LanguageSelector from "./LanguageSelector.tsx";
-import { CODE_SNIPPETS } from "../constants.tsx";
-import Output from "./Output.tsx";
-import FileUploader from "./FileUploader.tsx";
-import SaveCode from "./SaveCode.tsx";
+import LanguageSelector from "./LanguageSelector";
+import { CODE_SNIPPETS } from "../constants";
+import Output from "./Output";
+import FileUploader from "./FileUploader";
+import SaveCode from "./SaveCode";
 import { getSession } from "../services/sessionService";
 
 const CodeEditor: React.FC = () => {
     const editorRef = useRef<any>(null);
     const [value, setValue] = useState<string>("");
-    const [workflowName, setWorkflowName] = useState("Untitled Program");
     const [language, setLanguage] = useState<keyof typeof CODE_SNIPPETS>("javascript");
     const [token, setToken] = useState<string | null>(null);
 
@@ -43,25 +42,21 @@ const CodeEditor: React.FC = () => {
         // reader.readAsText(file);
     };
 
-    const handleChange = (e) => {
-        setWorkflowName(e.target.value);
-        console.log(value);
-    };
+
 
     return (
         <Box>
             <HStack>
                 <Box w="50%">
                     <div className="flex mb-2 gap-2">
+
                         {token && (
                             <SaveCode
-                                initialName={workflowName}
                                 initialCode={value}
                                 initialLanguage={language}
                                 token={token}
                             />
                         )}
-
                         <LanguageSelector language={language} onSelect={onSelect} />
                     </div>
                     <Editor

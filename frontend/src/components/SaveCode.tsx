@@ -1,28 +1,32 @@
-import React, {useState} from "react";
-import {Box, Button, Input} from "@chakra-ui/react";
-import {saveCode} from "../api/saveCode";
+import React, { useState, useEffect } from "react";
+import { Box, Button} from "@chakra-ui/react";
+import { saveCode } from "../api/saveCode";
 import toast from "react-hot-toast";
-import {getSession} from "../services/sessionService";
 
 interface SaveCodeProps {
-    initialName: string;
     initialCode: string;
     initialLanguage: string;
     token: string;
 }
 
-const SaveCode: React.FC<SaveCodeProps> = ({initialName, initialCode, initialLanguage, token}) => {
-    const [name, setName] = useState<string>(initialName);
-    const [code] = useState<string>(initialCode);
-    const [language] = useState<string>(initialLanguage);
+const SaveCode: React.FC<SaveCodeProps> = ({ initialCode, initialLanguage, token }) => {
+    const [code, setCode] = useState<string>(initialCode);
+    const [language, setLanguage] = useState<string>(initialLanguage);
+    const [name, setName] = useState<string>("Untitled Program");
+
+    useEffect(() => {
+        setCode(initialCode); // Assurez-vous que le code est mis à jour
+        setLanguage(initialLanguage); // Assurez-vous que la langue est mise à jour
+    }, [initialCode, initialLanguage]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
+    };
 
     const handleSave = async () => {
         try {
-            const token = getSession();
-            if (token) {
-                await saveCode({name, code, language}, token);
-                toast.success(`${name} saved successfully`);
-            }
+            await saveCode({ name, code, language }, token);
+            toast.success(`${name} saved successfully`);
         } catch (error) {
             console.error("Error saving code:", error);
             toast.error(`Failed to save ${name}`);
@@ -31,11 +35,11 @@ const SaveCode: React.FC<SaveCodeProps> = ({initialName, initialCode, initialLan
 
     return (
         <Box>
-            <Input
-                placeholder="Workflow Name"
+            <input
+                className="font-medium rounded px-2 outline-none"
+                type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                mb={2}
+                onChange={handleChange}
             />
             <Button onClick={handleSave} colorScheme="teal">
                 Save Code
