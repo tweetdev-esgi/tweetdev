@@ -25,10 +25,10 @@ const programSchema = new Schema<Program>({
         type: Schema.Types.String,
         required: true
     },
-    username : [{
+    username : {
         type: Schema.Types.String,
         required: false
-    }],
+    },
     creationDate : {
         type: Schema.Types.Date,
         required: true

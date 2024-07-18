@@ -1,5 +1,5 @@
 interface IProgram {
-    id: string;
+    _id: string;
     name: string;
     creationDate: string;
     content: string;
