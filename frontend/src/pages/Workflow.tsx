@@ -21,7 +21,11 @@ import FinishNode from "../components/workflow/FinishNode";
 import EditWorkflowButton from "../components/buttons/EditWorkflowButton";
 import UploadNode from "../components/workflow/UploadNode";
 import { getSession } from "../services/sessionService";
-import { fetchWorkflows } from "../api/workflow";
+import {
+  deleteWorkflowVersionByIdandName,
+  fetchWorkflows,
+  updateWorkflow,
+} from "../api/workflow";
 const initialNodes = [
   {
     id: "1",
@@ -75,7 +79,7 @@ const DnDFlow = () => {
   const [workflowName, setWorkflowName] = useState(
     (selectedWorkflow && selectedWorkflow.name) || "Untitled Workflow"
   );
-  const [selectedKey, setSelectedKey] = useState(null);
+  const [selectedKey, setSelectedKey] = useState(0);
 
   const [workflows, setWorkflows] = useState<any[]>([]);
   const handleChange = (e) => {
@@ -84,6 +88,13 @@ const DnDFlow = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      const updatedWorkflows = workflows.map((workflow, index) => {
+        if (index === selectedKey) {
+          return { ...workflow, name: workflowName };
+        }
+        return workflow;
+      });
+      setWorkflows(updatedWorkflows);
       toast.success(`${workflowName} saved`);
     }
   };
@@ -137,11 +148,22 @@ const DnDFlow = () => {
     },
     [edges, setEdges]
   );
-
-  const onSave = () => {
+  const onSave = async () => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-      console.log(flow);
+      const content = { content: flow };
+      try {
+        const sessionToken = getSession();
+        const update = await updateWorkflow(
+          sessionToken,
+          selectedWorkflow?._id ?? "",
+          content
+        );
+        toast.success("workflow updated successfully");
+        window.location.href = "";
+      } catch (error) {
+        toast.error("error while updating workflow");
+      }
       toast.success(`${workflowName} saved successfully`);
     }
   };
@@ -174,14 +196,13 @@ const DnDFlow = () => {
       toast.error("Workflow does not end with a finish node.");
     }
   };
-  const selectWorkflow = (e, workflow, key) => {
+  const selectWorkflow = (workflow, key) => {
     setSelectedWorkflow(workflow);
     console.log(workflow);
     setSelectedKey(key);
     setWorkflowName(workflow.name);
-    restoreFlow(workflow.versions[0].content);
-    console.log(workflow.versions[0].name);
-    setSelectedVersion(workflow.versions[0].name);
+    restoreFlow(workflow.versions[workflow.versions.length - 1].content);
+    setSelectedVersion(workflow.versions[workflow.versions.length - 1].name);
     setVersions(workflow.versions);
   };
 
@@ -205,6 +226,12 @@ const DnDFlow = () => {
         if (sessionToken) {
           const programsData = await fetchWorkflows(sessionToken);
           setWorkflows(programsData);
+
+          if (programsData.length > 0) {
+            selectWorkflow(programsData[0], 0);
+          } else {
+            console.log("No workflows available");
+          }
         } else {
           console.error("Error fetching workflows");
         }
@@ -215,6 +242,21 @@ const DnDFlow = () => {
 
     fetchWorkflow();
   }, []);
+
+  const deleteVersion = async (versionName: any) => {
+    try {
+      const sessionToken = getSession();
+      const update = await deleteWorkflowVersionByIdandName(
+        sessionToken,
+        selectedWorkflow?._id ?? "",
+        versionName
+      );
+      toast.success("version deleted successfully");
+      window.location.href = "";
+    } catch (error) {
+      toast.error("error while updating workflow");
+    }
+  };
   return (
     <div className="mt-20 mx-4">
       <div className="flex mb-2 gap-2">
@@ -229,8 +271,19 @@ const DnDFlow = () => {
           <summary className="btn px-2 min-h-0 h-6 ">{selectedVersion}</summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
             {versions.map((version) => (
-              <li key={version.name}>
-                <a onClick={(e) => selectVersion(e, version)}>{version.name}</a>
+              <li className="flex flex-row " key={version.name}>
+                <a
+                  className="flex-1"
+                  onClick={(e) => selectVersion(e, version)}
+                >
+                  {version.name}{" "}
+                </a>
+                <div
+                  className="flex items-center justify-center"
+                  onClick={() => deleteVersion({ versionName: version.name })}
+                >
+                  <Trash2 color="white" size={16}></Trash2>
+                </div>
               </li>
             ))}
           </ul>

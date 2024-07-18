@@ -89,7 +89,7 @@ function WorkflowSideBar({ workflows, selectedKey, selectWorkflow }) {
       {workflows.map((workflow, key) => (
         <div
           key={key}
-          onClick={(e) => selectWorkflow(e, workflow, key)}
+          onClick={(e) => selectWorkflow(workflow, key)}
           className={`flex flex-col gap-4 col-span-2 sm:col-span-2 lg:col-span-1 border-2 rounded-md p-2 cursor-pointer hover:bg-componentBgHover ${
             selectedKey === key ? "border-blue-500" : "border-componentBorder"
           }`}

@@ -142,21 +142,21 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
 //     }
 //   };
 
-//   export const deleteHubByName = async (token: string,name:string): Promise<any> => {
-//     try {
-//       const response = await axios.delete(`${API_BASE_URL}/hub/delete?name=${name}`, {
-
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${token}`
-//         }
-//       });
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error creating hub :", error);
-//       throw error;
-//     }
-//   };
+  export const deleteWorkflowVersionByIdandName = async (token: string,id:string,versionName:string): Promise<any> => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/workflow/delete/version/?id=${id}`, 
+        versionName,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting version :", error);
+      throw error;
+    }
+  };
 
 //   export const getIsAdminHub = async (token: string, name:string): Promise<any> => {
 //     try {
@@ -185,22 +185,22 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
 //     }
 //   };
 
-//   export const updateHub = async (token: string,name:string, hubInfo: any,): Promise<any> => {
-//     try {
-//       const response = await axios.patch(
-//         `${API_BASE_URL}/hub/update?name=${name}`,
-//         hubInfo, 
-//         {
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': `Bearer ${token}`
-//           }
-//         }
-//       );
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error updating hub info:", error);
-//       throw error;
-//     }
-//   };
+  export const updateWorkflow = async (token: string,id:string, workflowInfo: any,): Promise<any> => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/workflow?id=${id}`,
+        workflowInfo, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating hub info:", error);
+      throw error;
+    }
+  };
   
