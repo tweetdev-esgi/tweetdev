@@ -70,6 +70,10 @@ export default createBrowserRouter([
         element: <Workflow />,
       },
       {
+        path: "/workflow/:id",
+        element: <Workflow />,
+      },
+      {
         path: "/code",
         element: <CodeExecution />,
       },

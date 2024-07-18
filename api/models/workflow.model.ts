@@ -1,4 +1,5 @@
 import mongoose, { Schema, Model } from "mongoose";
+import { Like, likeSchema } from "./like.schema";
 
 
 const workflowSchema = new Schema<Workflow>({
@@ -10,6 +11,7 @@ const workflowSchema = new Schema<Workflow>({
         type: Schema.Types.Mixed,
         required: false
     },
+    like: [likeSchema], 
     username :{
         type: Schema.Types.String,
         required: false
@@ -50,6 +52,7 @@ export interface Workflow{
     name: string
     content: any
     username:string
+    like: Like[]
     language:string
     creationDate: Date
     versions: {

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { getSession } from "../../services/sessionService";
 import { fetchPrograms } from "../../api/programs";
 import { convertTimeToPostTime } from "../../utils/utils";
+import { fetchWorkflows } from "../../api/workflow";
 
 function WorkflowSideBar(props) {
   // const programs: IProgram[] = [
@@ -54,6 +55,9 @@ function WorkflowSideBar(props) {
   // ];
   const [programs, setPrograms] = useState<any[]>([]);
 
+  const [workflows, setWorkflows] = useState<any[]>([]);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [selectedKey, setSelectedKey] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,7 +73,21 @@ function WorkflowSideBar(props) {
         console.error("Error fetching programs:", error);
       }
     };
+    const fetchWorkflow = async () => {
+      try {
+        const sessionToken = getSession();
 
+        if (sessionToken) {
+          const programsData = await fetchWorkflows(sessionToken);
+          setWorkflows(programsData);
+        } else {
+          console.error("Error fetching programs");
+        }
+      } catch (error) {
+        console.error("Error fetching programs:", error);
+      }
+    };
+    fetchWorkflow();
     fetchData();
   }, []);
   const onDragStart = (event, nodeName, nodeType) => {
@@ -78,11 +96,35 @@ function WorkflowSideBar(props) {
     event.dataTransfer.setData("application/reactflow/node/name", nodeName);
     event.dataTransfer.effectAllowed = "move";
   };
+
+  const selectWorkflow = (e, workflow, key) => {
+    if (selectedKey === key) {
+      setSelectedWorkflow(null);
+      setSelectedKey(null);
+    } else {
+      setSelectedWorkflow(workflow);
+      setSelectedKey(key);
+    }
+  };
   return (
     <div
       style={{ width: "20vw" }}
       className="border-2 rounded-lg border-componentBorder bg-componentBg p-4 flex flex-col gap-4 max-h-[89vh] overflow-auto"
     >
+      <h1 className="text-lg font-semibold">Workflows</h1>
+      {workflows.map((workflow, key) => (
+        <div
+          key={key}
+          onClick={(e) => selectWorkflow(e, workflow, key)}
+          className={`flex flex-col gap-4 col-span-2 sm:col-span-2 lg:col-span-1 border-2 rounded-md p-2 cursor-pointer hover:bg-componentBgHover ${
+            selectedKey === key ? "border-blue-500" : "border-componentBorder"
+          }`}
+        >
+          <h1>{workflow.name}</h1>
+          {/* <h3>{workflow.username}</h3> */}
+        </div>
+      ))}
+      <h1 className="text-lg font-semibold">Nodes</h1>
       <div
         className="border-2 rounded-md border-componentBorder p-2 cursor-pointer hover:bg-componentBgHover select-none flex items-center gap-2"
         onDragStart={(event) => onDragStart(event, "Run", "run-node")}
@@ -109,6 +151,7 @@ function WorkflowSideBar(props) {
 
         <p className="font-medium">Upload Node</p>
       </div>
+      <h1 className="text-lg font-semibold">Programs</h1>
       {programs.map((program, key) => {
         return (
           <div
