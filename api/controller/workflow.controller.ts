@@ -127,7 +127,8 @@ export class WorkflowController {
         return 
     }
     readonly workflowsNewProgram = {
-        "content" : "string"
+        "content" : "string",
+        "language":"string"
     }
 
     newWorkflow = async (req: Request, res: Response): Promise<void> => {
@@ -135,6 +136,7 @@ export class WorkflowController {
             name: req.body.name,
             content: workflowSample,
             username : req.user?.username,
+            language : req.body.language,
             creationDate: new Date(),
             versions : [{
                 name:"1.O",

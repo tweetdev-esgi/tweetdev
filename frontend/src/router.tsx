@@ -11,6 +11,7 @@ import DetailsPost from "./pages/DetailsPost";
 import Workflow from "./pages/Workflow";
 import CodeExecution from "./pages/CodeExecution";
 import BrowsePrograms from "./pages/BrowsePrograms";
+import BrowseWorkflows from "./pages/BrowseWorkflows";
 export default createBrowserRouter([
   {
     path: "/",
@@ -59,6 +60,10 @@ export default createBrowserRouter([
       {
         path: "/post/:id",
         element: <DetailsPost />,
+      },
+      {
+        path: "/workflows",
+        element: <BrowseWorkflows />,
       },
       {
         path: "/workflow",
