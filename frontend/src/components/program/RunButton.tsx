@@ -1,6 +1,6 @@
 import { Button, useToast } from "@chakra-ui/react";
-import CustomButton from "./buttons/CustomButton";
 import { Play } from "lucide-react";
+import CustomButton from "../buttons/CustomButton";
 const RunCodeButton = ({
   editorRef,
   language,

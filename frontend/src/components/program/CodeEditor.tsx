@@ -1,18 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Box, HStack } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
-import LanguageSelector from "./LanguageSelector";
-import { CODE_SNIPPETS } from "../constants";
-import Output from "./Output";
-import FileUploader from "./FileUploader";
 import SaveCode from "./SaveCode";
-import { getSession } from "../services/sessionService";
-
+import { CODE_SNIPPETS } from "../../constants";
+import { getSession } from "../../services/sessionService";
+import FileUploader from "../FileUploader";
+import Output from "../Output";
+import LanguageSelector from "./LanguageSelector";
 const CodeEditor: React.FC = () => {
   const editorRef = useRef<any>(null);
-  const [value, setValue] = useState<string>("");
   const [language, setLanguage] =
     useState<keyof typeof CODE_SNIPPETS>("javascript");
+  const [value, setValue] = useState<string>(CODE_SNIPPETS[language]);
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {

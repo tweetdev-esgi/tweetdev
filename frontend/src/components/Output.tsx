@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
-import RunCodeButton from "./RunButton.tsx";
+import RunCodeButton from "./program/RunButton";
 
 const Output = ({ editorRef, language }) => {
   // const initialOutput = [

@@ -9,9 +9,10 @@ import CreatePost from "./pages/CreatePost";
 import Hub from "./pages/Hub";
 import DetailsPost from "./pages/DetailsPost";
 import Workflow from "./pages/Workflow";
-import CodeExecution from "./pages/CodeExecution";
 import BrowsePrograms from "./pages/BrowsePrograms";
 import BrowseWorkflows from "./pages/BrowseWorkflows";
+import DetailsCode from "./pages/DetailsCode";
+import CreateCode from "./pages/CreateCode";
 export default createBrowserRouter([
   {
     path: "/",
@@ -75,7 +76,12 @@ export default createBrowserRouter([
       },
       {
         path: "/code",
-        element: <CodeExecution />,
+        element: <CreateCode />,
+      },
+
+      {
+        path: "/code/:id",
+        element: <DetailsCode />,
       },
 
       // {

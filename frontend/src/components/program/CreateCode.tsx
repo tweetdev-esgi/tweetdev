@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
-import { saveCode } from "../api/saveCode";
 import toast from "react-hot-toast";
-import { createProgram } from "../api/programs";
-import { getSession } from "../services/sessionService";
+import { createProgram } from "../../api/programs";
+import { getSession } from "../../services/sessionService";
 
-interface SaveCodeProps {
+interface CreateCodeProps {
   initialCode: string;
   initialLanguage: string;
   token: string;
 }
 
-const SaveCode: React.FC<SaveCodeProps> = ({
+const CreateCode: React.FC<CreateCodeProps> = ({
   initialCode,
   initialLanguage,
   token,
@@ -43,10 +42,10 @@ const SaveCode: React.FC<SaveCodeProps> = ({
 
       const create = await createProgram(sessionToken, content);
 
-      toast.success(`${name} saved successfully`);
+      toast.success(`${name} created successfully`);
     } catch (error) {
-      console.error("Error saving code:", error);
-      toast.error(`Failed to save ${name}`);
+      console.error("Error creating code:", error);
+      toast.error(`Failed to create ${name}`);
     }
   };
 
@@ -62,10 +61,10 @@ const SaveCode: React.FC<SaveCodeProps> = ({
         className="btn mb-2 px-2 min-h-0 h-6 "
         onClick={() => handleSave()}
       >
-        Save Code
+        Create Code
       </summary>
     </Box>
   );
 };
 
-export default SaveCode;
+export default CreateCode;

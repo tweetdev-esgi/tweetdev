@@ -8,7 +8,7 @@ import { IPost } from "../interfaces";
 import { IHub } from "../interfaces/IHub";
 import { getSession } from "../services/sessionService";
 import { fetchPrograms } from "../api/programs";
-import Program from "../components/Program";
+import Program from "../components/program/Program";
 
 export default function BrowsePrograms(props) {
   const [posts, setPosts] = useState<IPost[]>([]);

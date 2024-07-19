@@ -1,18 +1,18 @@
-import "../styles/Post.css";
+import "../../styles/Post.css";
 import React, { useEffect, useState } from "react";
-import { getSession } from "../services/sessionService";
-import LikeButton from "./buttons/LikeButton";
+import { getSession } from "../../services/sessionService";
+import LikeButton from "../buttons/LikeButton";
 import { Dot, Trash2 } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
-import { convertTimeToPostTime } from "../utils/utils";
-import { fetchUserProfilePictureByUsername } from "../api/user";
-import { fetchHubByName } from "../api/hub";
+import { convertTimeToPostTime } from "../../utils/utils";
+import { fetchUserProfilePictureByUsername } from "../../api/user";
+import { fetchHubByName } from "../../api/hub";
 import { DotsThreeVertical } from "@phosphor-icons/react";
 import {
   deletePostById,
   fetchIsPostDeletable,
   getIsPostDeletable,
-} from "../api/post";
+} from "../../api/post";
 import toast from "react-hot-toast";
 
 export default function Program({ programInfo }) {
