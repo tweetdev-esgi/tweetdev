@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Box, HStack } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
-import SaveCode from "./SaveCode";
 import { CODE_SNIPPETS } from "../../constants";
 import { getSession } from "../../services/sessionService";
 import FileUploader from "../FileUploader";
 import Output from "../Output";
 import LanguageSelector from "./LanguageSelector";
+import CreateCode from "../../components/program/CreateCode";
 const CodeEditor: React.FC = () => {
   const editorRef = useRef<any>(null);
   const [language, setLanguage] =
@@ -48,7 +48,7 @@ const CodeEditor: React.FC = () => {
         <Box w="50%">
           <div className="flex mb-2 gap-2">
             {token && (
-              <SaveCode
+              <CreateCode
                 initialCode={value}
                 initialLanguage={language}
                 token={token}

@@ -228,7 +228,7 @@ export default function Program({ programInfo }) {
   return (
     <div
       className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer"
-      onClick={() => navigateTo("/post/" + programInfo._id)}
+      onClick={() => navigateTo("/program/" + programInfo._id)}
     >
       {renderPostingInfo()}
       <h2>{programInfo.name}</h2>

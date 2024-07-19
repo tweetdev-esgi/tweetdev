@@ -46,10 +46,57 @@ export class ProgramController {
         res.status(201).json(newPost)
         return 
     }
+
+    readonly paramsUpdateProgram = {
+        "name": "string",
+        "content": "string",
+        "inputFileType": "string",
+        "outputFileType": "string",
+        "language": "string"
+    }
+
+    updateProgram = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const updateData = {
+            name: req.body.name,
+            content: "```" + req.body.content + "```",
+            inputFileType: req.body.inputFileType,
+            outputFileType: req.body.outputFileType,
+            language: req.body.language,
+            
+        }
+
+        const updatedProgram = await ProgramModel.findByIdAndUpdate(id, updateData, { new: true })
+
+        if (updatedProgram) {
+            res.status(200).json(updatedProgram)
+        } else {
+            res.status(404).json({ message: "Program not found" })
+        }
+    }
+
+    deleteProgram = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const program = await ProgramModel.findById(id)
+
+        if (program) {
+            if (program.username === req.user?.username) {
+                await ProgramModel.findByIdAndDelete(id)
+                res.status(200).json({ message: "Program deleted successfully" })
+            } else {
+                res.status(403).json({ message: "You are not authorized to delete this program" })
+            }
+        } else {
+            res.status(404).json({ message: "Program not found" })
+        }
+    }
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
+        router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
+        router.delete('/', checkUserToken(), checkUserRole(RolesEnums.guest), this.deleteProgram.bind(this))
 
         return router
     }

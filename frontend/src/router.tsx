@@ -75,12 +75,12 @@ export default createBrowserRouter([
         element: <Workflow />,
       },
       {
-        path: "/code",
+        path: "/program",
         element: <CreateCode />,
       },
 
       {
-        path: "/code/:id",
+        path: "/program/:id",
         element: <DetailsCode />,
       },
 
