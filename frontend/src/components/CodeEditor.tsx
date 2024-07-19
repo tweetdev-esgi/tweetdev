@@ -11,7 +11,8 @@ import { getSession } from "../services/sessionService";
 const CodeEditor: React.FC = () => {
   const editorRef = useRef<any>(null);
   const [value, setValue] = useState<string>("");
-  const [language, setLanguage] = useState<keyof typeof CODE_SNIPPETS>("javascript");
+  const [language, setLanguage] =
+    useState<keyof typeof CODE_SNIPPETS>("javascript");
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,42 +43,39 @@ const CodeEditor: React.FC = () => {
     // reader.readAsText(file);
   };
 
-
-
   return (
-      <Box>
-        <HStack>
-          <Box w="50%">
-            <div className="flex mb-2 gap-2">
-
-              {token && (
-                  <SaveCode
-                      initialCode={value}
-                      initialLanguage={language}
-                      token={token}
-                  />
-              )}
-              <LanguageSelector language={language} onSelect={onSelect} />
-            </div>
-            <Editor
-                options={{
-                  minimap: {
-                    enabled: false,
-                  },
-                }}
-                height="75vh"
-                theme="vs-dark"
-                language={language}
-                defaultValue={CODE_SNIPPETS[language]}
-                onMount={onMount}
-                value={value}
-                onChange={(value) => setValue(value || "")}
-            />
-          </Box>
-          <Output editorRef={editorRef} language={language} />
-        </HStack>
-        <FileUploader onFileUpload={handleFileUpload} />
-      </Box>
+    <Box>
+      <HStack>
+        <Box w="50%">
+          <div className="flex mb-2 gap-2">
+            {token && (
+              <SaveCode
+                initialCode={value}
+                initialLanguage={language}
+                token={token}
+              />
+            )}
+            <LanguageSelector language={language} onSelect={onSelect} />
+          </div>
+          <Editor
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
+            height="75vh"
+            theme="vs-dark"
+            language={language}
+            defaultValue={CODE_SNIPPETS[language]}
+            onMount={onMount}
+            value={value}
+            onChange={(value) => setValue(value || "")}
+          />
+        </Box>
+        <Output editorRef={editorRef} language={language} />
+      </HStack>
+      <FileUploader onFileUpload={handleFileUpload} />
+    </Box>
   );
 };
 

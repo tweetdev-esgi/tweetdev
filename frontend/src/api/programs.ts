@@ -127,20 +127,20 @@ export const fetchPrograms = async (token: string): Promise<any> => {
 //   };
   
 
-//   export const createHub = async (token: string,formData: {  name:string, description:string, profileImageUrl:string, coverImageUrl:string }): Promise<any> => {
-//     try {
-//       const response = await axios.post(`${API_BASE_URL}/hub/create`, formData, {
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${token}`
-//         }
-//       });
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error creating hub :", error);
-//       throw error;
-//     }
-//   };
+  export const createProgram = async (token: string,formData:any): Promise<any> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/program/`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating program :", error);
+      throw error;
+    }
+  };
 
 //   export const deleteHubByName = async (token: string,name:string): Promise<any> => {
 //     try {

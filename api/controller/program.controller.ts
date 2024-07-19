@@ -23,7 +23,11 @@ export class ProgramController {
         return 
     }
     readonly paramsNewProgram = {
-        "content" : "string"
+        "name":"string",
+        "content" : "string",
+        "inputFileType": "string",
+        "outputFileType": "string",
+        "language": "string"
     }
 
     newProgram = async (req: Request, res: Response): Promise<void> => {
@@ -36,6 +40,7 @@ export class ProgramController {
             outputFileType:req.body.outputFileType,
             username : req.user?.username,
             creationDate: new Date(),
+            language: req.body.language,
         })
         
         res.status(201).json(newPost)
