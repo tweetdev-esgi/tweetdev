@@ -50,7 +50,7 @@ export default function CreatePost() {
   };
   return (
     <div className="container pt-24 flex flex-col justify-center gap-7 px-12 w-screen max-w-none  ">
-      <div className="ml-auto relative group ">
+      {/* <div className="ml-auto relative group ">
         <div className="absolute w-64  bg-componentBg rounded-sm z-10 top-0 right-0 hidden group-hover:block mt-6  ">
           <div className="flex flex-col p-2 gap-2 ">
             {userHubs.length > 0 &&
@@ -71,7 +71,20 @@ export default function CreatePost() {
 
           <span>Select Hub</span>
         </div>
-      </div>
+      </div> */}
+      <details className="dropdown ">
+        <summary className="btn px-2 min-h-0 h-6 ">
+          {selectedHubUsername}
+
+          {!selectedHubUsername && <span>No Hub Selected</span>}
+        </summary>
+        <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+          {userHubs.map((hub, key) => (
+            <HubSelect name={hub.name} updateParentState={handleHubSelect} />
+          ))}
+        </ul>
+      </details>
+
       <div>
         <h2 className="text-center text-xl font-bold">Create post</h2>
       </div>

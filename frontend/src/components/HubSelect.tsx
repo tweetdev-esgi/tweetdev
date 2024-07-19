@@ -5,9 +5,9 @@ const HubSelect = ({ name, updateParentState }) => {
     updateParentState(name);
   };
   return (
-    <div className="cursor-pointer" onClick={changeParentState}>
+    <li className="cursor-pointer" onClick={changeParentState}>
       <p>{name}</p>
-    </div>
+    </li>
   );
 };
 
