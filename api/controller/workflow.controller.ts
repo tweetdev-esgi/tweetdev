@@ -16,17 +16,15 @@ const workflowSample2={
                 "label": "Run"
             },
             "position": {
-                "x": -264,
-                "y": 20
+                "x": 0,
+                "y": 0
             },
             "width": 90,
             "height": 90,
-            "selected": false,
             "positionAbsolute": {
-                "x": -264,
-                "y": 20
-            },
-            "dragging": false
+                "x": 0,
+                "y": 0
+            }
         },
         {
             "id": "2",
@@ -35,17 +33,15 @@ const workflowSample2={
                 "label": "Upload"
             },
             "position": {
-                "x": -88,
-                "y": 32
+                "x": 200,
+                "y": 0
             },
             "width": 90,
             "height": 90,
-            "selected": false,
             "positionAbsolute": {
-                "x": -88,
-                "y": 32
-            },
-            "dragging": false
+                "x": 200,
+                "y": 0
+            }
         },
         {
             "id": "3",
@@ -54,17 +50,15 @@ const workflowSample2={
                 "label": "Code"
             },
             "position": {
-                "x": 348,
-                "y": 34
+                "x": 400,
+                "y": 0
             },
             "width": 90,
             "height": 90,
-            "selected": false,
             "positionAbsolute": {
-                "x": 348,
-                "y": 34
-            },
-            "dragging": false
+                "x": 400,
+                "y": 0
+            }
         },
         {
             "id": "4",
@@ -82,32 +76,13 @@ const workflowSample2={
                 "x": 600,
                 "y": 0
             }
-        },
-        {
-            "id": "dndnode_0",
-            "type": "code-node",
-            "position": {
-                "x": 159.4923573462745,
-                "y": 10.424092256959284
-            },
-            "data": {
-                "label": "my first program"
-            },
-            "width": 90,
-            "height": 90,
-            "selected": true,
-            "positionAbsolute": {
-                "x": 159.4923573462745,
-                "y": 10.424092256959284
-            },
-            "dragging": false
         }
     ],
     "edges": [],
     "viewport": {
-        "x": 318.50382132686275,
-        "y": 319.41295387152036,
-        "zoom": 0.5
+        "x": 39.54545454545462,
+        "y": 387.9189723320158,
+        "zoom": 1.1462450592885374
     }
 }
 export class WorkflowController {
@@ -137,7 +112,7 @@ export class WorkflowController {
             creationDate: new Date(),
             versions : [{
                 name:"1.0",
-                content: workflowSample2,
+                content: workflowSample,
                 creationDate: new Date()
             }]
         })
