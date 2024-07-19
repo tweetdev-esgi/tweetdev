@@ -5,10 +5,7 @@ const ACTIVE_COLOR = "blue.400";
 
 const LanguageSelector = ({ language, onSelect, isModifiable = false }) => {
   return (
-    <details
-      className={`dropdown ${isModifiable ? "" : "cursor-not-allowed"}`}
-      open={isModifiable}
-    >
+    <details className={`dropdown ${isModifiable ? "" : "cursor-not-allowed"}`}>
       <summary
         className={`btn px-2 min-h-0 h-6 ${
           isModifiable ? "" : "text-gray-500"
