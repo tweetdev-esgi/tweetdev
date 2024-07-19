@@ -25,6 +25,7 @@ import {
   deleteWorkflowVersionByIdandName,
   fetchWorkflows,
   updateWorkflow,
+  upgradeWorkflow,
 } from "../api/workflow";
 const initialNodes = [
   {
@@ -164,7 +165,27 @@ const DnDFlow = () => {
       } catch (error) {
         toast.error("error while updating workflow");
       }
-      toast.success(`${workflowName} saved successfully`);
+      toast.success(`${workflowName} updated successfully`);
+    }
+  };
+
+  const onSaveUpgrade = async () => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      const content = { content: flow };
+      try {
+        const sessionToken = getSession();
+        const upgrade = await upgradeWorkflow(
+          sessionToken,
+          selectedWorkflow?._id ?? "",
+          content
+        );
+        toast.success("workflow upgraded successfully");
+        window.location.href = "";
+      } catch (error) {
+        toast.error("error while upgrading workflow");
+      }
+      toast.success(`${workflowName} upgraded successfully`);
     }
   };
   const runWorkflow = () => {
@@ -326,6 +347,13 @@ const DnDFlow = () => {
                   color={"#22c55e "}
                   Icon={Save}
                   text={"Save"}
+                ></CustomButton>
+              </div>
+              <div onClick={onSaveUpgrade}>
+                <CustomButton
+                  color={"#22c55e "}
+                  Icon={Save}
+                  text={"Upgrade Version"}
                 ></CustomButton>
               </div>
               <div>

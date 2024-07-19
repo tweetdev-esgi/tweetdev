@@ -188,7 +188,26 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
   export const updateWorkflow = async (token: string,id:string, workflowInfo: any,): Promise<any> => {
     try {
       const response = await axios.patch(
-        `${API_BASE_URL}/workflow?id=${id}`,
+        `${API_BASE_URL}/workflow/?id=${id}`,
+        workflowInfo, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating hub info:", error);
+      throw error;
+    }
+  };
+  
+  export const upgradeWorkflow = async (token: string,id:string, workflowInfo: any,): Promise<any> => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/workflow/upgrade/?id=${id}`,
         workflowInfo, 
         {
           headers: {
