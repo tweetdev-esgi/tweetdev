@@ -33,7 +33,7 @@ export class ProgramController {
     newProgram = async (req: Request, res: Response): Promise<void> => {
         const newPost = await ProgramModel.create({
             name: req.body.name,
-            content: "```" +req.body.content +"```",
+            content:  req.body.content ,
             like: [],
             comments: [],
             inputFileType:req.body.inputFileType,
