@@ -25,6 +25,7 @@ import {
   deleteWorkflowVersionByIdandName,
   fetchWorkflows,
   updateWorkflow,
+  updateWorkflowName,
   upgradeWorkflow,
 } from "../api/workflow";
 const initialNodes = [
@@ -96,7 +97,7 @@ const DnDFlow = () => {
         return workflow;
       });
       setWorkflows(updatedWorkflows);
-      toast.success(`${workflowName} saved`);
+      onSaveName();
     }
   };
 
@@ -160,6 +161,7 @@ const DnDFlow = () => {
           selectedWorkflow?._id ?? "",
           content
         );
+        onSaveName();
         toast.success("workflow updated successfully");
         window.location.href = "";
       } catch (error) {
@@ -167,6 +169,20 @@ const DnDFlow = () => {
       }
       toast.success(`${workflowName} updated successfully`);
     }
+  };
+  const onSaveName = async () => {
+    const content = { name: workflowName };
+    try {
+      const sessionToken = getSession();
+      const update = await updateWorkflowName(
+        sessionToken,
+        selectedWorkflow?._id ?? "",
+        content
+      );
+    } catch (error) {
+      toast.error("error while updating workflow");
+    }
+    toast.success(`${workflowName} updated`);
   };
 
   const onSaveUpgrade = async () => {
@@ -180,6 +196,7 @@ const DnDFlow = () => {
           selectedWorkflow?._id ?? "",
           content
         );
+        onSaveName();
         toast.success("workflow upgraded successfully");
         window.location.href = "";
       } catch (error) {

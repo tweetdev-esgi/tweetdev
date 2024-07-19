@@ -229,10 +229,12 @@ export class WorkflowController {
             res.status(500).json({ error: 'Failed to update workflow' });
         }
     };
-
-    upgradeWorkflow = async (req: Request, res: Response): Promise<void> => {
+    readonly paramsSaveName = {
+        "name" : "string",
+    }
+    saveName = async (req: Request, res: Response): Promise<void> => {
         const id = req.query.id as string;
-        const { content } = req.body;
+        const { name } = req.body;
     
         try {
             const existingWorkflow = await WorkflowModel.findById(id);
@@ -242,24 +244,7 @@ export class WorkflowController {
                 return;
             }
     
-            let nextVersionNumber = 1;
-    
-            if (existingWorkflow.versions.length > 0) {
-                const latestVersion = existingWorkflow.versions[existingWorkflow.versions.length - 1];
-                const latestVersionNumber = parseFloat(latestVersion.name);
-    
-                if (!isNaN(latestVersionNumber)) {
-                    nextVersionNumber = Math.floor(latestVersionNumber) + 1;
-                }
-            }
-    
-            const nextVersionName = nextVersionNumber.toFixed(1);
-    
-            existingWorkflow.versions.push({
-                name: nextVersionName,
-                content,
-                creationDate: new Date()
-            });
+            existingWorkflow.set({name})
     
             await existingWorkflow.save();
     
@@ -324,6 +309,7 @@ export class WorkflowController {
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.workflowsNewProgram), this.newWorkflow.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateWorkflow), this.updateWorkflow.bind(this))
         router.patch('/upgrade', express.json(), checkUserToken(), checkBody(this.paramsUpdateWorkflow), this.upgradeWorkflow.bind(this))
+        router.patch('/name', express.json(), checkUserToken(), checkBody(this.paramsSaveName), this.saveName.bind(this))
         router.patch('/delete/version', express.json(), checkUserToken(), this.deleteWorkflowVersion.bind(this))
 
         return router
