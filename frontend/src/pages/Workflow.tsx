@@ -22,6 +22,7 @@ import EditWorkflowButton from "../components/buttons/EditWorkflowButton";
 import UploadNode from "../components/workflow/UploadNode";
 import { getSession } from "../services/sessionService";
 import {
+  createWorkflow,
   deleteWorkflow,
   deleteWorkflowVersionByIdandName,
   fetchWorkflows,
@@ -88,6 +89,7 @@ const DnDFlow = () => {
   const handleChange = (e) => {
     setWorkflowName(e.target.value);
   };
+  var isAnyWorkflow = workflows.length > 0 ? true : false;
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -310,38 +312,76 @@ const DnDFlow = () => {
       toast.error("error while deleting workflow");
     }
   };
+
+  const createWorkflows = async () => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      const content = { name: "Untitled Workflow", content: flow };
+      try {
+        const sessionToken = getSession();
+        const create = await createWorkflow(sessionToken, content);
+        toast.success("workflow created successfully");
+        window.location.href = "";
+      } catch (error) {
+        toast.error("error while creating workflow");
+      }
+    }
+  };
+
+  const initializeNodes = () => {
+    setNodes(initialNodes);
+  };
   return (
     <div className="mt-20 mx-4">
-      <div className="flex mb-2 gap-2">
-        <input
-          className="font-medium rounded px-2 outline-none "
-          type="text"
-          value={workflowName}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-        <details className="dropdown ">
-          <summary className="btn px-2 min-h-0 h-6 ">{selectedVersion}</summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-            {versions.map((version) => (
-              <li className="flex flex-row " key={version.name}>
-                <a
-                  className="flex-1"
-                  onClick={(e) => selectVersion(e, version)}
-                >
-                  Version {version.name}
-                </a>
-                <div
-                  className="flex items-center justify-center"
-                  onClick={() => deleteVersion({ versionName: version.name })}
-                >
-                  <Trash2 color="white" size={16}></Trash2>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </details>
-      </div>
+      {isAnyWorkflow && (
+        <div className="flex mb-2 gap-2">
+          <input
+            className="font-medium rounded px-2 outline-none "
+            type="text"
+            value={workflowName}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+          <details className="dropdown ">
+            <summary className="btn px-2 min-h-0 h-6 ">
+              {selectedVersion}
+            </summary>
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              {versions.map((version) => (
+                <li className="flex flex-row " key={version.name}>
+                  <a
+                    className="flex-1"
+                    onClick={(e) => selectVersion(e, version)}
+                  >
+                    Version {version.name}
+                  </a>
+                  <div
+                    className="flex items-center justify-center"
+                    onClick={() => deleteVersion({ versionName: version.name })}
+                  >
+                    <Trash2 color="white" size={16}></Trash2>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </details>
+          <summary
+            className="btn px-2 min-h-0 h-6 "
+            onClick={() => createWorkflows()}
+          >
+            Create Workflow
+          </summary>
+        </div>
+      )}
+      {!isAnyWorkflow && (
+        <summary
+          className="btn mb-2 px-2 min-h-0 h-6 "
+          onClick={() => createWorkflows()}
+        >
+          Create Workflow
+        </summary>
+      )}
+
       <div className="flex gap-2">
         <WorkflowSideBar
           workflows={workflows}
