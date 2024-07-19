@@ -236,11 +236,44 @@ export class WorkflowController {
             res.status(500).json({ message: 'Internal server error' });
         }
     };
+    isWorkflowDeletable = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const username = req.user?.username;
     
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
+        }
+    
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid Workflow ID format' });
+            return;
+        }
+    
+        try {
+            const workflow = await WorkflowModel.findById(id);
+    
+            if (!workflow) {
+                res.status(404).json({ message: 'Workflow not found' });
+                return;
+            }
+    
+            if (workflow.username === username) {
+                res.status(200).json(true);
+                return;
+            }
+    
+            res.status(200).json(false);
+        } catch (error) {
+            console.error('Error retrieving workflow :', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
 
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllWorkflows.bind(this))
+        router.get('/is-deletable', checkUserToken(), this.isWorkflowDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.workflowsNewProgram), this.newWorkflow.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateWorkflow), this.updateWorkflow.bind(this))
         router.patch('/upgrade', express.json(), checkUserToken(), checkBody(this.paramsUpdateWorkflow), this.upgradeWorkflow.bind(this))

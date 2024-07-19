@@ -158,6 +158,32 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
     }
   };
 
+  export const getIsWorkflowDeletable = async (token: string, id: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/workflow/is-deletable?id=${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching program:", error);
+      throw error;
+    }
+  };
+
+  export const fetchIsWorkflowDeletable = async (token: string, id: string) => {
+    try {
+      const data = await getIsWorkflowDeletable(token, id);
+      return data;
+    } catch (error) {
+      console.error("Error fetching program:", error);
+      throw error;
+    }
+  };
+
+
 //   export const getIsAdminHub = async (token: string, name:string): Promise<any> => {
 //     try {
 //       const response = await axios.get(`${API_BASE_URL}/hub/is-admin?name=${name}`, {

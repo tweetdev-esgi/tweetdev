@@ -142,6 +142,49 @@ export const fetchPrograms = async (token: string): Promise<any> => {
     }
   };
 
+  export const getIsProgramDeletable = async (token: string, id: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/program/is-deletable?id=${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching program:", error);
+      throw error;
+    }
+  };
+
+  export const fetchIsPostDeletable = async (token: string, id: string) => {
+    try {
+      const data = await getIsProgramDeletable(token, id);
+      return data;
+    } catch (error) {
+      console.error("Error fetching program:", error);
+      throw error;
+    }
+  };
+
+  export const deleteProgram = async (token: string,id:string): Promise<any> => {
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/program/?id=${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting program:", error);
+      throw error;
+    }
+  };
+  
 //   export const deleteHubByName = async (token: string,name:string): Promise<any> => {
 //     try {
 //       const response = await axios.delete(`${API_BASE_URL}/hub/delete?name=${name}`, {

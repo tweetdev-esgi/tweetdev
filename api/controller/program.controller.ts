@@ -1,4 +1,4 @@
-import { Model } from "mongoose"
+import mongoose, { Model } from "mongoose"
 import { Program, ProgramModel } from "../models"
 
 import * as express from "express"
@@ -90,10 +90,43 @@ export class ProgramController {
             res.status(404).json({ message: "Program not found" })
         }
     }
-
+    isProgramDeletable = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const username = req.user?.username;
+    
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
+        }
+    
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid program ID format' });
+            return;
+        }
+    
+        try {
+            const program = await ProgramModel.findById(id);
+    
+            if (!program) {
+                res.status(404).json({ message: 'program not found' });
+                return;
+            }
+    
+            if (program.username === username) {
+                res.status(200).json(true);
+                return;
+            }
+    
+            res.status(200).json(false);
+        } catch (error) {
+            console.error('Error retrieving program:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
+        router.get('/is-deletable', checkUserToken(), this.isProgramDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
         router.delete('/', checkUserToken(), checkUserRole(RolesEnums.guest), this.deleteProgram.bind(this))

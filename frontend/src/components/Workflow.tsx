@@ -14,6 +14,7 @@ import {
   getIsPostDeletable,
 } from "../api/post";
 import toast from "react-hot-toast";
+import { deleteWorkflow, getIsWorkflowDeletable } from "../api/workflow";
 
 export default function Workflow({ programInfo }) {
   const [input, setInput] = useState("");
@@ -22,7 +23,7 @@ export default function Workflow({ programInfo }) {
   const [userProfileImageUrl, setUserProfileImageUrl] = useState(null);
   const [hubnameProfileImageUrl, setHubnameProfileImageUrl] = useState(null);
   //   const isPostedinHub = programInfo.hubname ? true : false;
-  //   const [isDeletable, setIsDeletable] = useState(false);
+  const [isDeletable, setIsDeletable] = useState(false);
   const handleChildClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     path: string
@@ -37,40 +38,19 @@ export default function Workflow({ programInfo }) {
 
   const postedTimeIndicator = convertTimeToPostTime(programInfo.creationDate);
 
-  //   const deletePost = async (event) => {
-  //     event.stopPropagation();
-  //     try {
-  //       const deletePostResponse = await deletePostById(
-  //         sessionToken,
-  //         programInfo._id
-  //       );
-  //       toast.success("Deleted post !");
+  const deletePost = async (event) => {
+    event.stopPropagation();
+    try {
+      await deleteWorkflow(sessionToken, programInfo._id);
+      toast.success("Deleted post !");
 
-  //       window.location.href = "/";
-  //     } catch (error) {
-  //       toast.error("Error deleting post ");
-  //     }
-  //   };
+      window.location.href = "/workflows";
+    } catch (error) {
+      toast.error("Error deleting post ");
+    }
+  };
 
   useEffect(() => {
-    // const fetchHub = async () => {
-    //   try {
-    //     const cleanString = encodeURIComponent(programInfo.hubname);
-
-    //     const response = await fetchHubByName(sessionToken, cleanString);
-    //     console.log(response.profileImageUrl);
-    //     setHubnameProfileImageUrl(response.profileImageUrl);
-    //   } catch (error) {
-    //     console.error("Failed to fetch user profile picture:", error);
-    //   }
-    // };
-    // const fetchIsDeletable = async () => {
-    //   const isDeletableResponse = await getIsPostDeletable(
-    //     sessionToken,
-    //     programInfo._id
-    //   );
-    //   setIsDeletable(isDeletableResponse);
-    // };
     const fetchUserProfileImage = async () => {
       try {
         const url = await fetchUserProfilePictureByUsername(
@@ -82,8 +62,14 @@ export default function Workflow({ programInfo }) {
         console.error("Failed to fetch user profile picture:", error);
       }
     };
-    // fetchIsDeletable();
-    // fetchHub();
+    const fetchIsDeletable = async () => {
+      const isDeletableResponse = await getIsWorkflowDeletable(
+        sessionToken,
+        programInfo._id
+      );
+      setIsDeletable(isDeletableResponse);
+    };
+    fetchIsDeletable();
     fetchUserProfileImage();
   }, [sessionToken, programInfo.username]);
 
@@ -173,7 +159,7 @@ export default function Workflow({ programInfo }) {
             </span>
           </div>
         </div>
-        {/* {isDeletable && (
+        {isDeletable && (
           <>
             <div className="flex items-center cursor-pointer relative group ml-auto">
               <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block ">
@@ -188,7 +174,7 @@ export default function Workflow({ programInfo }) {
               <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
             </div>
           </>
-        )} */}
+        )}
       </div>
     );
   };
