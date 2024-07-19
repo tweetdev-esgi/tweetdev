@@ -84,7 +84,7 @@ export class ProgramController {
     
             const updateData = {
                 name: req.body.name,
-                content: "```" + req.body.content + "```",
+                content: req.body.content,
                 inputFileType: req.body.inputFileType,
                 outputFileType: req.body.outputFileType,
                 language: req.body.language,

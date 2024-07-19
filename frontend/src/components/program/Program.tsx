@@ -172,7 +172,11 @@ export default function Program({ programInfo }) {
       <h2>{programInfo.name}</h2>
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
         <MDEditor.Markdown
-          source={programInfo.content}
+          source={`
+\`\`\`${programInfo.language == "python" ? "python" : "js"}
+${programInfo.content}
+\`\`\`
+`}
           className="p-4 bg-inherit rounded-lg"
         />
       </p>
