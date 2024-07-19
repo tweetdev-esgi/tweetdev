@@ -123,8 +123,9 @@ export default function DetailsCode(props) {
               <Editor
                 options={{
                   minimap: {
-                    enabled: false,
+                    enabled: true,
                   },
+                  readOnly: !isModifiable,
                 }}
                 height="75vh"
                 theme="vs-dark"
