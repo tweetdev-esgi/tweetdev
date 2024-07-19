@@ -1,5 +1,5 @@
 import { Document, Model } from "mongoose"
-import { HubModel, PostModel, ProgramModel, Role, RoleModel, SessionModel, User, UserModel } from "../models"
+import { HubModel, PostModel, ProgramModel, Role, RoleModel, SessionModel, User, UserModel, WorkflowModel } from "../models"
 import { Router, Response, Request} from "express"
 import * as express from 'express'
 import { SecurityUtils } from "../utils"
@@ -196,6 +196,19 @@ export class UserController {
           console.error('Error updating programs:', error);
         }
       }
+      updateUsernameInWorkflows = async (oldUsername:string, newUsername:string) => {
+        try {
+          const result = await WorkflowModel.updateMany(
+            { username: oldUsername }, 
+            { username: newUsername } 
+          );
+      
+          console.log('Number of documents matched username:', result.matchedCount);
+          console.log('Number of documents modified username:', result.modifiedCount);
+        } catch (error) {
+          console.error('Error updating programs:', error);
+        }
+      }
 
     updateUser = async (req: Request, res: Response) => {
         const { currentPassword, password, ...userInfo } = req.body;
@@ -248,6 +261,7 @@ export class UserController {
                 this.updateUsernameInPostLikes ( last_username,updateData.username)
                 this.updateUsernameInPrograms(last_username,updateData.username)
                 this.updateUsernameInProgramsLikes(last_username,updateData.username)
+                this.updateUsernameInWorkflows(last_username,updateData.username)
             }
           } catch (e) {
             console.log(e);
@@ -621,6 +635,17 @@ export class UserController {
     }
 };
 
+deleteUsernameInWorkflows = async (username: string) => {
+    try {
+        const result = await WorkflowModel.deleteMany(
+            { username: username }
+        );
+
+        console.log('Number of documents deleted programs:', result.deletedCount);
+    } catch (error) {
+        console.error('Error deleting username in programs:', error);
+    }
+}
 
      deleteMe = async (req: Request, res: Response) => {
         try {
@@ -640,6 +665,7 @@ export class UserController {
           this.deleteUsernameInPostLikes(username)
             this.deleteUsernameInPrograms(username)
             this.deleteUsernameInProgramLikes(username)
+            this.deleteUsernameInWorkflows(username)
 
           await UserModel.deleteOne( {user:user.username});
 
