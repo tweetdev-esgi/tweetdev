@@ -242,4 +242,22 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
       throw error;
     }
   };
+    
+  export const deleteWorkflow = async (token: string,id:string,): Promise<any> => {
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/workflow/?id=${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting workflow:", error);
+      throw error;
+    }
+  };
   

@@ -1,4 +1,4 @@
-import { Model } from "mongoose"
+import mongoose, { Model } from "mongoose"
 import { Workflow, WorkflowModel } from "../models"
 
 import * as express from "express"
@@ -300,7 +300,44 @@ export class WorkflowController {
             res.status(500).json({ error: 'Failed to delete version' });
         }
     };
+    deleteWorkflowById = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const username = req.user?.username;
     
+        if (!id) {
+            res.status(400).json({ message: 'workflow ID is required' });
+            return;
+        }
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid workflow ID format' });
+            return;
+        }
+    
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
+        }
+    
+        try {
+            const workflow = await WorkflowModel.findById(id);
+    
+            if (!workflow) {
+                res.status(404).json({ message: 'workflow not found' });
+                return;
+            }
+    
+            if (workflow.username === username) {
+                await workflow.deleteOne();
+                res.status(200).json({ message: `workflow ${id} deleted` });
+                return;
+            }else {
+                res.status(401).json({ message: 'You are not the owner' });
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
     
 
     buildRouter = (): Router => {
@@ -311,7 +348,7 @@ export class WorkflowController {
         router.patch('/upgrade', express.json(), checkUserToken(), checkBody(this.paramsUpdateWorkflow), this.upgradeWorkflow.bind(this))
         router.patch('/name', express.json(), checkUserToken(), checkBody(this.paramsSaveName), this.saveName.bind(this))
         router.patch('/delete/version', express.json(), checkUserToken(), this.deleteWorkflowVersion.bind(this))
-
+        router.delete('/',express.json(),checkUserToken(), this.deleteWorkflowById.bind(this))
         return router
     }
 }

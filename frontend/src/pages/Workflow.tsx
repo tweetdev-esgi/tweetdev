@@ -22,6 +22,7 @@ import EditWorkflowButton from "../components/buttons/EditWorkflowButton";
 import UploadNode from "../components/workflow/UploadNode";
 import { getSession } from "../services/sessionService";
 import {
+  deleteWorkflow,
   deleteWorkflowVersionByIdandName,
   fetchWorkflows,
   updateWorkflow,
@@ -295,6 +296,20 @@ const DnDFlow = () => {
       toast.error("error while updating workflow");
     }
   };
+
+  const deleteWorkflowByID = async () => {
+    try {
+      const sessionToken = getSession();
+      const update = await deleteWorkflow(
+        sessionToken,
+        selectedWorkflow?._id ?? ""
+      );
+      toast.success("workflow deleted successfully");
+      window.location.href = "";
+    } catch (error) {
+      toast.error("error while deleting workflow");
+    }
+  };
   return (
     <div className="mt-20 mx-4">
       <div className="flex mb-2 gap-2">
@@ -314,7 +329,7 @@ const DnDFlow = () => {
                   className="flex-1"
                   onClick={(e) => selectVersion(e, version)}
                 >
-                  {version.name}{" "}
+                  Version {version.name}
                 </a>
                 <div
                   className="flex items-center justify-center"
@@ -373,7 +388,7 @@ const DnDFlow = () => {
                   text={"Upgrade Version"}
                 ></CustomButton>
               </div>
-              <div>
+              <div onClick={deleteWorkflowByID}>
                 <CustomButton
                   color={"#b91c1c"}
                   Icon={Trash2}
