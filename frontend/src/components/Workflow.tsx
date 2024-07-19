@@ -168,7 +168,7 @@ export default function Workflow({ programInfo }) {
                   onClick={(e) => deletePost(e)}
                 >
                   <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
-                  Delete Post
+                  Delete Workflow
                 </button>
               </div>
               <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
@@ -182,7 +182,7 @@ export default function Workflow({ programInfo }) {
   return (
     <div
       className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer"
-      onClick={() => navigateTo("/post/" + programInfo._id)}
+      onClick={() => navigateTo("/workflow/" + programInfo._id)}
     >
       {renderPostingInfo()}
       <h2>{programInfo.name}</h2>

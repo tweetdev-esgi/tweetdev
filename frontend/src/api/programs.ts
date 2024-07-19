@@ -185,6 +185,51 @@ export const fetchPrograms = async (token: string): Promise<any> => {
     }
   };
   
+  export const getProgramById = async (token: string, id: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/program/one`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        params:{ id:id} 
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching program:", error);
+      throw error;
+    }
+  };
+  export const fetchProgramById = async (token: string, id: string) => {
+    try {
+      const programData = await getProgramById(token,id);
+    
+      return programData;} catch (error) {
+        
+      console.error("Error fetching program:", error);
+      throw error;
+    }
+  };  
+
+  export const updateProgram = async (token: string,id:string, programInfo: any,): Promise<any> => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/program/?id=${id}`,
+        programInfo, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating program info:", error);
+      throw error;
+    }
+  };
+
 //   export const deleteHubByName = async (token: string,name:string): Promise<any> => {
 //     try {
 //       const response = await axios.delete(`${API_BASE_URL}/hub/delete?name=${name}`, {

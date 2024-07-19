@@ -63,7 +63,6 @@ export class ProgramController {
             inputFileType: req.body.inputFileType,
             outputFileType: req.body.outputFileType,
             language: req.body.language,
-            
         }
 
         const updatedProgram = await ProgramModel.findByIdAndUpdate(id, updateData, { new: true })
@@ -123,9 +122,33 @@ export class ProgramController {
             res.status(500).json({ message: 'Internal server error' });
         }
     };
+
+    getOneProgram = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+    
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid program ID format' })
+            return
+        }
+    
+        try {
+            const program = await ProgramModel.findById(id)
+    
+            if (program) {
+                res.status(200).json(program)
+            } else {
+                res.status(404).json({ message: 'Program not found' })
+            }
+        } catch (error) {
+            console.error('Error retrieving program:', error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
+        router.get('/one', checkUserToken(), this.getOneProgram.bind(this))
+
         router.get('/is-deletable', checkUserToken(), this.isProgramDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))

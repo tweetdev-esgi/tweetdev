@@ -287,3 +287,27 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
     }
   };
   
+  export const getWorkflowById = async (token: string, id: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/workflow/one`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        params:{ id:id} 
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching workflow:", error);
+      throw error;
+    }
+  };
+  export const fetchWorkflowById = async (token: string, id: string) => {
+    try {
+      const workflowData = await getWorkflowById(token,id);
+      return workflowData
+    } catch (error) {
+      console.error("Error fetching workflow:", error);
+      throw error;
+    }
+  };

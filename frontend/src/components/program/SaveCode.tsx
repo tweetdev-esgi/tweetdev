@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import toast from "react-hot-toast";
-import { createProgram } from "../../api/programs";
+import { createProgram, updateProgram } from "../../api/programs";
 import { getSession } from "../../services/sessionService";
 
 interface SaveCodeProps {
   initialCode: string;
   initialLanguage: string;
   token: string;
+  programData: any;
 }
 
 const SaveCode: React.FC<SaveCodeProps> = ({
   initialCode,
   initialLanguage,
   token,
+  programData,
 }) => {
   const [code, setCode] = useState<string>(initialCode);
   const [language, setLanguage] = useState<string>(initialLanguage);
@@ -40,7 +42,11 @@ const SaveCode: React.FC<SaveCodeProps> = ({
     try {
       const sessionToken = getSession();
 
-      const create = await createProgram(sessionToken, content);
+      const create = await updateProgram(
+        sessionToken,
+        programData._id,
+        programData
+      );
 
       toast.success(`${name} saved successfully`);
     } catch (error) {
