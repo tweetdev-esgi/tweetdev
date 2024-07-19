@@ -12,10 +12,6 @@ const workflowSchema = new Schema<Workflow>({
         type: Schema.Types.String,
         required: false
     },
-    language :{
-        type: Schema.Types.String,
-        required: false
-    },
     creationDate : {
         type: Schema.Types.Date,
         required: true
@@ -44,7 +40,6 @@ export interface Workflow{
     name: string
     username:string
     like: Like[]
-    language:string
     creationDate: Date
     versions: {
         name: string;

@@ -230,6 +230,46 @@ export class WorkflowController {
         }
     };
 
+    upgradeWorkflow = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const { content } = req.body;
+    
+        try {
+            const existingWorkflow = await WorkflowModel.findById(id);
+    
+            if (!existingWorkflow) {
+                res.status(404).json({ error: 'Workflow not found' });
+                return;
+            }
+    
+            let nextVersionNumber = 1;
+    
+            if (existingWorkflow.versions.length > 0) {
+                const latestVersion = existingWorkflow.versions[existingWorkflow.versions.length - 1];
+                const latestVersionNumber = parseFloat(latestVersion.name);
+    
+                if (!isNaN(latestVersionNumber)) {
+                    nextVersionNumber = Math.floor(latestVersionNumber) + 1;
+                }
+            }
+    
+            const nextVersionName = nextVersionNumber.toFixed(1);
+    
+            existingWorkflow.versions.push({
+                name: nextVersionName,
+                content,
+                creationDate: new Date()
+            });
+    
+            await existingWorkflow.save();
+    
+            res.status(200).json(existingWorkflow);
+        } catch (error) {
+            console.error('Error updating workflow:', error);
+            res.status(500).json({ error: 'Failed to update workflow' });
+        }
+    };
+
     deleteWorkflowVersion = async (req: Request, res: Response): Promise<void> => {
         const id = req.query.id as string;  
         const versionName = req.body.versionName;
