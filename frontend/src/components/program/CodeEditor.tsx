@@ -54,7 +54,11 @@ const CodeEditor: React.FC = () => {
                 token={token}
               />
             )}
-            <LanguageSelector language={language} onSelect={onSelect} />
+            <LanguageSelector
+              language={language}
+              onSelect={onSelect}
+              isModifiable={true}
+            />
           </div>
           <Editor
             options={{

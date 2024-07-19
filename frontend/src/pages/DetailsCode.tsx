@@ -7,7 +7,7 @@ import FileUploader from "../components/FileUploader";
 import Output from "../components/Output";
 import SaveCode from "../components/program/SaveCode";
 import LanguageSelector from "../components/program/LanguageSelector";
-import { fetchProgramById } from "../api/programs";
+import { fetchProgramById, getIsProgramDeletable } from "../api/programs";
 
 export default function DetailsCode(props) {
   const { id } = useParams<{ id: string }>();
@@ -16,21 +16,7 @@ export default function DetailsCode(props) {
   const [programData, setProgramData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [notFoundPost, setNotFoundPost] = useState<boolean>(false);
-
-  useEffect(() => {
-    const sessionToken = getSession();
-    if (sessionToken) {
-      setToken(sessionToken);
-    } else {
-      console.error("No session token found");
-    }
-  }, []);
-
-  const onMount = (editor: any) => {
-    editorRef.current = editor;
-    editor.focus();
-  };
-
+  const [isModifiable, setIsModifiable] = useState(false);
   const handleFileUpload = (file: File) => {
     // const reader = new FileReader();
     // reader.onload = (event) => {
@@ -47,12 +33,21 @@ export default function DetailsCode(props) {
     const fetchData = async () => {
       try {
         const sessionToken = getSession();
-        if (sessionToken && id) {
+        if (!sessionToken) {
+          console.error("No session token found");
+          return;
+        }
+        setToken(sessionToken);
+
+        if (id) {
           const programData = await fetchProgramById(sessionToken, id);
           if (programData) {
             setProgramData(programData);
             setLoading(false);
-            console.log(programData);
+
+            // Check if the program is deletable after fetching the program
+            const response = await getIsProgramDeletable(sessionToken, id);
+            setIsModifiable(response);
           } else {
             setNotFoundPost(true);
             setLoading(false);
@@ -61,7 +56,7 @@ export default function DetailsCode(props) {
       } catch (error) {
         setNotFoundPost(true);
         setLoading(false);
-        console.error("Error fetching post:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -104,23 +99,25 @@ export default function DetailsCode(props) {
           <HStack>
             <Box w="50%">
               <div className="flex mb-2 gap-2">
-                {token && (
+                {token && programData && (
                   <SaveCode
                     initialCode={programData.content}
                     initialLanguage={programData.language}
                     token={token}
                     programData={programData}
+                    isModifiable={isModifiable}
                   />
                 )}
                 <LanguageSelector
-                  language={programData.language}
+                  language={programData?.language || ""}
                   onSelect={(language) => {
                     setProgramData((prevData) => ({
                       ...prevData,
-                      language: language,
-                      content: programData.content, // Reset content to default for the new language if needed
+                      language,
+                      content: prevData?.content || "",
                     }));
                   }}
+                  isModifiable={isModifiable}
                 />
               </div>
               <Editor
@@ -131,9 +128,11 @@ export default function DetailsCode(props) {
                 }}
                 height="75vh"
                 theme="vs-dark"
-                language={programData.language}
-                value={programData.content}
-                onMount={onMount}
+                language={programData?.language || "javascript"}
+                value={programData?.content || ""}
+                onMount={(editor) => {
+                  editorRef.current = editor;
+                }}
                 onChange={(value) =>
                   setProgramData((prevData) => ({
                     ...prevData,
@@ -142,7 +141,10 @@ export default function DetailsCode(props) {
                 }
               />
             </Box>
-            <Output editorRef={editorRef} language={programData.language} />
+            <Output
+              editorRef={editorRef}
+              language={programData?.language || "javascript"}
+            />
           </HStack>
           <FileUploader onFileUpload={handleFileUpload} />
         </Box>

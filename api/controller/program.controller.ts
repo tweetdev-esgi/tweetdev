@@ -57,20 +57,49 @@ export class ProgramController {
 
     updateProgram = async (req: Request, res: Response): Promise<void> => {
         const id = req.query.id as string;
-        const updateData = {
-            name: req.body.name,
-            content: "```" + req.body.content + "```",
-            inputFileType: req.body.inputFileType,
-            outputFileType: req.body.outputFileType,
-            language: req.body.language,
+        const username = req.user?.username;
+    
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
         }
-
-        const updatedProgram = await ProgramModel.findByIdAndUpdate(id, updateData, { new: true })
-
-        if (updatedProgram) {
-            res.status(200).json(updatedProgram)
-        } else {
-            res.status(404).json({ message: "Program not found" })
+    
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid program ID format' });
+            return;
+        }
+    
+        try {
+            const program = await ProgramModel.findById(id);
+    
+            if (!program) {
+                res.status(404).json({ message: 'Program not found' });
+                return;
+            }
+    
+            if (program.username !== username) {
+                res.status(403).json({ message: 'You do not have permission to update this program' });
+                return;
+            }
+    
+            const updateData = {
+                name: req.body.name,
+                content: "```" + req.body.content + "```",
+                inputFileType: req.body.inputFileType,
+                outputFileType: req.body.outputFileType,
+                language: req.body.language,
+            };
+    
+            const updatedProgram = await ProgramModel.findByIdAndUpdate(id, updateData, { new: true });
+    
+            if (updatedProgram) {
+                res.status(200).json(updatedProgram);
+            } else {
+                res.status(404).json({ message: "Program not found" });
+            }
+        } catch (error) {
+            console.error('Error updating program:', error);
+            res.status(500).json({ message: 'Internal server error' });
         }
     }
 

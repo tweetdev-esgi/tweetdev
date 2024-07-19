@@ -9,6 +9,7 @@ interface SaveCodeProps {
   initialLanguage: string;
   token: string;
   programData: any;
+  isModifiable: boolean;
 }
 
 const SaveCode: React.FC<SaveCodeProps> = ({
@@ -16,10 +17,11 @@ const SaveCode: React.FC<SaveCodeProps> = ({
   initialLanguage,
   token,
   programData,
+  isModifiable,
 }) => {
   const [code, setCode] = useState<string>(initialCode);
   const [language, setLanguage] = useState<string>(initialLanguage);
-  const [name, setName] = useState<string>("Untitled Program");
+  const [name, setName] = useState<string>(programData.name);
 
   useEffect(() => {
     setCode(initialCode);
@@ -42,6 +44,7 @@ const SaveCode: React.FC<SaveCodeProps> = ({
     try {
       const sessionToken = getSession();
 
+      programData.name = name;
       const create = await updateProgram(
         sessionToken,
         programData._id,
@@ -62,13 +65,16 @@ const SaveCode: React.FC<SaveCodeProps> = ({
         type="text"
         value={name}
         onChange={handleChange}
+        disabled={!isModifiable}
       />
-      <summary
-        className="btn mb-2 px-2 min-h-0 h-6 "
-        onClick={() => handleSave()}
-      >
-        Save Code
-      </summary>
+      {isModifiable && (
+        <Button
+          className="btn mb-2 px-2 min-h-0 h-6"
+          onClick={() => handleSave()}
+        >
+          Save Code
+        </Button>
+      )}
     </Box>
   );
 };
