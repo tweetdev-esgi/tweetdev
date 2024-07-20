@@ -14,6 +14,7 @@ import {
   getIsPostDeletable,
 } from "../api/post";
 import toast from "react-hot-toast";
+import { fetchProgramById } from "../api/programs";
 
 function Post({ postInfo }) {
   const [value, setValue] = React.useState(`
@@ -55,6 +56,9 @@ function Post({ postInfo }) {
   const [hubnameProfileImageUrl, setHubnameProfileImageUrl] = useState(null);
   const isPostedinHub = postInfo.hubname ? true : false;
   const [isDeletable, setIsDeletable] = useState(false);
+  const [programContent, setProgramContent] = useState();
+
+  const [programLanguage, setProgramLanguage] = useState();
   const handleChildClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     path: string
@@ -96,6 +100,20 @@ function Post({ postInfo }) {
         console.error("Failed to fetch user profile picture:", error);
       }
     };
+    const fetchData = async () => {
+      try {
+        if (postInfo.program) {
+          const response = await fetchProgramById(
+            sessionToken,
+            postInfo.program
+          );
+          setProgramContent(response.content);
+          setProgramLanguage(response.language);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile picture:", error);
+      }
+    };
     const fetchIsDeletable = async () => {
       const isDeletableResponse = await getIsPostDeletable(
         sessionToken,
@@ -117,6 +135,7 @@ function Post({ postInfo }) {
     fetchIsDeletable();
     fetchHub();
     fetchUserProfileImage();
+    fetchData();
   }, [sessionToken, postInfo.username]);
 
   const renderPostingInfo = () => {
@@ -231,7 +250,16 @@ function Post({ postInfo }) {
       {renderPostingInfo()}
       <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
         <MDEditor.Markdown
-          source={postInfo.content}
+          source={
+            !programContent
+              ? postInfo.content
+              : postInfo.content +
+                `
+\`\`\`${programLanguage == "python" ? "python" : "js"}
+${programContent}
+\`\`\`
+`
+          }
           className="p-4 bg-inherit rounded-lg"
         />
       </p>

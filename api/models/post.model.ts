@@ -26,7 +26,11 @@ const postShemma = new Schema<Post>({
     hubname: {
         type: Schema.Types.String,
         required: false
-    }
+    },
+    program: {
+        type: Schema.Types.String,
+        required: false
+    },
 }, {
     versionKey: false,
     collection: "Posts"
@@ -39,6 +43,7 @@ export interface Post{
     creationDate : Date
     username: string
     hubname: string | undefined
+    program: string; 
 }
 
 

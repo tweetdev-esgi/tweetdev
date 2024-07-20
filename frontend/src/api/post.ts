@@ -143,7 +143,7 @@ export const fetchPosts = async (token: string, fetchAllPosts: boolean): Promise
       throw error;
     }
   };
-  export const createPost = async (token: string,formData: {  content:string, hubname?:string }): Promise<any> => {
+  export const createPost = async (token: string,formData: {  content:string, hubname?:string, program?:string }): Promise<any> => {
     try {
       const response = await axios.post(`${API_BASE_URL}/post`, formData, {
         headers: {

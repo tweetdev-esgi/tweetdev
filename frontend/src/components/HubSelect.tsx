@@ -1,8 +1,12 @@
 import React from "react";
 
-const HubSelect = ({ name, updateParentState }) => {
+const HubSelect = ({ name, updateParentState, id }) => {
   const changeParentState = () => {
-    updateParentState(name);
+    if (id != undefined) {
+      updateParentState(name, id);
+    } else {
+      updateParentState(name);
+    }
   };
   return (
     <li className="cursor-pointer" onClick={changeParentState}>

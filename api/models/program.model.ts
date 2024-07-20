@@ -39,7 +39,7 @@ const programSchema = new Schema<Program>({
     },
     language: {
         type: Schema.Types.String,
-        enum: Object.values(Language), // Use the enum values for validation
+        enum: Object.values(Language), 
         required: true
     }
 }, {

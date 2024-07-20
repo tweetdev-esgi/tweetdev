@@ -30,6 +30,7 @@ export class PostController {
             creationDate: new Date(),
             username : req.user?.username,
             hubname : req.body.hubname ? req.body.hubname : null,
+            program : req.body.program ? req.body.program : null,
         })
         
         res.status(201).json(newPost)
