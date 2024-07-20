@@ -85,7 +85,10 @@ function WorkflowSideBar({ workflows, selectedKey, selectWorkflow }) {
       style={{ width: "20vw" }}
       className="border-2 rounded-lg border-componentBorder bg-componentBg p-4 flex flex-col gap-4 max-h-[89vh] overflow-auto"
     >
-      <h1 className="text-lg font-semibold">Workflows</h1>
+      {workflows.length > 0 && (
+        <h1 className="text-lg font-semibold">Workflows</h1>
+      )}
+
       {workflows.map((workflow, key) => (
         <div
           key={key}

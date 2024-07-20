@@ -13,6 +13,7 @@ import BrowsePrograms from "./pages/BrowsePrograms";
 import BrowseWorkflows from "./pages/BrowseWorkflows";
 import DetailsCode from "./pages/DetailsCode";
 import CreateCode from "./pages/CreateCode";
+import DetailsWorkflow from "./pages/DetailsWorkflow";
 export default createBrowserRouter([
   {
     path: "/",
@@ -72,7 +73,7 @@ export default createBrowserRouter([
       },
       {
         path: "/workflow/:id",
-        element: <Workflow />,
+        element: <DetailsWorkflow />,
       },
       {
         path: "/program",
