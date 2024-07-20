@@ -119,13 +119,16 @@ export default function Program({ programInfo }) {
     fetchHub();
     fetchUserProfileImage();
   }, [sessionToken, programInfo.username]);
-
+  const noClick = (e) => {
+    e.stopPropagation();
+    return;
+  };
   return (
     <div
       className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover cursor-pointer"
       onClick={() => navigateTo("/program/" + programInfo._id)}
     >
-      <div className="flex gap-3 mb-3 ">
+      <div className="flex gap-3 mb-3 cursor-text  ">
         <div
           className="cursor-pointer bg-blue-700 w-10 h-10 rounded-full"
           onClick={(e) =>
@@ -169,17 +172,19 @@ export default function Program({ programInfo }) {
           </>
         )}
       </div>
-      <h2>{programInfo.name}</h2>
-      <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
-        <MDEditor.Markdown
-          source={`
+      <div className="cursor-text" onClick={(e) => noClick(e)}>
+        <h2>{programInfo.name}</h2>
+        <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
+          <MDEditor.Markdown
+            source={`
 \`\`\`${programInfo.language == "python" ? "python" : "js"}
 ${programInfo.content}
 \`\`\`
 `}
-          className="p-4 bg-inherit rounded-lg"
-        />
-      </p>
+            className="p-4 bg-inherit rounded-lg"
+          />
+        </p>
+      </div>
       <div className="flex mt-2 ">
         <LikeButton
           sessionToken={sessionToken}

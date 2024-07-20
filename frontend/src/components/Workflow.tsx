@@ -72,7 +72,10 @@ export default function Workflow({ programInfo }) {
     fetchIsDeletable();
     fetchUserProfileImage();
   }, [sessionToken, programInfo.username]);
-
+  const noClick = (e) => {
+    e.stopPropagation();
+    return;
+  };
   const renderPostingInfo = () => {
     // if (isPostedinHub) {
     //   return (
@@ -185,13 +188,16 @@ export default function Workflow({ programInfo }) {
       onClick={() => navigateTo("/workflow/" + programInfo._id)}
     >
       {renderPostingInfo()}
-      <h2>{programInfo.name}</h2>
-      <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
-        {/* <MDEditor.Markdown
+      <div className="cursor-text" onClick={(e) => noClick(e)}>
+        <h2 className="font-medium text-sm">{programInfo.name}</h2>
+
+        <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
+          {/* <MDEditor.Markdown
           source={programInfo.content}
           className="p-4 bg-inherit rounded-lg"
         /> */}
-      </p>
+        </p>
+      </div>
       <div className="flex mt-2 ">
         <LikeButton
           sessionToken={sessionToken}

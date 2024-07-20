@@ -137,7 +137,10 @@ function Post({ postInfo }) {
     fetchUserProfileImage();
     fetchData();
   }, [sessionToken, postInfo.username]);
-
+  const noClick = (e) => {
+    e.stopPropagation();
+    return;
+  };
   const renderPostingInfo = () => {
     if (isPostedinHub) {
       return (
@@ -196,6 +199,7 @@ function Post({ postInfo }) {
         </div>
       );
     }
+
     return (
       <div className="flex gap-3 mb-3 ">
         <div
@@ -248,21 +252,23 @@ function Post({ postInfo }) {
       onClick={() => navigateTo("/post/" + postInfo._id)}
     >
       {renderPostingInfo()}
-      <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
-        <MDEditor.Markdown
-          source={
-            !programContent
-              ? postInfo.content
-              : postInfo.content +
-                `
+      <div className="cursor-text" onClick={(e) => noClick(e)}>
+        <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
+          <MDEditor.Markdown
+            source={
+              !programContent
+                ? postInfo.content
+                : postInfo.content +
+                  `
 \`\`\`${programLanguage == "python" ? "python" : "js"}
 ${programContent}
 \`\`\`
 `
-          }
-          className="p-4 bg-inherit rounded-lg"
-        />
-      </p>
+            }
+            className="p-4 bg-inherit rounded-lg"
+          />
+        </p>
+      </div>
       <div className="flex mt-2 ">
         <LikeButton
           sessionToken={sessionToken}

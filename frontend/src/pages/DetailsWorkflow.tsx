@@ -75,7 +75,7 @@ const DetailsWorkflow = () => {
   const [selectedVersion, setSelectedVersion] = useState("");
   const [versions, setVersions] = useState([]);
   const [token, setToken] = useState("");
-  const [notFoundWorkflow, setNotFoundWorkflow] = useState();
+  const [notFoundWorkflow, setNotFoundWorkflow] = useState(false);
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
