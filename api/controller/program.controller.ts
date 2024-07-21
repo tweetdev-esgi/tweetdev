@@ -7,6 +7,12 @@ import { checkBody, checkUserRole, checkUserToken } from "../middleware"
 import { checkQuery } from "../middleware/query.middleware"
 import { RolesEnums } from "../enums"
 
+const path = require('path');
+const fs = require('fs')
+const Docker = require('dockerode')
+const docker = new Docker();
+
+
 export class ProgramController {
 
     readonly path: string
@@ -173,6 +179,76 @@ export class ProgramController {
             res.status(500).json({ message: 'Internal server error' })
         }
     }
+
+    sanitizeOutput = (output: string): string => {
+        // Remove control characters (non-printable characters)
+        return output.replace(/[\x00-\x1F\x7F]/g, '').trim();
+    };
+    executeCode = async (language: string, code: string): Promise<string> => {
+        const scriptFile = `script.${language === 'python' ? 'py' : 'js'}`;
+        const scriptPath = path.join(__dirname, 'scripts', scriptFile);
+    
+        if (!fs.existsSync(path.join(__dirname, 'scripts'))) {
+            fs.mkdirSync(path.join(__dirname, 'scripts'));
+        }
+    
+        fs.writeFileSync(scriptPath, code, { encoding: 'utf8' });
+    
+        const container = await docker.createContainer({
+            Image: 'multi-language-executor',
+            AttachStdout: true,
+            AttachStderr: true,
+            Cmd: [language],
+            HostConfig: {
+                Binds: [`${path.join(__dirname, 'scripts')}:/scripts`]
+            }
+        });
+    
+        await container.start();
+    
+        let output = '';
+        const logStream = await container.logs({
+            stdout: true,
+            stderr: true,
+            follow: true
+        });
+    
+        logStream.on('data', (data: Buffer) => {
+            output += data.toString('utf8');
+        });
+    
+        await new Promise((resolve) => {
+            logStream.on('end', resolve);
+        });
+    
+        await container.wait();
+        await container.remove();
+        fs.unlinkSync(scriptPath);
+    
+        return this.sanitizeOutput(output); // Ensure sanitizeOutput function is defined
+    };
+
+    executeProgram = async (req: Request, res: Response): Promise<void> => {
+        const { language, code } = req.body;
+    
+        if (!language || !code) {
+            res.status(400).json({ message: 'Language and code are required' });
+            return;
+        }
+    
+        if (!['python', 'javascript'].includes(language)) {
+            res.status(400).json({ message: 'Invalid language specified' });
+            return;
+        }
+    
+        try {
+            const output = await this.executeCode(language, code);
+            res.status(200).json({ output });
+        } catch (error) {
+            console.error('Error executing code:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
@@ -182,7 +258,7 @@ export class ProgramController {
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
         router.delete('/', checkUserToken(), checkUserRole(RolesEnums.guest), this.deleteProgram.bind(this))
-
+        router.post('/execute', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), this.executeProgram.bind(this))
         return router
     }
 }
