@@ -1,6 +1,7 @@
 import { Button, useToast } from "@chakra-ui/react";
 import { Play } from "lucide-react";
 import CustomButton from "../buttons/CustomButton";
+import { executeProgram } from "../../api/programs";
 const RunCodeButton = ({
   editorRef,
   language,
@@ -16,11 +17,13 @@ const RunCodeButton = ({
     const sourceCode = editorRef.current.getValue();
     try {
       setIsLoading(true);
-      //   const result = await executeCode(language, sourceCode);
-      //   setOutput(result.output.split("\n"));
-      //   setIsError(!!result.stderr);
-      setOutput("fsdf");
-      console.log("Execution result:", "not implemented");
+      const body = {
+        language,
+        code: sourceCode,
+      };
+      const result = await executeProgram("66942a72221193cfb4796a69", body);
+      setOutput(result.output.split("\n"));
+      setIsError(!!result.stderr);
     } catch (error) {
       console.error("Error executing code:", error);
       toast({
@@ -36,9 +39,9 @@ const RunCodeButton = ({
   };
 
   return (
-    <div onClick={runCode}>
-      <CustomButton color={"#355cc9"} Icon={Play} text={"Run Code"} />
-    </div>
+    <summary className="btn mb-2 px-2 min-h-0 h-6 " onClick={runCode}>
+      Run Code
+    </summary>
   );
 };
 

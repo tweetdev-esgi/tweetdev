@@ -4,7 +4,7 @@ import { Editor } from "@monaco-editor/react";
 import { getSession } from "../services/sessionService";
 import { useParams } from "react-router-dom";
 import FileUploader from "../components/FileUploader";
-import Output from "../components/Output";
+import Output from "../components/program/Output";
 import SaveCode from "../components/program/SaveCode";
 import LanguageSelector from "../components/program/LanguageSelector";
 import { fetchProgramById, getIsProgramDeletable } from "../api/programs";

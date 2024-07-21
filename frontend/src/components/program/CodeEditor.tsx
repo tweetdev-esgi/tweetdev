@@ -4,7 +4,7 @@ import { Editor } from "@monaco-editor/react";
 import { CODE_SNIPPETS } from "../../constants";
 import { getSession } from "../../services/sessionService";
 import FileUploader from "../FileUploader";
-import Output from "../Output";
+import Output from "./Output";
 import LanguageSelector from "./LanguageSelector";
 import CreateCode from "../../components/program/CreateCode";
 const CodeEditor: React.FC = () => {
@@ -46,7 +46,7 @@ const CodeEditor: React.FC = () => {
     <Box>
       <HStack>
         <Box w="50%">
-          <div className="flex mb-2 gap-2">
+          <div className="flex gap-2">
             {token && (
               <CreateCode
                 initialCode={value}

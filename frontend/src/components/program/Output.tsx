@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
-import RunCodeButton from "./program/RunButton";
+import RunCodeButton from "./RunButton";
 
 const Output = ({ editorRef, language }) => {
   // const initialOutput = [
@@ -16,7 +16,7 @@ const Output = ({ editorRef, language }) => {
   const [isError, setIsError] = useState(false);
 
   return (
-    <Box w="50%">
+    <Box w="50%" mb={-8}>
       <RunCodeButton
         editorRef={editorRef}
         language={language}
@@ -27,16 +27,17 @@ const Output = ({ editorRef, language }) => {
       />
       <Box
         height="75vh"
-        p={2}
+        p={16}
         color={isError ? "red.400" : ""}
         border="1px solid"
         borderRadius={4}
+        backgroundColor={"#1E1E1E"}
         borderColor={isError ? "red.500" : "#333"}
       >
         {/* {output
           ? output.map((line, i) => <Text key={i}>{line}</Text>)
           : 'Click "Run Code" to see the output here'} */}
-        {output}
+        <div className="text-sm font-normal">{output}</div>
       </Box>
     </Box>
   );

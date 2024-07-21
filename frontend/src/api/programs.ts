@@ -211,6 +211,31 @@ export const fetchPrograms = async (token: string): Promise<any> => {
     }
   };  
 
+  export const executeProgram = async (token: string, body:any): Promise<any> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/program/execute`,body, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error executing program:", error);
+      throw error;
+    }
+  };
+  export const fetchExecuteProgram = async (token: string, body: any) => {
+    try {
+      const programData = await executeProgram(token,body);
+    
+      return programData;} catch (error) {
+        
+      console.error("Error executing program:", error);
+      throw error;
+    }
+  };  
+
   export const updateProgram = async (token: string,id:string, programInfo: any,): Promise<any> => {
     try {
       const response = await axios.put(
