@@ -295,15 +295,9 @@ export class ProgramController {
     
             // Vérifiez si outputFileType est spécifié
             if (outputFileType != "void") {
-                // const fileName ="script.py"
-                // const containerPath = `/app/${fileName}`; // Chemin du fichier dans le conteneur
-
-                // // Obtenir le fichier depuis le conteneur
-                // const stream = await container.getArchive({ path: containerPath });
-                // res.download(stream)
               
                 try {
-                    const fileName ="script.py"
+                    const fileName ="output." + outputFileType
                     const containerPath = `/app/${fileName}`; // Chemin du fichier dans le conteneur
     
                     // Obtenir le fichier depuis le conteneur

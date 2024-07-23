@@ -4,6 +4,7 @@ import CustomButton from "../buttons/CustomButton";
 import { executeProgram } from "../../api/programs";
 import { useState } from "react";
 import FileDownload from "./FileDownload";
+import hotToast from "react-hot-toast"; // Rename the imported 'toast' variable
 
 const RunCodeButton = ({
   editorRef,
@@ -36,22 +37,21 @@ const RunCodeButton = ({
         formData.append("file", uploadedFile);
       }
 
-      const result = await executeProgram(
-        "66942a72221193cfb4796a69",
-        formData,
-        outputType
-      );
+      const result = await executeProgram("66942a72221193cfb4796a69", formData);
 
       if (outputType === "void") {
         setOutput(result.split("\n"));
+        hotToast.success("Le code a été exécuté avec succès.");
         setIsError(!!result.stderr);
       } else {
         const url = window.URL.createObjectURL(result);
         setFileUrl(url);
         setMessage("Le fichier est prêt à être téléchargé.");
+        hotToast.success("File fetched"); // Use the renamed 'hotToast' variable
         setIsError(false); // Set to false as the result is successful
       }
     } catch (error) {
+      hotToast.error("Erreur lors de l'exécution du code." + error);
       console.error("Error executing code:", error);
       setMessage("Erreur lors de l'exécution du code.");
       toast({
@@ -69,7 +69,7 @@ const RunCodeButton = ({
     if (fileUrl) {
       const link = document.createElement("a");
       link.href = fileUrl;
-      link.download = "script." + outputType; // Dynamically set the file extension
+      link.download = "output." + outputType; // Dynamically set the file extension
 
       document.body.appendChild(link);
       link.click();
