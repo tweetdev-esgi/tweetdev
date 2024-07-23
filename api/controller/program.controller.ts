@@ -35,9 +35,21 @@ const LANGUAGES: { [key: string]: LanguageConfig } = {
 
 function writeCodeToFile(code: string, filePath: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        fs.writeFile(filePath, code, (err: any) => {
-            if (err) reject(err);
-            else resolve();
+        // Ensure the directory exists
+        const dir = path.dirname(filePath);
+        fs.mkdir(dir, { recursive: true }, (err: any) => {
+            if (err) {
+                return reject(err);
+            }
+
+            // Write the file
+            fs.writeFile(filePath, code, (err: any) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
         });
     });
 }

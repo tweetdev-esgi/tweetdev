@@ -1,22 +1,14 @@
 import { useState } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import RunCodeButton from "./RunButton";
 
-const Output = ({ editorRef, language }) => {
-  // const initialOutput = [
-  //   "Compilation started...",
-  //   "Compilation successful.",
-  //   "Running the code...",
-  //   "Output:",
-  //   "Hello, world!",
-  // ];
-
+const Output = ({ editorRef, language, uploadedFile }) => {
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   return (
-    <Box w="50%" mb={-8}>
+    <Box w="50%">
       <RunCodeButton
         editorRef={editorRef}
         language={language}
@@ -24,6 +16,7 @@ const Output = ({ editorRef, language }) => {
         setIsLoading={setIsLoading}
         setIsError={setIsError}
         setOutput={setOutput}
+        uploadedFile={uploadedFile}
       />
       <Box
         height="75vh"
@@ -33,13 +26,13 @@ const Output = ({ editorRef, language }) => {
         borderRadius={4}
         backgroundColor={"#1E1E1E"}
         borderColor={isError ? "red.500" : "#333"}
+        overflow="auto" // Add overflow auto to handle scroll
+        whiteSpace="pre-wrap" // Preserve whitespace and wrap text
       >
-        {/* {output
-          ? output.map((line, i) => <Text key={i}>{line}</Text>)
-          : 'Click "Run Code" to see the output here'} */}
         <div className="text-sm font-normal">{output}</div>
       </Box>
     </Box>
   );
 };
+
 export default Output;

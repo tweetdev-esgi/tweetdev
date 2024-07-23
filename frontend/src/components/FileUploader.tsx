@@ -1,18 +1,20 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import toast from "react-hot-toast";
 
 interface FileUploaderProps {
   onFileUpload: (file: File) => void;
+  uploadedFile: File | null;
 }
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
+const FileUploader: React.FC<FileUploaderProps> = ({
+  onFileUpload,
+  uploadedFile,
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setUploadedFile(file);
       onFileUpload(file);
       toast.success(`${file.name} uploaded successfully`);
     }
@@ -23,7 +25,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
   };
 
   const handleDiscardFile = () => {
-    setUploadedFile(null);
+    onFileUpload(null); // Clear the uploaded file state in the parent component
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Clear the file input value
     }

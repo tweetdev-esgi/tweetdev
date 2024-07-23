@@ -10,12 +10,8 @@ import CreateCode from "../../components/program/CreateCode";
 import OutputSelect from "./OutputSelect";
 
 const outputFileType = [
-  {
-    name: "void",
-  },
-  {
-    name: "png",
-  },
+  { name: "void" },
+  { name: "png" },
   { name: "jpg" },
   { name: "py" },
   { name: "js" },
@@ -28,6 +24,7 @@ const CodeEditor: React.FC = () => {
   const [value, setValue] = useState<string>(CODE_SNIPPETS[language]);
   const [token, setToken] = useState<string | null>(null);
   const [outputType, setOutputType] = useState("void");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   useEffect(() => {
     const sessionToken = getSession();
@@ -53,12 +50,7 @@ const CodeEditor: React.FC = () => {
   };
 
   const handleFileUpload = (file: File) => {
-    // const reader = new FileReader();
-    // reader.onload = (event) => {
-    //   const fileContent = event.target?.result;
-    //   setValue(fileContent as string);
-    // };
-    // reader.readAsText(file);
+    setUploadedFile(file);
   };
 
   return (
@@ -94,15 +86,22 @@ const CodeEditor: React.FC = () => {
             onChange={(value) => setValue(value || "")}
           />
         </Box>
-        <Output editorRef={editorRef} language={language} />
+        <Output
+          editorRef={editorRef}
+          language={language}
+          uploadedFile={uploadedFile}
+        />
       </HStack>
-      <div className=" flex flex-row justify-between">
-        <FileUploader onFileUpload={handleFileUpload} />
+      <div className="flex flex-row justify-between">
+        <FileUploader
+          onFileUpload={handleFileUpload}
+          uploadedFile={uploadedFile}
+        />
         <details className="dropdown relative">
           <summary className="btn px-2 min-h-0 h-6">
             Output Type : {outputType}
           </summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-full ">
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-full">
             {outputFileType.map((type, key) => (
               <OutputSelect
                 name={type.name}
