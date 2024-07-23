@@ -37,10 +37,6 @@ function writeCodeToFile(code: string, filePath: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         // Ensure the directory exists
         const dir = path.dirname(filePath);
-        fs.mkdir(dir, { recursive: true }, (err: any) => {
-            if (err) {
-                return reject(err);
-            }
 
             // Write the file
             fs.writeFile(filePath, code, (err: any) => {
@@ -50,7 +46,6 @@ function writeCodeToFile(code: string, filePath: string): Promise<void> {
                     resolve();
                 }
             });
-        });
     });
 }
 function deleteFile(filePath: string): Promise<void> {
@@ -320,22 +315,16 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
                 // Pipe le flux de données vers la réponse HTTP
                 stream.pipe(res);
 
-                stream.on('end', async () => {
-                    // Nettoyage des fichiers après l'envoi de la réponse
-                    await this.cleanupFiles(hostCodeFilePath, hostFilePath);
-                });
 
                 stream.on('error', async (err: any) => {
                     console.error('Erreur lors de l\'envoi du fichier:', err);
                     res.status(500).send('Erreur lors de l\'envoi du fichier.');
                     // Nettoyage des fichiers en cas d'erreur
-                    await this.cleanupFiles(hostCodeFilePath, hostFilePath);
                 });
             } catch (error) {
                 console.error('Erreur lors de la récupération du fichier depuis le conteneur:', error);
                 res.status(500).send('Erreur lors de la récupération du fichier.');
                 // Nettoyage des fichiers en cas d'erreur
-                await this.cleanupFiles(hostCodeFilePath, hostFilePath);
             }
         } else {
             // Si outputFileType n'est pas spécifié, envoyez les logs en réponse
@@ -346,7 +335,6 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
             logs.on('end', async () => {
                 res.end();
                 // Nettoyage des fichiers après l'envoi de la réponse
-                await this.cleanupFiles(hostCodeFilePath, hostFilePath);
             });
         }
     } catch (error) {
