@@ -227,82 +227,79 @@ export class ProgramController {
 
     executeProgram = async (req: Request, res: Response): Promise<void> => {
         const { language, code } = req.body;
-    const file = req.file as Express.Multer.File; // Type assertion
-
-    // Vérifiez que le langage est pris en charge
-    const langConfig = LANGUAGES[language as string];
-    if (!langConfig) {
-        res.status(400).send('Unsupported language');
-        return 
-    }
-
-    // Vérifiez que le fichier a bien été téléchargé
-    if (!file) {
-         res.status(400).send('No file uploaded');
-         return
-    }
-    const containerName = `code-exec-container-${language}`;
-    const codeFileName = `script.${langConfig.extension}`;
-    const hostCodeFilePath = path.join(__dirname, codeFileName);
-    const containerCodeFilePath = `/app/${codeFileName}`;
-    const hostFilePath = path.join(__dirname, 'uploads', file.filename);
-    const containerFilePath = `/app/${file.originalname}`;
-    try {
-
-
-        // Écrire le code dans un fichier sur l'hôte
-        await writeCodeToFile(code as string, hostCodeFilePath);
-
-        // Vérifiez si le conteneur est déjà en cours d'exécution
-        let container = docker.getContainer(containerName);
-        const containerInfo = await container.inspect().catch(() => null);
-
-        if (containerInfo) {
-            // Arrêter et supprimer le conteneur s'il existe
-            await container.stop().catch(() => null);
-            await container.remove();
+        const file = req.file as Express.Multer.File | undefined;
+    
+        // Vérifiez que le langage est pris en charge
+        const langConfig = LANGUAGES[language as string];
+        if (!langConfig) {
+            res.status(400).send('Unsupported language');
+            return;
         }
-
-        // Créez et démarrez le conteneur avec les fichiers montés
-        container = await docker.createContainer({
-            Image: langConfig.image,
-            Cmd: langConfig.cmd(containerCodeFilePath),
-            name: containerName,
-            Tty: true,
-            HostConfig: {
-                Binds: [
-                    `${hostFilePath}:${containerFilePath}`,
-                    `${hostCodeFilePath}:${containerCodeFilePath}`
-                ]
+    
+        const containerName = `code-exec-container-${language}`;
+        const codeFileName = `script.${langConfig.extension}`;
+        const hostCodeFilePath = path.join(__dirname, codeFileName);
+        const containerCodeFilePath = `/app/${codeFileName}`;
+        const hostFilePath = file ? path.join(__dirname, 'uploads', file.filename) : undefined;
+        const containerFilePath = file ? `/app/${file.originalname}` : undefined;
+    
+        try {
+            // Écrire le code dans un fichier sur l'hôte
+            await writeCodeToFile(code as string, hostCodeFilePath);
+    
+            // Vérifiez si le conteneur est déjà en cours d'exécution
+            let container = docker.getContainer(containerName);
+            const containerInfo = await container.inspect().catch(() => null);
+    
+            if (containerInfo) {
+                // Arrêter et supprimer le conteneur s'il existe
+                await container.stop().catch(() => null);
+                await container.remove();
             }
-        });
-        await container.start();
-
-        // Obtenez les logs du conteneur
-        const logs = await container.logs({
-            stdout: true,
-            stderr: true,
-            follow: true
-        });
-
-        // Envoyer les logs en réponse
-        res.set('Content-Type', 'text/plain');
-        logs.on('data', (chunk: Buffer) => {
-            res.write(chunk.toString());
-        });
-        logs.on('end', () => {
-            res.end();
-            Promise.all([
-                deleteFile(path.join(__dirname, '/uploads', file.filename)),
-                deleteFile(hostCodeFilePath)
-            ]).catch(cleanupError => {
-                console.error('Error during cleanup:', cleanupError);
+    
+            // Créez et démarrez le conteneur avec les fichiers montés
+            const binds = [`${hostCodeFilePath}:${containerCodeFilePath}`];
+            if (file) {
+                binds.push(`${hostFilePath}:${containerFilePath}`);
+            }
+    
+            container = await docker.createContainer({
+                Image: langConfig.image,
+                Cmd: langConfig.cmd(containerCodeFilePath),
+                name: containerName,
+                Tty: true,
+                HostConfig: {
+                    Binds: binds
+                }
             });
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('An error occurred while fetching the logs.');
-    } 
+            await container.start();
+    
+            // Obtenez les logs du conteneur
+            const logs = await container.logs({
+                stdout: true,
+                stderr: true,
+                follow: true
+            });
+    
+            // Envoyer les logs en réponse
+            res.set('Content-Type', 'text/plain');
+            logs.on('data', (chunk: Buffer) => {
+                res.write(chunk.toString());
+            });
+            logs.on('end', () => {
+                res.end();
+                const cleanupPromises = [deleteFile(hostCodeFilePath)];
+                if (file) {
+                    cleanupPromises.push(deleteFile(hostFilePath));
+                }
+                Promise.all(cleanupPromises).catch(cleanupError => {
+                    console.error('Error during cleanup:', cleanupError);
+                });
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).send('An error occurred while fetching the logs.');
+        }
     };
     buildRouter = (): Router => {
         const router = express.Router()

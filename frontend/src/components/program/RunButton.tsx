@@ -21,8 +21,11 @@ const RunCodeButton = ({
         language,
         code: sourceCode,
       };
+      console.log(body);
       const result = await executeProgram("66942a72221193cfb4796a69", body);
-      setOutput(result.output.split("\n"));
+
+      console.log(result);
+      setOutput(result.split("\n"));
       setIsError(!!result.stderr);
     } catch (error) {
       console.error("Error executing code:", error);
