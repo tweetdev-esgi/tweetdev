@@ -82,7 +82,7 @@ const CodeEditor: React.FC = () => {
           <Editor
             options={{
               minimap: {
-                enabled: false,
+                enabled: true,
               },
             }}
             height="75vh"
