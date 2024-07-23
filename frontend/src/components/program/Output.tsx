@@ -2,7 +2,13 @@ import { useState } from "react";
 import { Box } from "@chakra-ui/react";
 import RunCodeButton from "./RunButton";
 
-const Output = ({ editorRef, language, uploadedFile }) => {
+const Output = ({
+  editorRef,
+  language,
+  uploadedFile,
+  inputType,
+  outputType,
+}) => {
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -17,6 +23,8 @@ const Output = ({ editorRef, language, uploadedFile }) => {
         setIsError={setIsError}
         setOutput={setOutput}
         uploadedFile={uploadedFile}
+        inputType={inputType} // Pass inputType
+        outputType={outputType} // Pass outputType
       />
       <Box
         height="75vh"

@@ -2,6 +2,8 @@ import { Button, useToast } from "@chakra-ui/react";
 import { Play } from "lucide-react";
 import CustomButton from "../buttons/CustomButton";
 import { executeProgram } from "../../api/programs";
+import { useState } from "react";
+import FileDownload from "./FileDownload";
 
 const RunCodeButton = ({
   editorRef,
@@ -11,31 +13,47 @@ const RunCodeButton = ({
   setIsError,
   setOutput,
   uploadedFile,
+  inputType,
+  outputType,
 }) => {
   const toast = useToast();
+  const [fileUrl, setFileUrl] = useState("");
+  const [message, setMessage] = useState("");
 
   const runCode = async () => {
-    if (!editorRef.current) return;
-    const sourceCode = editorRef.current.getValue();
     try {
+      if (!editorRef.current) return;
+      const sourceCode = editorRef.current.getValue();
       setIsLoading(true);
+
       const formData = new FormData();
       formData.append("language", language);
-      console.log(language);
       formData.append("code", sourceCode);
-      console.log(sourceCode);
+      formData.append("inputFileType", inputType);
+      formData.append("outputFileType", outputType);
+
       if (uploadedFile) {
         formData.append("file", uploadedFile);
-        console.log(uploadedFile);
       }
 
-      const result = await executeProgram("66942a72221193cfb4796a69", formData);
+      const result = await executeProgram(
+        "66942a72221193cfb4796a69",
+        formData,
+        outputType
+      );
 
-      console.log(result);
-      setOutput(result.split("\n"));
-      setIsError(!!result.stderr);
+      if (outputType === "void") {
+        setOutput(result.split("\n"));
+        setIsError(!!result.stderr);
+      } else {
+        const url = window.URL.createObjectURL(result);
+        setFileUrl(url);
+        setMessage("Le fichier est prêt à être téléchargé.");
+        setIsError(false); // Set to false as the result is successful
+      }
     } catch (error) {
       console.error("Error executing code:", error);
+      setMessage("Erreur lors de l'exécution du code.");
       toast({
         title: "An error occurred.",
         description: "Unable to run code",
@@ -47,10 +65,40 @@ const RunCodeButton = ({
     }
   };
 
+  const downloadFile = () => {
+    if (fileUrl) {
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = "script." + outputType; // Dynamically set the file extension
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(fileUrl); // Révoquer l'URL pour libérer les ressources
+    }
+  };
+
   return (
-    <summary className="btn mb-2 px-2 min-h-0 h-6 " onClick={runCode}>
-      Run Code
-    </summary>
+    <div>
+      <summary className="btn mb-2 px-2 min-h-0 h-6 " onClick={runCode}>
+        Run Code
+      </summary>
+      <div>
+        {message && <p>{message}</p>}
+        {fileUrl && (
+          <div
+            onClick={downloadFile}
+            style={{
+              cursor: "pointer",
+              color: "blue",
+              textDecoration: "underline",
+            }}
+          >
+            Cliquez ici pour télécharger le fichier
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Box, HStack, Button, Tooltip } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import { CODE_SNIPPETS } from "../../constants";
 import { getSession } from "../../services/sessionService";
@@ -11,6 +11,7 @@ import OutputSelect from "./OutputSelect";
 
 const outputFileType = [
   { name: "void" },
+  { name: "txt" },
   { name: "png" },
   { name: "jpg" },
   { name: "py" },
@@ -95,6 +96,8 @@ const CodeEditor: React.FC = () => {
           editorRef={editorRef}
           language={language}
           uploadedFile={uploadedFile}
+          inputType={inputType} // Pass inputType
+          outputType={outputType} // Pass outputType
         />
       </HStack>
       <div className="flex flex-row justify-between">

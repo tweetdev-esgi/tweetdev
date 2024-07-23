@@ -238,7 +238,7 @@ export class ProgramController {
     };
 
     executeProgram = async (req: Request, res: Response): Promise<void> => {
-        const { language, code } = req.body;
+        const { language, code, outputFileType } = req.body;
         const file = req.file as Express.Multer.File | undefined;
     
         // Vérifiez que le langage est pris en charge
@@ -293,31 +293,75 @@ export class ProgramController {
                 follow: true
             });
     
-            // Envoyer les logs en réponse
-            res.set('Content-Type', 'text/plain');
-            logs.on('data', (chunk: Buffer) => {
-                res.write(chunk.toString());
-            });
-            logs.on('end', () => {
-                res.end();
-                const cleanupPromises = [deleteFile(hostCodeFilePath)];
-                if (file) {
-                    cleanupPromises.push(deleteFile(hostFilePath));
+            // Vérifiez si outputFileType est spécifié
+            if (outputFileType != "void") {
+                // const fileName ="script.py"
+                // const containerPath = `/app/${fileName}`; // Chemin du fichier dans le conteneur
+
+                // // Obtenir le fichier depuis le conteneur
+                // const stream = await container.getArchive({ path: containerPath });
+                // res.download(stream)
+              
+                try {
+                    const fileName ="script.py"
+                    const containerPath = `/app/${fileName}`; // Chemin du fichier dans le conteneur
+    
+                    // Obtenir le fichier depuis le conteneur
+                    const stream = await container.getArchive({ path: containerPath });
+    
+                    // Envoyer le fichier en streaming à l'utilisateur
+                    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+                    res.setHeader('Content-Type', 'application/octet-stream');
+    
+                    // Pipe le flux de données vers la réponse HTTP
+                    stream.pipe(res);
+                    
+                    stream.on('end', () => {
+                        // Le fichier a été envoyé avec succès
+                    });
+    
+                    stream.on('error', (err: any) => {
+                        console.error('Erreur lors de l\'envoi du fichier:', err);
+                        res.status(500).send('Erreur lors de l\'envoi du fichier.');
+                    });
+                } catch (error) {
+                    console.error('Erreur lors de la récupération du fichier depuis le conteneur:', error);
+                    res.status(500).send('Erreur lors de la récupération du fichier.');
                 }
-                Promise.all(cleanupPromises).catch(cleanupError => {
-                    console.error('Error during cleanup:', cleanupError);
+            } else {
+                // Si outputFileType n'est pas spécifié, envoyez les logs en réponse
+                res.set('Content-Type', 'text/plain');
+                logs.on('data', (chunk: Buffer) => {
+                    res.write(chunk.toString());
                 });
-            });
+                logs.on('end', () => {
+                    res.end();
+                    const cleanupPromises = [deleteFile(hostCodeFilePath)];
+                    if (file) {
+                        cleanupPromises.push(deleteFile(hostFilePath));
+                    }
+                    Promise.all(cleanupPromises).catch(cleanupError => {
+                        console.error('Erreur lors du nettoyage:', cleanupError);
+                    });
+                });
+            }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Erreur:', error);
             res.status(500).send('An error occurred while fetching the logs.');
         }
     };
+
+    download = async (req: Request, res: Response): Promise<void> => {
+        const filePath = path.join(__dirname, 'file.txt'); // chemin vers votre fichier
+        res.download(filePath);
+    }
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
         router.get('/one', checkUserToken(), this.getOneProgram.bind(this))
 
+        router.get('/download',  this.download.bind(this))
         router.get('/is-deletable', checkUserToken(), this.isProgramDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
