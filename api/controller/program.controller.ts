@@ -10,9 +10,49 @@ import { RolesEnums } from "../enums"
 const path = require('path');
 const fs = require('fs')
 const Docker = require('dockerode')
+const multer = require('multer')
+
 const docker = new Docker();
+const upload = multer({ dest: path.join(__dirname, 'uploads') });
+interface LanguageConfig {
+    extension: string;
+    image: string;
+    cmd: (filePath: string) => string[];
+}
 
+const LANGUAGES: { [key: string]: LanguageConfig } = {
+    python: {
+        extension: 'py',
+        image: 'my-python-image',
+        cmd: (filePath: string) => ['python3', filePath]
+    },
+    javascript: {
+        extension: 'js',
+        image: 'my-node-image',
+        cmd: (filePath: string) => ['node', filePath]
+    }
+};
 
+function writeCodeToFile(code: string, filePath: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        fs.writeFile(filePath, code, (err: any) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+}
+function deleteFile(filePath: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        fs.unlink(filePath, (err: any) => {
+            if (err) {
+                console.error(`Error deleting file ${filePath}:`, err);
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
 export class ProgramController {
 
     readonly path: string
@@ -184,70 +224,85 @@ export class ProgramController {
         // Remove control characters (non-printable characters)
         return output.replace(/[\x00-\x1F\x7F]/g, '').trim();
     };
-    executeCode = async (language: string, code: string): Promise<string> => {
-        const scriptFile = `script.${language === 'python' ? 'py' : 'js'}`;
-        const scriptPath = path.join(__dirname, 'scripts', scriptFile);
-    
-        if (!fs.existsSync(path.join(__dirname, 'scripts'))) {
-            fs.mkdirSync(path.join(__dirname, 'scripts'));
+
+    executeProgram = async (req: Request, res: Response): Promise<void> => {
+        const { language, code } = req.body;
+    const file = req.file as Express.Multer.File; // Type assertion
+
+    // Vérifiez que le langage est pris en charge
+    const langConfig = LANGUAGES[language as string];
+    if (!langConfig) {
+        res.status(400).send('Unsupported language');
+        return 
+    }
+
+    // Vérifiez que le fichier a bien été téléchargé
+    if (!file) {
+         res.status(400).send('No file uploaded');
+         return
+    }
+    const containerName = `code-exec-container-${language}`;
+    const codeFileName = `script.${langConfig.extension}`;
+    const hostCodeFilePath = path.join(__dirname, codeFileName);
+    const containerCodeFilePath = `/app/${codeFileName}`;
+    const hostFilePath = path.join(__dirname, 'uploads', file.filename);
+    const containerFilePath = `/app/${file.originalname}`;
+    try {
+
+
+        // Écrire le code dans un fichier sur l'hôte
+        await writeCodeToFile(code as string, hostCodeFilePath);
+
+        // Vérifiez si le conteneur est déjà en cours d'exécution
+        let container = docker.getContainer(containerName);
+        const containerInfo = await container.inspect().catch(() => null);
+
+        if (containerInfo) {
+            // Arrêter et supprimer le conteneur s'il existe
+            await container.stop().catch(() => null);
+            await container.remove();
         }
-    
-        fs.writeFileSync(scriptPath, code, { encoding: 'utf8' });
-    
-        const container = await docker.createContainer({
-            Image: 'multi-language-executor',
-            AttachStdout: true,
-            AttachStderr: true,
-            Cmd: [language],
+
+        // Créez et démarrez le conteneur avec les fichiers montés
+        container = await docker.createContainer({
+            Image: langConfig.image,
+            Cmd: langConfig.cmd(containerCodeFilePath),
+            name: containerName,
+            Tty: true,
             HostConfig: {
-                Binds: [`${path.join(__dirname, 'scripts')}:/scripts`]
+                Binds: [
+                    `${hostFilePath}:${containerFilePath}`,
+                    `${hostCodeFilePath}:${containerCodeFilePath}`
+                ]
             }
         });
-    
         await container.start();
-    
-        let output = '';
-        const logStream = await container.logs({
+
+        // Obtenez les logs du conteneur
+        const logs = await container.logs({
             stdout: true,
             stderr: true,
             follow: true
         });
-    
-        logStream.on('data', (data: Buffer) => {
-            output += data.toString('utf8');
-        });
-    
-        await new Promise((resolve) => {
-            logStream.on('end', resolve);
-        });
-    
-        await container.wait();
-        await container.remove();
-        fs.unlinkSync(scriptPath);
-    
-        return this.sanitizeOutput(output); // Ensure sanitizeOutput function is defined
-    };
 
-    executeProgram = async (req: Request, res: Response): Promise<void> => {
-        const { language, code } = req.body;
-    
-        if (!language || !code) {
-            res.status(400).json({ message: 'Language and code are required' });
-            return;
-        }
-    
-        if (!['python', 'javascript'].includes(language)) {
-            res.status(400).json({ message: 'Invalid language specified' });
-            return;
-        }
-    
-        try {
-            const output = await this.executeCode(language, code);
-            res.status(200).json({ output });
-        } catch (error) {
-            console.error('Error executing code:', error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
+        // Envoyer les logs en réponse
+        res.set('Content-Type', 'text/plain');
+        logs.on('data', (chunk: Buffer) => {
+            res.write(chunk.toString());
+        });
+        logs.on('end', () => {
+            res.end();
+            Promise.all([
+                deleteFile(path.join(__dirname, '/uploads', file.filename)),
+                deleteFile(hostCodeFilePath)
+            ]).catch(cleanupError => {
+                console.error('Error during cleanup:', cleanupError);
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while fetching the logs.');
+    } 
     };
     buildRouter = (): Router => {
         const router = express.Router()
@@ -258,7 +313,7 @@ export class ProgramController {
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
         router.delete('/', checkUserToken(), checkUserRole(RolesEnums.guest), this.deleteProgram.bind(this))
-        router.post('/execute', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), this.executeProgram.bind(this))
+        router.post('/execute', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), upload.single('file'), this.executeProgram.bind(this))
         return router
     }
 }

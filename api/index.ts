@@ -9,7 +9,6 @@ import { StartService } from './service'
 import { PostController } from './controller/post.controller'
 import { MessageController } from './controller/message.controller'
 import { HubController } from './controller/hub.controller'
-import { SaveCodeController } from './controller/saveCode.controller';
 
 const cors = require('cors');
 import * as dotenv from "dotenv";
@@ -48,7 +47,6 @@ const startServer = async (): Promise<void> => {
     const hubController = new HubController()
     const programController = new ProgramController()
     const workflowController = new WorkflowController()
-    const saveCodeController = new SaveCodeController();
 
     await StartService.createUsers()
 
@@ -59,7 +57,6 @@ const startServer = async (): Promise<void> => {
     app.use(hubController.path, hubController.buildRouter())
     app.use(programController.path, programController.buildRouter())
     app.use(workflowController.path, workflowController.buildRouter())
-    app.use(saveCodeController.path, saveCodeController.buildRouter());
 
 
     app.listen(process.env.PORT, () => {
