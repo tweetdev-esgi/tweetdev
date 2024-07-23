@@ -7,8 +7,19 @@ import FileUploader from "../components/FileUploader";
 import Output from "../components/program/Output";
 import SaveCode from "../components/program/SaveCode";
 import LanguageSelector from "../components/program/LanguageSelector";
-import { fetchProgramById, getIsProgramDeletable } from "../api/programs";
-
+import {
+  fetchProgramById,
+  getIsProgramDeletable,
+  executeProgram,
+} from "../api/programs";
+import OutputSelect from "../components/program/OutputSelect";
+const outputFileType = [
+  { name: "void" },
+  { name: "png" },
+  { name: "jpg" },
+  { name: "py" },
+  { name: "js" },
+];
 export default function DetailsCode(props) {
   const { id } = useParams<{ id: string }>();
   const editorRef = useRef<any>(null);
@@ -17,16 +28,15 @@ export default function DetailsCode(props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [notFoundPost, setNotFoundPost] = useState<boolean>(false);
   const [isModifiable, setIsModifiable] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  const [outputType, setOutputType] = useState("void");
+  const handleOutputTypeSelect = (name: string) => {
+    setOutputType(name);
+  };
+
   const handleFileUpload = (file: File) => {
-    // const reader = new FileReader();
-    // reader.onload = (event) => {
-    //   const fileContent = event.target?.result;
-    //   setProgramData((prevData) => ({
-    //     ...prevData,
-    //     content: fileContent as string,
-    //   }));
-    // };
-    // reader.readAsText(file);
+    setUploadedFile(file);
   };
 
   useEffect(() => {
@@ -62,6 +72,28 @@ export default function DetailsCode(props) {
 
     fetchData();
   }, [id]);
+
+  const runCode = async () => {
+    if (!editorRef.current) return;
+    const sourceCode = editorRef.current.getValue();
+    try {
+      const body = {
+        language: programData?.language || "javascript",
+        code: sourceCode,
+        file: uploadedFile, // Add file to the body if it's set
+      };
+      console.log(body);
+      const result = await executeProgram(token || "", body);
+
+      console.log(result);
+      setProgramData((prevData) => ({
+        ...prevData,
+        output: result,
+      }));
+    } catch (error) {
+      console.error("Error executing code:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -145,9 +177,29 @@ export default function DetailsCode(props) {
             <Output
               editorRef={editorRef}
               language={programData?.language || "javascript"}
+              uploadedFile={uploadedFile}
             />
           </HStack>
-          <FileUploader onFileUpload={handleFileUpload} />
+          <div className="flex flex-row justify-between">
+            <FileUploader
+              onFileUpload={handleFileUpload}
+              uploadedFile={uploadedFile}
+            />
+            <details className="dropdown relative">
+              <summary className="btn px-2 min-h-0 h-6">
+                Output Type : {outputType}
+              </summary>
+              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-full">
+                {outputFileType.map((type, key) => (
+                  <OutputSelect
+                    name={type.name}
+                    updateParentState={handleOutputTypeSelect}
+                    key={key}
+                  />
+                ))}
+              </ul>
+            </details>
+          </div>{" "}
         </Box>
       </Box>
     </div>
