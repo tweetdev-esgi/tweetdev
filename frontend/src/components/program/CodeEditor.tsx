@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, HStack, Button, Tooltip } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import { CODE_SNIPPETS } from "../../constants";
 import { getSession } from "../../services/sessionService";
@@ -24,6 +24,7 @@ const CodeEditor: React.FC = () => {
   const [value, setValue] = useState<string>(CODE_SNIPPETS[language]);
   const [token, setToken] = useState<string | null>(null);
   const [outputType, setOutputType] = useState("void");
+  const [inputType, setInputType] = useState("void");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -49,7 +50,11 @@ const CodeEditor: React.FC = () => {
     setOutputType(name);
   };
 
-  const handleFileUpload = (file: File) => {
+  const handleInputTypeSelect = (name: string) => {
+    setInputType(name);
+  };
+
+  const handleFileUpload = (file: File | null) => {
     setUploadedFile(file);
   };
 
@@ -93,15 +98,30 @@ const CodeEditor: React.FC = () => {
         />
       </HStack>
       <div className="flex flex-row justify-between">
+        <details className="dropdown relative">
+          <summary className="btn px-2 min-h-0 h-6">
+            Input Type : {inputType}
+          </summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full ">
+            {outputFileType.map((type, key) => (
+              <OutputSelect
+                name={type.name}
+                updateParentState={handleInputTypeSelect}
+                key={key}
+              />
+            ))}
+          </ul>
+        </details>
         <FileUploader
           onFileUpload={handleFileUpload}
           uploadedFile={uploadedFile}
+          allowedFileType={inputType}
         />
         <details className="dropdown relative">
           <summary className="btn px-2 min-h-0 h-6">
             Output Type : {outputType}
           </summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-full">
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-0">
             {outputFileType.map((type, key) => (
               <OutputSelect
                 name={type.name}

@@ -30,15 +30,20 @@ export default function DetailsCode(props) {
   const [isModifiable, setIsModifiable] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
+  const [inputType, setInputType] = useState("void");
+
   const [outputType, setOutputType] = useState("void");
   const handleOutputTypeSelect = (name: string) => {
     setOutputType(name);
   };
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = (file: File | null) => {
     setUploadedFile(file);
   };
 
+  const handleInputTypeSelect = (name: string) => {
+    setInputType(name);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,7 +59,8 @@ export default function DetailsCode(props) {
           if (programData) {
             setProgramData(programData);
             setLoading(false);
-
+            setInputType(programData.inputFileType);
+            setOutputType(programData.outputFileType);
             // Check if the program is deletable after fetching the program
             const response = await getIsProgramDeletable(sessionToken, id);
             setIsModifiable(response);
@@ -72,28 +78,6 @@ export default function DetailsCode(props) {
 
     fetchData();
   }, [id]);
-
-  const runCode = async () => {
-    if (!editorRef.current) return;
-    const sourceCode = editorRef.current.getValue();
-    try {
-      const body = {
-        language: programData?.language || "javascript",
-        code: sourceCode,
-        file: uploadedFile, // Add file to the body if it's set
-      };
-      console.log(body);
-      const result = await executeProgram(token || "", body);
-
-      console.log(result);
-      setProgramData((prevData) => ({
-        ...prevData,
-        output: result,
-      }));
-    } catch (error) {
-      console.error("Error executing code:", error);
-    }
-  };
 
   if (loading) {
     return (
@@ -135,6 +119,8 @@ export default function DetailsCode(props) {
                   <SaveCode
                     initialCode={programData.content}
                     initialLanguage={programData.language}
+                    inputFileType={inputType}
+                    outputFileType={outputType}
                     token={token}
                     programData={programData}
                     isModifiable={isModifiable}
@@ -181,25 +167,66 @@ export default function DetailsCode(props) {
             />
           </HStack>
           <div className="flex flex-row justify-between">
+            <details
+              className={`dropdown relative ${
+                !isModifiable ? "pointer-events-none opacity-50" : ""
+              }`}
+            >
+              <summary
+                className={`btn px-2 min-h-0 h-6 ${
+                  !isModifiable ? "cursor-not-allowed" : ""
+                }`}
+              >
+                Input Type : {inputType}
+              </summary>
+              <ul
+                className={`menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full ${
+                  !isModifiable ? "pointer-events-none opacity-50" : ""
+                }`}
+              >
+                {outputFileType.map((type, key) => (
+                  <OutputSelect
+                    name={type.name}
+                    updateParentState={handleInputTypeSelect}
+                    key={key}
+                    disabled={!isModifiable} // Pass the isModifiable state to OutputSelect
+                  />
+                ))}
+              </ul>
+            </details>
             <FileUploader
               onFileUpload={handleFileUpload}
               uploadedFile={uploadedFile}
+              allowedFileType={inputType}
             />
-            <details className="dropdown relative">
-              <summary className="btn px-2 min-h-0 h-6">
+            <details
+              className={`dropdown relative ${
+                !isModifiable ? "pointer-events-none opacity-50" : ""
+              }`}
+            >
+              <summary
+                className={`btn px-2 min-h-0 h-6 ${
+                  !isModifiable ? "cursor-not-allowed" : ""
+                }`}
+              >
                 Output Type : {outputType}
               </summary>
-              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-full">
+              <ul
+                className={`menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-0 ${
+                  !isModifiable ? "pointer-events-none opacity-50" : ""
+                }`}
+              >
                 {outputFileType.map((type, key) => (
                   <OutputSelect
                     name={type.name}
                     updateParentState={handleOutputTypeSelect}
                     key={key}
+                    disabled={!isModifiable} // Pass the isModifiable state to OutputSelect
                   />
                 ))}
               </ul>
             </details>
-          </div>{" "}
+          </div>
         </Box>
       </Box>
     </div>

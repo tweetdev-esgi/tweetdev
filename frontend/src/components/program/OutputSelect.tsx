@@ -1,11 +1,29 @@
 import React from "react";
 
-const OutputSelect = ({ name, updateParentState }) => {
+interface OutputSelectProps {
+  name: string;
+  updateParentState: (name: string) => void;
+  disabled?: boolean; // Add the disabled prop
+}
+
+const OutputSelect: React.FC<OutputSelectProps> = ({
+  name,
+  updateParentState,
+  disabled,
+}) => {
   const changeParentState = () => {
-    updateParentState(name);
+    if (!disabled) {
+      updateParentState(name);
+    }
   };
+
   return (
-    <li className="cursor-pointer" onClick={changeParentState}>
+    <li
+      className={`cursor-pointer ${
+        disabled ? "text-gray-400 cursor-not-allowed" : ""
+      }`}
+      onClick={changeParentState}
+    >
       <p>{name}</p>
     </li>
   );

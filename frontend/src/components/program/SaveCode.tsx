@@ -10,6 +10,8 @@ interface SaveCodeProps {
   token: string;
   programData: any;
   isModifiable: boolean;
+  inputFileType: string;
+  outputFileType: string;
 }
 
 const SaveCode: React.FC<SaveCodeProps> = ({
@@ -18,6 +20,8 @@ const SaveCode: React.FC<SaveCodeProps> = ({
   token,
   programData,
   isModifiable,
+  inputFileType,
+  outputFileType,
 }) => {
   const [code, setCode] = useState<string>(initialCode);
   const [language, setLanguage] = useState<string>(initialLanguage);
@@ -37,8 +41,8 @@ const SaveCode: React.FC<SaveCodeProps> = ({
       name: name,
       content: code,
       language: language,
-      inputFileType: "jpg",
-      outputFileType: "jpg",
+      inputFileType: inputFileType,
+      outputFileType: outputFileType,
     };
 
     try {
@@ -48,7 +52,7 @@ const SaveCode: React.FC<SaveCodeProps> = ({
       const create = await updateProgram(
         sessionToken,
         programData._id,
-        programData
+        content
       );
 
       toast.success(`${name} saved successfully`);

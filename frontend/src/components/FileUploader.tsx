@@ -2,21 +2,31 @@ import React, { useRef } from "react";
 import toast from "react-hot-toast";
 
 interface FileUploaderProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File | null) => void;
   uploadedFile: File | null;
+  allowedFileType: string; // This will be the type of file that is allowed
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({
   onFileUpload,
   uploadedFile,
+  allowedFileType,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      onFileUpload(file);
-      toast.success(`${file.name} uploaded successfully`);
+      const fileExtension = file.name.split(".").pop()?.toLowerCase();
+      if (fileExtension === allowedFileType.toLowerCase()) {
+        onFileUpload(file);
+        toast.success(`${file.name} uploaded successfully`);
+      } else {
+        toast.error(
+          `Invalid file type. Please upload a ${allowedFileType} file.`
+        );
+        onFileUpload(null); // Clear the file state if invalid
+      }
     }
   };
 
