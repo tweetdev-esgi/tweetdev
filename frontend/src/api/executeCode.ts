@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 type ExecuteCodeResponse = {
     output: string;
@@ -9,7 +9,7 @@ type ExecuteCodeResponse = {
 
 export const executeCode = async (language: string, code: string): Promise<ExecuteCodeResponse> => {
     try {
-        const response = await axios.post(`${API_URL}/executeCode`, {
+        const response = await axios.post(`${API_BASE_URL}/executeCode`, {
             language : language,
             code : code,
             files: [
