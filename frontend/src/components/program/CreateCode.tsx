@@ -8,12 +8,17 @@ interface CreateCodeProps {
   initialCode: string;
   initialLanguage: string;
   token: string;
+
+  inputType: string;
+  outputType: string;
 }
 
 const CreateCode: React.FC<CreateCodeProps> = ({
   initialCode,
   initialLanguage,
   token,
+  inputType,
+  outputType,
 }) => {
   const [code, setCode] = useState<string>(initialCode);
   const [language, setLanguage] = useState<string>(initialLanguage);
@@ -33,8 +38,8 @@ const CreateCode: React.FC<CreateCodeProps> = ({
       name: name,
       content: code,
       language: language,
-      inputFileType: "jpg",
-      outputFileType: "jpg",
+      inputFileType: inputType,
+      outputFileType: outputType,
     };
 
     try {

@@ -15,6 +15,7 @@ import {
 import OutputSelect from "../components/program/OutputSelect";
 const outputFileType = [
   { name: "void" },
+  { name: "txt" },
   { name: "png" },
   { name: "jpg" },
   { name: "py" },

@@ -69,6 +69,8 @@ const CodeEditor: React.FC = () => {
                 initialCode={value}
                 initialLanguage={language}
                 token={token}
+                inputType={inputType} // Pass inputType
+                outputType={outputType} // Pass outputType
               />
             )}
             <LanguageSelector
