@@ -41,7 +41,9 @@ const RunCodeButton = ({
 
       if (outputType === "void") {
         setOutput(result.split("\n"));
-        hotToast.success("Le code a été exécuté avec succès.");
+        hotToast.success("Le code a été exécuté avec succès.", {
+          duration: 1000,
+        });
         setIsError(!!result.stderr);
       } else {
         const url = window.URL.createObjectURL(result);
@@ -51,7 +53,9 @@ const RunCodeButton = ({
         setIsError(false); // Set to false as the result is successful
       }
     } catch (error) {
-      hotToast.error("Erreur lors de l'exécution du code." + error);
+      hotToast.error("Erreur lors de l'exécution du code." + error, {
+        duration: 200,
+      });
       console.error("Error executing code:", error);
       setMessage("Erreur lors de l'exécution du code.");
       toast({
