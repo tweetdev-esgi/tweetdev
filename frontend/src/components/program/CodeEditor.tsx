@@ -7,12 +7,27 @@ import FileUploader from "../FileUploader";
 import Output from "./Output";
 import LanguageSelector from "./LanguageSelector";
 import CreateCode from "../../components/program/CreateCode";
+import OutputSelect from "./OutputSelect";
+
+const outputFileType = [
+  {
+    name: "void",
+  },
+  {
+    name: "png",
+  },
+  { name: "jpg" },
+  { name: "py" },
+  { name: "js" },
+];
+
 const CodeEditor: React.FC = () => {
   const editorRef = useRef<any>(null);
   const [language, setLanguage] =
     useState<keyof typeof CODE_SNIPPETS>("javascript");
   const [value, setValue] = useState<string>(CODE_SNIPPETS[language]);
   const [token, setToken] = useState<string | null>(null);
+  const [outputType, setOutputType] = useState("void");
 
   useEffect(() => {
     const sessionToken = getSession();
@@ -31,6 +46,10 @@ const CodeEditor: React.FC = () => {
   const onSelect = (language: keyof typeof CODE_SNIPPETS) => {
     setLanguage(language);
     setValue(CODE_SNIPPETS[language]);
+  };
+
+  const handleOutputTypeSelect = (name: string) => {
+    setOutputType(name);
   };
 
   const handleFileUpload = (file: File) => {
@@ -77,7 +96,23 @@ const CodeEditor: React.FC = () => {
         </Box>
         <Output editorRef={editorRef} language={language} />
       </HStack>
-      <FileUploader onFileUpload={handleFileUpload} />
+      <div className=" flex flex-row justify-between">
+        <FileUploader onFileUpload={handleFileUpload} />
+        <details className="dropdown relative">
+          <summary className="btn px-2 min-h-0 h-6">
+            Output Type : {outputType}
+          </summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute bottom-full right-full ">
+            {outputFileType.map((type, key) => (
+              <OutputSelect
+                name={type.name}
+                updateParentState={handleOutputTypeSelect}
+                key={key}
+              />
+            ))}
+          </ul>
+        </details>
+      </div>
     </Box>
   );
 };
