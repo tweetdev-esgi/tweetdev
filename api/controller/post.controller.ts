@@ -171,6 +171,18 @@ export class PostController {
             return 
         }
     }
+
+    deleteUsernameInComments = async (id: string) => {
+        try {
+            const result = await CommentModel.deleteMany(
+                { postId: id }
+            );
+      
+            console.log('Number of documents deleted CommentModel:', result.deletedCount);
+        } catch (error) {
+            console.error('Error deleting username in CommentModel:', error);
+        }
+      }
     deletePostById = async (req: Request, res: Response): Promise<void> => {
         const id = req.query.id as string;
         const username = req.user?.username;
@@ -199,9 +211,11 @@ export class PostController {
     
             if (post.username === username) {
                 await post.deleteOne();
+                await this.deleteUsernameInComments(id);
                 res.status(200).json({ message: `Post ${id} deleted` });
                 return;
             }
+
             
             if (post.hubname) {
                 const hub = await HubModel.findOne({ name: post.hubname });

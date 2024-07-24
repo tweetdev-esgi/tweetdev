@@ -662,6 +662,17 @@ deleteUsernameInWorkflows = async (username: string) => {
         console.error('Error deleting username in programs:', error);
     }
 }
+deleteUsernameInComments = async (username: string) => {
+  try {
+      const result = await CommentModel.deleteMany(
+          { username: username }
+      );
+
+      console.log('Number of documents deleted CommentModel:', result.deletedCount);
+  } catch (error) {
+      console.error('Error deleting username in CommentModel:', error);
+  }
+}
 
      deleteMe = async (req: Request, res: Response) => {
         try {
@@ -682,6 +693,7 @@ deleteUsernameInWorkflows = async (username: string) => {
             this.deleteUsernameInPrograms(username)
             this.deleteUsernameInProgramLikes(username)
             this.deleteUsernameInWorkflows(username)
+            this.deleteUsernameInComments(username)
 
           await UserModel.deleteOne( {user:user.username});
 
