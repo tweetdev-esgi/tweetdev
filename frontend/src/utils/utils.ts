@@ -1,22 +1,8 @@
 export const convertTimestampToMonthYear =(timestamp: string): string =>{
     const date = new Date(timestamp);
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day:"2-digit" };
     return date.toLocaleDateString('en-US', options);
 }
-export const defaultUser: UserResponse = {
-  description: "",
-    followers: [],
-    following:[],
-    profileImageUrl: "",
-    backgroundImageUrl:"",
-    joinDate: "",
-    login: "",
-    password: "",
-    posts: [],
-    roles: [],
-    username: "",
-    _id: ""
-  };
 
   export const convertTimeToPostTime = (time: string): string => {
     const date = new Date(time);
@@ -41,4 +27,26 @@ export const defaultUser: UserResponse = {
       }
     }
   };
+  
+
+
+
+
+
+
+
+  export const defaultUser: UserResponse = {
+    description: "",
+      followers: [],
+      following:[],
+      profileImageUrl: "",
+      backgroundImageUrl:"",
+      joinDate: "",
+      login: "",
+      password: "",
+      posts: [],
+      roles: [],
+      username: "",
+      _id: ""
+    };
   

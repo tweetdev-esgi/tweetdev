@@ -5,6 +5,7 @@ import { getLocalStorageItemByName } from "../services/sessionService";
 function Header() {
   const { isLoggedIn } = useAuth();
   const username = getLocalStorageItemByName("username");
+
   return (
     <div>
       <header className="header border-2 border-headerBorder bg-headerBg">
@@ -15,14 +16,6 @@ function Header() {
           {/* <div>
             <MagnifyingGlass weight="bold"></MagnifyingGlass>
           </div> */}
-          <input
-            size={35}
-            className="ml-6 rounded-xl text-sm p-2 border-solid border-2 border-searchBorder "
-            type="search"
-            name="searchbar"
-            id="searchbar"
-            placeholder=" 🔍 Search"
-          />
         </div>
         <nav className="header_navbar">
           <ul className="header_nav-menu">
@@ -111,6 +104,14 @@ function Header() {
                     className="header_nav-link text-fontColor font-medium"
                   >
                     Log Out
+                  </a>
+                </li>
+                <li className="header_nav-item">
+                  <a
+                    href="/logout"
+                    className="header_nav-link text-fontColor font-medium"
+                  >
+                    Logged in as : {username}
                   </a>
                 </li>
               </>
