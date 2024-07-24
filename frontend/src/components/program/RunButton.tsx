@@ -5,6 +5,7 @@ import { executeProgram } from "../../api/programs";
 import { useState } from "react";
 import FileDownload from "./FileDownload";
 import hotToast from "react-hot-toast"; // Rename the imported 'toast' variable
+import { getSession } from "../../services/sessionService";
 
 const RunCodeButton = ({
   editorRef,
@@ -20,7 +21,7 @@ const RunCodeButton = ({
   const toast = useToast();
   const [fileUrl, setFileUrl] = useState("");
   const [message, setMessage] = useState("");
-
+  const token = getSession();
   const runCode = async () => {
     try {
       if (!editorRef.current) return;
@@ -37,7 +38,7 @@ const RunCodeButton = ({
         formData.append("file", uploadedFile);
       }
 
-      const result = await executeProgram("66942a72221193cfb4796a69", formData);
+      const result = await executeProgram(token, formData);
 
       if (outputType === "void") {
         setOutput(result.split("\n"));

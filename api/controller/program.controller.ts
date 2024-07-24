@@ -379,7 +379,7 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
         router.delete('/', checkUserToken(), checkUserRole(RolesEnums.guest), this.deleteProgram.bind(this))
-        router.post('/execute', express.json(), checkUserRole(RolesEnums.guest), upload.single('file'), this.executeProgram.bind(this))
+        router.post('/execute', express.json(), upload.single('file'), this.executeProgram.bind(this))
         return router
     }
 }
