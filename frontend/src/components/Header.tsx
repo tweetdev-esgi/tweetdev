@@ -68,22 +68,6 @@ function Header() {
                 </li>
                 <li className="header_nav-item">
                   <a
-                    href="/programs"
-                    className="header_nav-link text-fontColor font-medium"
-                  >
-                    Browse Programs
-                  </a>
-                </li>
-                <li className="header_nav-item">
-                  <a
-                    href="/workflows"
-                    className="header_nav-link text-fontColor font-medium"
-                  >
-                    Browse Workflows
-                  </a>
-                </li>
-                <li className="header_nav-item">
-                  <a
                     href="/workflow"
                     className="header_nav-link text-fontColor font-medium"
                   >

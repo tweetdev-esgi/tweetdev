@@ -143,10 +143,12 @@ function Post({ postInfo }) {
         console.error("Error fetching comment:", error);
       }
     };
+    fetchUserProfileImage();
     fetchComments();
     fetchIsDeletable();
-    fetchHub();
-    fetchUserProfileImage();
+    if (isPostedinHub) {
+      fetchHub();
+    }
     fetchData();
   }, [sessionToken, postInfo.username]);
   const noClick = (e) => {

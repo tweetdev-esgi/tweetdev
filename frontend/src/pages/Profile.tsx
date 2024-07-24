@@ -119,25 +119,18 @@ function Profile() {
     const fetchContent = async () => {
       try {
         if (sessionToken) {
-          if (selectedMode === "posts") {
-            const selfPostsData = await fetchProfilePosts(
-              sessionToken,
-              username
-            );
-            setPosts(selfPostsData);
-          } else if (selectedMode === "programs") {
-            const programsData = await fetchGetUserPrograms(
-              sessionToken,
-              username
-            );
-            setPrograms(programsData);
-          } else if (selectedMode === "workflows") {
-            const workflowsData = await fetchGetUserWorkflows(
-              sessionToken,
-              username
-            );
-            setWorkflows(workflowsData);
-          }
+          const selfPostsData = await fetchProfilePosts(sessionToken, username);
+          setPosts(selfPostsData);
+          const programsData = await fetchGetUserPrograms(
+            sessionToken,
+            username
+          );
+          setPrograms(programsData);
+          const workflowsData = await fetchGetUserWorkflows(
+            sessionToken,
+            username
+          );
+          setWorkflows(workflowsData);
         }
       } catch (error) {
         console.error(`Error fetching ${selectedMode}:`, error);
