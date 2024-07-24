@@ -10,26 +10,10 @@ import { IHub } from "../interfaces/IHub";
 import { fetchPrograms } from "../api/programs";
 import Workflow from "../components/Workflow";
 export default function BrowseWorkflows(props) {
-  const [posts, setPosts] = useState<IPost[]>([]);
   const [portals, setPortals] = useState<IHub[]>([]);
-  const [programs, setPrograms] = useState<any[]>([]);
   const [workflows, setWorkflows] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const sessionToken = getSession();
-
-        if (sessionToken) {
-          const programsData = await fetchPrograms(sessionToken);
-          setPrograms(programsData);
-        } else {
-          console.error("Error fetching programs");
-        }
-      } catch (error) {
-        console.error("Error fetching programs:", error);
-      }
-    };
     const fetchHubsData = async () => {
       try {
         const sessionToken = getSession();
@@ -59,7 +43,6 @@ export default function BrowseWorkflows(props) {
       }
     };
     fetchWorkflow();
-    fetchData();
     fetchHubsData();
   }, []);
   return (

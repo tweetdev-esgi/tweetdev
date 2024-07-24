@@ -350,11 +350,28 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
         res.download(filePath);
     }
 
+
+    getUserPrograms = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const username = req.query.username || req.user?.username;
+            if (!username) {
+                res.status(401).json({"message": "Unauthorized"});
+                return;
+            }
+
+            const userPosts = await ProgramModel.find({ username: username });
+            res.status(200).json(userPosts);
+        } catch (err) {
+            res.status(500).json({"message": "An error occurred while retrieving workflows"});
+        }
+    }
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
         router.get('/one', checkUserToken(), this.getOneProgram.bind(this))
 
+        router.get('/user', checkUserToken(), this.getUserPrograms.bind(this))
         router.get('/download',  this.download.bind(this))
         router.get('/is-deletable', checkUserToken(), this.isProgramDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))

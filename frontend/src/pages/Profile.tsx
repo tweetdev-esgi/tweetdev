@@ -12,7 +12,7 @@ import { convertTimestampToMonthYear, defaultUser } from "../utils/utils";
 import "../styles/Profile.css";
 import { fetchProfilePosts } from "../api/post";
 import { IPost } from "../interfaces";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Favorites from "../components/Favorites";
 import {
   Clock,
@@ -38,16 +38,21 @@ import toast from "react-hot-toast";
 import { useAuth } from "../provider/AuthProvider";
 import ReadFollowsButton from "../components/buttons/ReadFollowsButton";
 import EditPasswordButton from "../components/buttons/EditPasswordButton";
+import Workflow from "../components/Workflow";
+import { fetchGetUserPrograms, fetchPrograms } from "../api/programs";
+import { fetchGetUserWorkflows, fetchWorkflows } from "../api/workflow";
+import Program from "../components/program/Program";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
-
-  const { logoutAndClearToken } = useAuth();
   const [posts, setPosts] = useState<IPost[]>([]);
+  const [programs, setPrograms] = useState([]);
+  const [workflows, setWorkflows] = useState([]);
+  const [selectedMode, setSelectedMode] = useState("posts"); // Default mode
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [followersText, setFollowersText] = useState("Follower");
-
+  const { logoutAndClearToken } = useAuth();
   const sessionToken = getSession();
   const [notFoundUser, setNotFoundUser] = useState("");
   let { username } = useParams();
@@ -93,14 +98,14 @@ function Profile() {
               setPosts(selfPostsData);
             } catch (error) {
               setNotFoundUser("This account doesn’t exist");
-              console.error("Error fetching self info:", error);
+              console.error("Error fetching user info:", error);
             }
           }
         } else {
           console.error("Token de session null.");
         }
       } catch (error) {
-        console.error("Error fetching self info:", error);
+        console.error("Error fetching user info:", error);
       }
     };
     fetchData();
@@ -109,6 +114,37 @@ function Profile() {
   useEffect(() => {
     setFollowersText(followersCount > 1 ? "Followers" : "Follower");
   }, [followersCount]);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        if (sessionToken) {
+          if (selectedMode === "posts") {
+            const selfPostsData = await fetchProfilePosts(
+              sessionToken,
+              username
+            );
+            setPosts(selfPostsData);
+          } else if (selectedMode === "programs") {
+            const programsData = await fetchGetUserPrograms(
+              sessionToken,
+              username
+            );
+            setPrograms(programsData);
+          } else if (selectedMode === "workflows") {
+            const workflowsData = await fetchGetUserWorkflows(
+              sessionToken,
+              username
+            );
+            setWorkflows(workflowsData);
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching ${selectedMode}:`, error);
+      }
+    };
+    fetchContent();
+  }, [selectedMode, sessionToken, username]);
 
   const incrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter + 1);
@@ -124,18 +160,17 @@ function Profile() {
         <>
           <EditProfileButton />
           <EditPasswordButton />
-
           <div className="flex items-center cursor-pointer relative group">
-            <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
+            <div className="absolute bg-white z-10 top-10 right-0 hidden group-hover:block">
               <button
-                className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
+                className="font-medium bg-red-100 text-nowrap rounded-lg p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
                 onClick={() => deleteUser()}
               >
-                <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
-                <span className="text-red-700 ">Delete Profile</span>
+                <Trash2 size={20} weight="bold" color="#b91c1c" />
+                <span className="text-red-700">Delete Profile</span>
               </button>
             </div>
-            <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+            <DotsThreeVertical size={30} weight="bold" />
           </div>
         </>
       ) : (
@@ -149,31 +184,30 @@ function Profile() {
     return (
       <>
         <EditProfileButton />
-
         <div className="flex items-center cursor-pointer relative group">
-          <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">
+          <div className="absolute bg-white z-10 top-10 right-0 hidden group-hover:block">
             <button
-              className="font-medium bg-red-100 text-nowrap rounded-lg  p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
+              className="font-medium bg-red-100 text-nowrap rounded-lg p-2 flex items-center gap-2 hover:bg-red-200 text-sm mt-1"
               onClick={() => deleteUser()}
             >
-              <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
-              <span className="text-red-700 ">Delete Profile</span>
+              <Trash2 size={20} weight="bold" color="#b91c1c" />
+              <span className="text-red-700">Delete Profile</span>
             </button>
           </div>
-          <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
+          <DotsThreeVertical size={30} weight="bold" />
         </div>
       </>
     );
   };
 
   return (
-    <div className="profile-container grid grid-cols-[1fr_3.5fr] gap-4 p-12 mt-6 ">
+    <div className="profile-container grid grid-cols-[1fr_3.5fr] gap-4 p-12 mt-6">
       {!userInfo && <>Loading...</>}
 
       {userInfo && (
         <>
           <div className="hidden lg:block">
-            <Favorites></Favorites>
+            <Favorites />
           </div>
           <div className="profile-card border-2 border-componentBorder rounded-xl grid grid-rows-[60fr_25fr_15fr] h-[600px] mr-6 col-span-2 lg:col-span-1">
             <div
@@ -196,16 +230,16 @@ function Profile() {
                 ></div>
               </div>
               <div className="flex flex-col gap-3 p-4">
-                <p className="text-xl font-semibold ">{userInfo.username}</p>
+                <p className="text-xl font-semibold">{userInfo.username}</p>
                 <ReadFollowsButton
                   followingCount={followingCount}
                   followersCount={followersCount}
                   followersText={followersText}
                   username={username}
-                ></ReadFollowsButton>
+                />
                 <p className="text-secondaryColor text-xs font-medium">
-                  <Clock color="#C7C9CE" weight="bold" size={22}></Clock> Member
-                  Since {convertTimestampToMonthYear(userInfo.joinDate)}
+                  <Clock color="#C7C9CE" weight="bold" size={22} /> Member Since{" "}
+                  {convertTimestampToMonthYear(userInfo.joinDate)}
                 </p>
               </div>
               <div className="grid grid-rows-[40fr_50fr]">
@@ -213,23 +247,67 @@ function Profile() {
               </div>
             </div>
             <div className="p-6 bg-componentBg grid grid-cols-[68fr_32fr] gap-5">
-              <div className=" text-secondaryColor text-sm font-medium">
+              <div className="text-secondaryColor text-sm font-medium">
                 {userInfo.description}
                 {notFoundUser}
               </div>
               <div className="flex justify-around items-center">
-                <InstagramLogo size={24} weight="fill"></InstagramLogo>
-                <YoutubeLogo size={24} weight="fill"></YoutubeLogo>
-                <XLogo size={24} weight="fill"></XLogo>
-                <TwitchLogo size={24} weight="fill"></TwitchLogo>
-                <GithubLogo size={24} weight="fill"></GithubLogo>
+                <InstagramLogo size={24} weight="fill" />
+                <YoutubeLogo size={24} weight="fill" />
+                <XLogo size={24} weight="fill" />
+                <TwitchLogo size={24} weight="fill" />
+                <GithubLogo size={24} weight="fill" />
               </div>
             </div>
           </div>
-          <div className=" -mt-20 mr-10 flex flex-col gap-4  col-span-2 lg:col-start-2">
-            {posts.reverse().map((post, index) => (
-              <Post postInfo={post} key={index} />
-            ))}
+
+          <div className="col-span-2 lg:col-start-2 -mt-20">
+            <div className="flex gap-4 mb-4   flex-row font-medium">
+              <button
+                className={`py-2 px-4 rounded-md ${
+                  selectedMode === "posts"
+                    ? "bg-accentColor text-white"
+                    : "bg-gray-200 text-gray-800"
+                } hover:bg-accentColorHover`}
+                onClick={() => setSelectedMode("posts")}
+              >
+                Posts
+              </button>
+              <button
+                className={`py-2 px-4 rounded-md ${
+                  selectedMode === "programs"
+                    ? "bg-accentColor text-white"
+                    : "bg-gray-200 text-gray-800"
+                } hover:bg-accentColorHover`}
+                onClick={() => setSelectedMode("programs")}
+              >
+                Programs
+              </button>
+              <button
+                className={`py-2 px-4 rounded-md ${
+                  selectedMode === "workflows"
+                    ? "bg-accentColor text-white"
+                    : "bg-gray-200 text-gray-800"
+                } hover:bg-accentColorHover`}
+                onClick={() => setSelectedMode("workflows")}
+              >
+                Workflows
+              </button>
+            </div>
+            <div className="flex flex-col gap-4">
+              {selectedMode === "posts" &&
+                posts
+                  .reverse()
+                  .map((post, index) => <Post postInfo={post} key={index} />)}
+              {selectedMode === "programs" &&
+                programs.map((program, index) => (
+                  <Program programInfo={program} key={index} />
+                ))}
+              {selectedMode === "workflows" &&
+                workflows.map((workflow, index) => (
+                  <Workflow programInfo={workflow} key={index} />
+                ))}
+            </div>
           </div>
         </>
       )}

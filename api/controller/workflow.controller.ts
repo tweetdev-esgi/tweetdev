@@ -370,10 +370,26 @@ export class WorkflowController {
         }
     }
 
+    getUserWorkflows = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const username = req.query.username || req.user?.username;
+            if (!username) {
+                res.status(401).json({"message": "Unauthorized"});
+                return;
+            }
+
+            const userPosts = await WorkflowModel.find({ username: username });
+            res.status(200).json(userPosts);
+        } catch (err) {
+            res.status(500).json({"message": "An error occurred while retrieving workflows"});
+        }
+    }
+
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), this.getAllWorkflows.bind(this))
         router.get('/one', checkUserToken(), this.getOneWorkflow.bind(this))
+        router.get('/user', checkUserToken(), this.getUserWorkflows.bind(this))
 
         router.get('/is-deletable', checkUserToken(), this.isWorkflowDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.workflowsNewProgram), this.newWorkflow.bind(this))

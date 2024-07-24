@@ -258,6 +258,32 @@ export const fetchPrograms = async (token: string): Promise<any> => {
     }
   };
 
+
+  export const getUserPrograms = async (token: string, username?: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/program/user`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        params: username ? { username } : {}
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+  export const fetchGetUserPrograms = async (token: string, username?: string) => {
+    try {
+      const postsData = await getUserPrograms(token, username);
+      return postsData;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+
 //   export const deleteHubByName = async (token: string,name:string): Promise<any> => {
 //     try {
 //       const response = await axios.delete(`${API_BASE_URL}/hub/delete?name=${name}`, {

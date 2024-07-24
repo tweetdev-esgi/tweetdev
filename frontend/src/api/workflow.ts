@@ -125,7 +125,31 @@ export const fetchWorkflows = async (token: string): Promise<any> => {
 //       throw error;
 //     }
 //   };
-  
+export const getUserWorkflows = async (token: string, username?: string): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/workflow/user`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      params: username ? { username } : {}
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+};
+export const fetchGetUserWorkflows = async (token: string, username?: string) => {
+  try {
+    const postsData = await getUserWorkflows(token, username);
+    return postsData;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+};
+
 
   export const createWorkflow = async (token: string,formData: any): Promise<any> => {
     try {
