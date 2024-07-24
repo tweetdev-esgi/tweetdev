@@ -12,7 +12,7 @@ const fs = require('fs')
 const Docker = require('dockerode')
 const multer = require('multer')
 
-import * as util from 'util';
+
 const docker = new Docker();
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 interface LanguageConfig {
@@ -34,21 +34,21 @@ const LANGUAGES: { [key: string]: LanguageConfig } = {
     }
 };
 
-// function writeCodeToFile(code: string, filePath: string): Promise<void> {
-//     return new Promise<void>((resolve, reject) => {
-//         // Ensure the directory exists
-//         const dir = path.dirname(filePath);
+function writeCodeToFile(code: string, filePath: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        // Ensure the directory exists
+        const dir = path.dirname(filePath);
 
-//             // Write the file
-//             fs.writeFile(filePath, code, (err: any) => {
-//                 if (err) {
-//                     reject(err);
-//                 } else {
-//                     resolve();
-//                 }
-//             });
-//     });
-// }
+            // Write the file
+            fs.writeFile(filePath, code, (err: any) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+    });
+}
 function deleteFile(filePath: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         fs.unlink(filePath, (err: any) => {
@@ -61,40 +61,6 @@ function deleteFile(filePath: string): Promise<void> {
         });
     });
 }
-
-
-
-const writeFile = util.promisify(fs.writeFile);
-const unlink = util.promisify(fs.unlink);
-const stat = util.promisify(fs.stat);
-const rm = util.promisify(fs.rm);
-
-export const writeCodeToFile = async (code: string, filePath: string) => {
-    try {
-        const fileStats = await stat(filePath);
-        if (fileStats.isDirectory()) {
-            await rm(filePath, { recursive: true, force: true });
-        } else {
-            await unlink(filePath);
-        }
-    } catch (error:any) {
-        if (error.code !== 'ENOENT') {
-            throw error;
-        }
-        // If error is ENOENT, it means the file/directory does not exist, so we can proceed
-    }
-    
-    await writeFile(filePath, code);
-};
-
-export const cleanupFiles = async (...filePaths: (string | undefined)[]) => {
-    for (const filePath of filePaths) {
-        if (filePath) {
-            await unlink(filePath).catch((err: any) => console.error(`Erreur lors du nettoyage du fichier ${filePath}:`, err));
-        }
-    }
-};
-
 export class ProgramController {
 
     readonly path: string
@@ -250,11 +216,9 @@ export class ProgramController {
     
         try {
             const program = await ProgramModel.findById(id)
-
-
+    
             if (program) {
-                const isDeletable = program.username === req.user?.username;
-                res.status(200).json({ ...program.toObject(), isDeletable });
+                res.status(200).json(program)
             } else {
                 res.status(404).json({ message: 'Program not found' })
             }
@@ -293,8 +257,7 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
 
     const containerName = `code-exec-container-${language}`;
     const codeFileName = `script.${langConfig.extension}`;
-    const hostCodeFilePath = path.join(__dirname,codeFileName);
-    console.log(hostCodeFilePath)
+    const hostCodeFilePath = path.join(__dirname, codeFileName);
     const containerCodeFilePath = `/app/${codeFileName}`;
     const hostFilePath = file ? path.join(__dirname, 'uploads', file.filename) : undefined;
     const containerFilePath = file ? `/app/${file.originalname}` : undefined;
@@ -352,19 +315,17 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
 
                 // Pipe le flux de données vers la réponse HTTP
                 stream.pipe(res);
-                await cleanupFiles(hostCodeFilePath, hostFilePath);
+
 
                 stream.on('error', async (err: any) => {
                     console.error('Erreur lors de l\'envoi du fichier:', err);
                     res.status(500).send('Erreur lors de l\'envoi du fichier.');
                     // Nettoyage des fichiers en cas d'erreur
-                    await cleanupFiles(hostCodeFilePath, hostFilePath);
                 });
             } catch (error) {
                 console.error('Erreur lors de la récupération du fichier depuis le conteneur:', error);
                 res.status(500).send('Erreur lors de la récupération du fichier.');
                 // Nettoyage des fichiers en cas d'erreur
-                await cleanupFiles(hostCodeFilePath, hostFilePath);
             }
         } else {
             // Si outputFileType n'est pas spécifié, envoyez les logs en réponse
@@ -375,36 +336,19 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
             logs.on('end', async () => {
                 res.end();
                 // Nettoyage des fichiers après l'envoi de la réponse
-                await cleanupFiles(hostCodeFilePath, hostFilePath);
             });
         }
     } catch (error) {
         console.error('Erreur:', error);
         res.status(500).send('An error occurred while fetching the logs.');
         // Nettoyage des fichiers en cas d'erreur
-        await cleanupFiles(hostCodeFilePath, hostFilePath);
+        await this.cleanupFiles(hostCodeFilePath, hostFilePath);
     }
 };
 
     download = async (req: Request, res: Response): Promise<void> => {
         const filePath = path.join(__dirname, 'file.txt'); // chemin vers votre fichier
         res.download(filePath);
-    }   
-
-
-    getUserPrograms = async (req: Request, res: Response): Promise<void> => {
-        try {
-            const username = req.query.username || req.user?.username;
-            if (!username) {
-                res.status(401).json({"message": "Unauthorized"});
-                return;
-            }
-
-            const userPosts = await ProgramModel.find({ username: username });
-            res.status(200).json(userPosts);
-        } catch (err) {
-            res.status(500).json({"message": "An error occurred while retrieving workflows"});
-        }
     }
 
     buildRouter = (): Router => {
@@ -412,13 +356,12 @@ executeProgram = async (req: Request, res: Response): Promise<void> => {
         router.get('/', checkUserToken(), this.getAllPrograms.bind(this))
         router.get('/one', checkUserToken(), this.getOneProgram.bind(this))
 
-        router.get('/user', checkUserToken(), this.getUserPrograms.bind(this))
         router.get('/download',  this.download.bind(this))
         router.get('/is-deletable', checkUserToken(), this.isProgramDeletable.bind(this))
         router.post('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsNewProgram), this.newProgram.bind(this))
         router.put('/', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), checkBody(this.paramsUpdateProgram), this.updateProgram.bind(this))
         router.delete('/', checkUserToken(), checkUserRole(RolesEnums.guest), this.deleteProgram.bind(this))
-        router.post('/execute', express.json(), upload.single('file'), this.executeProgram.bind(this))
+        router.post('/execute', express.json(), checkUserToken(), checkUserRole(RolesEnums.guest), upload.single('file'), this.executeProgram.bind(this))
         return router
     }
 }
