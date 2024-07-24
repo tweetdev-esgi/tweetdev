@@ -4,10 +4,9 @@ import * as morgan from "morgan"
 
 import { Response, Request } from "express"
 import listEndpoints = require('express-list-endpoints')
-import { AuthController, UserController, ProgramController, WorkflowController } from './controller'
+import { AuthController, UserController, ProgramController, WorkflowController,CommentController } from './controller'
 import { StartService } from './service'
 import { PostController } from './controller/post.controller'
-import { MessageController } from './controller/message.controller'
 import { HubController } from './controller/hub.controller'
 
 const cors = require('cors');
@@ -43,20 +42,20 @@ const startServer = async (): Promise<void> => {
     const userController = new UserController()
     const authController = new AuthController() 
     const postController = new PostController()
-    const messageController = new MessageController()
     const hubController = new HubController()
     const programController = new ProgramController()
     const workflowController = new WorkflowController()
+    const commentController = new CommentController()
 
     await StartService.createUsers()
 
     app.use(userController.path, userController.buildRouter())
     app.use(authController.path, authController.buildRouter())
     app.use(postController.path, postController.buildRouter())
-    app.use(messageController.path, messageController.buildRouter())
     app.use(hubController.path, hubController.buildRouter())
     app.use(programController.path, programController.buildRouter())
     app.use(workflowController.path, workflowController.buildRouter())
+    app.use(commentController.path, commentController.buildRouter())
 
 
     app.listen(process.env.PORT, () => {

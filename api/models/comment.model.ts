@@ -1,14 +1,15 @@
 import mongoose, { Schema, Model } from "mongoose";
-import { User } from "./user.model";
-
-const commentShemma = new Schema<Comment>({
+const commentSchema = new Schema<Comment>({
     description: {
         type: Schema.Types.String,
         required : true
     },
-    author: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
+    username: {
+        type: Schema.Types.String,
+        required: true
+    },
+    postId: {
+        type: Schema.Types.String,
         required: true
     }
 }, {
@@ -18,7 +19,8 @@ const commentShemma = new Schema<Comment>({
 
 export interface Comment{
     description: string,
-    author: User
+    username: string,
+    postId:string
 }
 
-export const CommentModel: Model<Comment> = mongoose.model("Comment", commentShemma)
+export const CommentModel: Model<Comment> = mongoose.model("Comment", commentSchema)
