@@ -77,7 +77,7 @@ function DetailsPost() {
         ) : (
           <Post postInfo={post} />
         )}
-        <div className="pt-2 flex flex-col gap-1">
+        <div className="pt-2 flex flex-col gap-1 mr-12">
           {comments.map((comment: any, key) => (
             <Comment programInfo={comment}></Comment>
           ))}

@@ -110,7 +110,7 @@ export default function Comment({ programInfo }) {
                   onClick={(e) => deletePost(e)}
                 >
                   <Trash2 size={20} weight="bold" color="#b91c1c"></Trash2>
-                  Delete Workflow
+                  Delete Comment
                 </button>
               </div>
               <DotsThreeVertical size={30} weight="bold"></DotsThreeVertical>
@@ -122,7 +122,7 @@ export default function Comment({ programInfo }) {
   };
 
   return (
-    <div className="bg-componentBg border-2 border-componentBorder rounded-xl p-6 hover:bg-componentBgHover ">
+    <div className="bg-componentBg border-2 border-componentBorder rounded-xl p-6  ">
       {renderPostingInfo()}
       <div className="cursor-text" onClick={(e) => noClick(e)}>
         <p className="text-xs text-secondaryColor leading-relaxed mb-0 py-2">
