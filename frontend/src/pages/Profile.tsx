@@ -37,6 +37,7 @@ import { Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../provider/AuthProvider";
 import ReadFollowsButton from "../components/buttons/ReadFollowsButton";
+import EditPasswordButton from "../components/buttons/EditPasswordButton";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState<UserResponse>(defaultUser);
@@ -122,6 +123,7 @@ function Profile() {
       return username === sessionUsername ? (
         <>
           <EditProfileButton />
+          <EditPasswordButton />
 
           <div className="flex items-center cursor-pointer relative group">
             <div className="absolute bg-whitez-10 top-10 right-0 hidden group-hover:block">

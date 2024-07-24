@@ -798,6 +798,61 @@ deleteUsernameInWorkflows = async (username: string) => {
             res.status(500).json({ message: "Internal server error", error });
         }
     };
+
+
+    readonly paramsUpdatePassword = {
+      "currentPassword":"string",
+      "newPassword": "string"
+
+  };
+  
+  // Function to update the user's password
+  updatePassword = async (req: Request, res: Response): Promise<void> => {
+    
+    const user = req.user;
+    if (!user){
+        res.status(404).json({"message": "User not found"})
+        return
+    }
+      const { currentPassword,newPassword } = req.body;
+  
+           
+      try {
+          const userFind = await UserModel.findOne({username:user.username});
+  
+          if (!userFind) {
+              res.status(404).json({ "message": "User not found" });
+              return;
+          }
+          if (currentPassword) {
+            const isCurrentPasswordValid = SecurityUtils.verifySHA512(
+              currentPassword,
+              userFind.password
+            );
+      
+            if (!isCurrentPasswordValid) {
+              res.status(400).json({ message: "Current password is incorrect" });
+              return;
+            }
+          }
+          const updateData: any = {
+            ...(newPassword && { password: SecurityUtils.toSHA512(newPassword) }),
+          };
+          const updated_user = await UserModel.findOneAndUpdate({username:user.username},
+          updateData,
+          { new: true }
+        );
+      
+      if (!updated_user) {
+        res.status(404).end();
+        return;
+      }
+  
+          res.status(200).json({ "message": "Password updated successfully" });
+      } catch (error:any) {
+          res.status(500).json({ "message": "An error occurred while updating the password", "error": error.message });
+      }
+  };
     buildRouter = (): Router => {
         
         const router = express.Router()
@@ -817,6 +872,7 @@ deleteUsernameInWorkflows = async (username: string) => {
         router.get('/is-liked', checkUserToken(), this.isUserFollowed.bind(this))
         router.get('/hubs', checkUserToken(), this.getUserHubs.bind(this))
         router.patch('/', express.json(), checkUserToken(), checkBody(this.paramsUpdateUser), this.updateUser.bind(this))
+        router.patch('/password', express.json(), checkUserToken(), checkBody(this.paramsUpdatePassword), this.updatePassword.bind(this))
         router.patch('/validate', express.json(), checkUserToken(), checkQuery(this.queryValidatePost), this.validatePost.bind(this))
         router.patch('/role', express.json(), checkUserToken(), checkUserRole(RolesEnums.admin), checkBody(this.paramsGiveRole), this.addRole.bind(this))
         router.post('/follows', express.json(), checkUserToken(), checkBody(this.queryFollow), this.follow.bind(this))
