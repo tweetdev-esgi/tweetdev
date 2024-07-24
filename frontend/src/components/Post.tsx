@@ -2,7 +2,7 @@ import "../styles/Post.css";
 import React, { useEffect, useState } from "react";
 import { getSession } from "../services/sessionService";
 import LikeButton from "./buttons/LikeButton";
-import { Dot, Trash2 } from "lucide-react";
+import { Dot, Trash2, MessageCircle } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
 import { convertTimeToPostTime } from "../utils/utils";
 import { fetchUserProfilePictureByUsername } from "../api/user";
@@ -10,6 +10,7 @@ import { fetchHubByName } from "../api/hub";
 import { DotsThreeVertical } from "@phosphor-icons/react";
 import {
   deletePostById,
+  fetchGetComments,
   fetchIsPostDeletable,
   getIsPostDeletable,
 } from "../api/post";
@@ -59,6 +60,7 @@ function Post({ postInfo }) {
   const [programContent, setProgramContent] = useState();
 
   const [programLanguage, setProgramLanguage] = useState();
+  const [commentCount, setCommentCount] = useState(0);
   const handleChildClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     path: string
@@ -132,6 +134,20 @@ function Post({ postInfo }) {
         console.error("Failed to fetch user profile picture:", error);
       }
     };
+    const fetchComments = async () => {
+      try {
+        const sessionToken = getSession();
+        if (sessionToken && postInfo._id) {
+          const comments = await fetchGetComments(sessionToken, postInfo._id);
+          if (comments) {
+            setCommentCount(comments.length);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching comment:", error);
+      }
+    };
+    fetchComments();
     fetchIsDeletable();
     fetchHub();
     fetchUserProfileImage();
@@ -269,11 +285,16 @@ ${programContent}
           />
         </p>
       </div>
-      <div className="flex mt-2 ">
+      <div className="flex mt-2 flex-row justify-between items-center gap">
         <LikeButton
           sessionToken={sessionToken}
           postInfo={postInfo}
         ></LikeButton>
+        <div className="flex flex-row items-center gap-1">
+          <p className=" font-medium">{commentCount}</p>
+
+          <MessageCircle size={20}></MessageCircle>
+        </div>
       </div>
     </div>
   );
