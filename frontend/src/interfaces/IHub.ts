@@ -7,4 +7,5 @@ export interface IHub{
     profileImageUrl: string
     coverImageUrl:string
     users: string[]
+    admins: string[]
 }

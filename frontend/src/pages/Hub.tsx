@@ -40,7 +40,12 @@ function Hub() {
     profileImageUrl: "",
     coverImageUrl: "",
     users: [],
+    admins: [],
   });
+
+  const navigateTo = (location: string) => {
+    window.location.href = location;
+  };
 
   const incrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter + 1);
@@ -160,6 +165,12 @@ function Hub() {
                       </div>
                     </>
                   )}
+                </div>
+                <div
+                  className="text-xs font-semibold text-end mr-12 cursor-pointer"
+                  onClick={() => navigateTo("/profile/" + hub.admins[0])}
+                >
+                  Owner: {hub.admins[0]}
                 </div>
               </div>
             </div>
