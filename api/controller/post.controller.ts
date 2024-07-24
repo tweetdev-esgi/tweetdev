@@ -362,11 +362,26 @@ export class PostController {
             res.status(500).json({ message: 'Internal server error' });
         }
     };
+    getComments = async (req: Request, res: Response): Promise<void> => {
+        const postId = req.query.id as string;
 
+        if (!postId) {
+            res.status(400).json({ message: "postId query parameter is required" });
+            return;
+        }
+
+        try {
+            const comments = await CommentModel.find({ postId });
+            res.status(200).json(comments);
+        } catch (error: any) {
+            res.status(500).json({ message: "An error occurred while retrieving the comments", error: error.message });
+        }
+    };
     buildRouter = (): Router => {
         const router = express.Router()
         router.get('/', checkUserToken(), checkUserRole(RolesEnums.guest), checkQuery(this.queryPostId), this.getOnePost.bind(this))
         router.get('/all', checkUserToken(), this.getAllPosts.bind(this))
+        router.get('/comments', checkUserToken(), this.getComments.bind(this))
         router.get('/followed-users-posts', checkUserToken(), this.getFollowedUsersPosts.bind(this)); 
         router.get('/user-posts', checkUserToken(), this.getUserPosts.bind(this))
         router.get('/is-deletable', checkUserToken(), this.isPostDeletable.bind(this))

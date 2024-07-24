@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import Favorites from "../components/Favorites";
 import { getSession } from "../services/sessionService";
 import { useParams } from "react-router-dom";
-import { fetchPostById } from "../api/post";
+import { fetchGetComments, fetchPostById } from "../api/post";
 import { IPost } from "../interfaces";
 import Post from "../components/Post";
-
+import Comment from "../components/Comment";
 function DetailsPost() {
   const { id } = useParams<{ id: string }>();
   const [notFoundPost, setNotFoundPost] = useState(false);
@@ -19,6 +19,7 @@ function DetailsPost() {
     username: "",
     hubname: undefined,
   });
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +42,25 @@ function DetailsPost() {
       }
     };
 
+    const fetchComments = async () => {
+      try {
+        const sessionToken = getSession();
+        if (sessionToken && id) {
+          const comments = await fetchGetComments(sessionToken, id);
+          if (comments) {
+            setComments(comments);
+            setLoading(false);
+            console.log(comments);
+          } else {
+            setLoading(false);
+          }
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("Error fetching comment:", error);
+      }
+    };
+    fetchComments();
     fetchData();
   }, [id]);
 
@@ -57,6 +77,11 @@ function DetailsPost() {
         ) : (
           <Post postInfo={post} />
         )}
+        <div className="pt-2 flex flex-col gap-1">
+          {comments.map((comment: any, key) => (
+            <Comment programInfo={comment}></Comment>
+          ))}
+        </div>
       </div>
     </div>
   );

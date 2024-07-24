@@ -98,6 +98,31 @@ export const fetchPosts = async (token: string, fetchAllPosts: boolean): Promise
     }
   };
 
+  export const getComments = async (token: string, id: string): Promise<any> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/post/comments`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        params:{ id:id} 
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+  export const fetchGetComments = async (token: string, id: string) => {
+    try {
+      const postsData = await getComments(token, id);
+      return postsData;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  };
+
   export const getIsPostLiked = async (token: string, postId: string): Promise<any> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/post/is-liked`, {

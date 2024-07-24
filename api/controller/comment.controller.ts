@@ -33,7 +33,8 @@ export class CommentController {
         }
 
         try {
-            const newComment = await this.model.create({ description, username, postId });
+            const newComment = await this.model.create({ description, username, postId,
+                creationDate: new Date(), });
             res.status(201).json(newComment);
         } catch (error: any) {
             res.status(500).json({ message: "An error occurred while creating the comment", error: error.message });
@@ -104,11 +105,45 @@ export class CommentController {
             res.status(500).json({ message: "An error occurred while retrieving the comment", error: error.message });
         }
     };
+    isCommentDeletable = async (req: Request, res: Response): Promise<void> => {
+        const id = req.query.id as string;
+        const username = req.user?.username;
+
+        if (!username) {
+            res.status(401).json({ message: 'You are not logged in' });
+            return;
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid comment ID format' });
+            return;
+        }
+
+        try {
+            const comment = await this.model.findById(id);
+
+            if (!comment) {
+                res.status(404).json({ message: 'Comment not found' });
+                return;
+            }
+
+            if (comment.username === username) {
+                res.status(200).json(true);
+                return;
+            }
+
+            res.status(200).json(false);
+        } catch (error) {
+            console.error('Error retrieving comment:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
 
     buildRouter = (): Router => {
         const router = Router();
         router.get('/', checkUserToken(), this.getAllComments.bind(this));
         router.get('/one', checkUserToken(), this.getOneComment.bind(this));
+        router.get('/is-deletable', checkUserToken(), this.isCommentDeletable.bind(this));
         router.post('/', express.json(), checkUserToken(), checkBody(this.commentCreateParams), this.createComment.bind(this));
         router.patch('/', checkUserToken(), checkBody(this.commentUpdateParams), this.updateComment.bind(this));
         router.delete('/', checkUserToken(), this.deleteComment.bind(this));

@@ -11,6 +11,10 @@ const commentSchema = new Schema<Comment>({
     postId: {
         type: Schema.Types.String,
         required: true
+    },
+    creationDate: {
+        type: Schema.Types.Date,
+        required: true
     }
 }, {
     versionKey: false,
@@ -21,6 +25,7 @@ export interface Comment{
     description: string,
     username: string,
     postId:string
+    creationDate: Date;
 }
 
 export const CommentModel: Model<Comment> = mongoose.model("Comment", commentSchema)
