@@ -45,3 +45,19 @@ export const getIsCommentDeletable = async (token: string, id: string): Promise<
       throw error;
     }
   };
+
+
+  export const createComment = async (token: string,formData: any): Promise<any> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/comments/`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating comment :", error);
+      throw error;
+    }
+  };
