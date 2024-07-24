@@ -277,7 +277,8 @@ function Post({ postInfo }) {
 \`\`\`${programLanguage == "python" ? "python" : "js"}
 ${programContent}
 \`\`\`
-`
+` +
+                  `**[link to program](http://localhost:4000/program/${postInfo.program})**`
             }
             className="p-4 bg-inherit rounded-lg"
           />
