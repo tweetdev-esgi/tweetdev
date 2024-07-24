@@ -9,7 +9,7 @@ import {
 } from "../api/hub";
 import { getSession } from "../services/sessionService";
 import { IHub } from "../interfaces/IHub";
-import { convertTimestampToMonthYear } from "../utils/utils";
+import { convertTimestampToMonthYear, navigateTo } from "../utils/utils";
 import Post from "../components/Post";
 import IPost from "../interfaces/IPost";
 import { Clock, DotsThreeVertical } from "@phosphor-icons/react";
@@ -42,10 +42,6 @@ function Hub() {
     users: [],
     admins: [],
   });
-
-  const navigateTo = (location: string) => {
-    window.location.href = location;
-  };
 
   const incrementFollowers = () => {
     setFollowersCount((prevCounter) => prevCounter + 1);

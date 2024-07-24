@@ -4,7 +4,7 @@ import { getSession } from "../services/sessionService";
 import LikeButton from "./buttons/LikeButton";
 import { Dot, Trash2 } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
-import { convertTimeToPostTime } from "../utils/utils";
+import { convertTimeToPostTime, navigateTo } from "../utils/utils";
 import { fetchUserProfilePictureByUsername } from "../api/user";
 import { fetchHubByName } from "../api/hub";
 import { DotsThreeVertical } from "@phosphor-icons/react";
@@ -30,10 +30,6 @@ export default function Workflow({ programInfo }) {
   ) => {
     event.stopPropagation();
     navigateTo(path);
-  };
-
-  const navigateTo = (location: string) => {
-    window.location.href = location;
   };
 
   const postedTimeIndicator = convertTimeToPostTime(programInfo.creationDate);

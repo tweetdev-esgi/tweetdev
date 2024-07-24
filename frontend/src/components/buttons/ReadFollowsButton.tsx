@@ -8,6 +8,7 @@ import { getSession } from "../../services/sessionService";
 import toast from "react-hot-toast";
 import { fetchGetFollowUsers, updateUser } from "../../api/user";
 import ModalFollowers from "../ModalFollowers";
+import { navigateTo } from "../../utils/utils";
 
 export default function ReadFollowsButton({
   followingCount,
@@ -90,7 +91,12 @@ export default function ReadFollowsButton({
                   <div className="p-6 flex flex-col gap-4">
                     {following.map((user, key) => {
                       return (
-                        <div className="flex gap-3">
+                        <div
+                          className="flex gap-3"
+                          onClick={() =>
+                            navigateTo(`/profile/${user.username}`)
+                          }
+                        >
                           <div
                             className="cursor-pointer bg-blue-700 w-10 h-10 rounded-full"
                             style={{
@@ -121,7 +127,12 @@ export default function ReadFollowsButton({
                   <div className="p-6">
                     {followers.map((user, key) => {
                       return (
-                        <div className="flex gap-3">
+                        <div
+                          className="flex gap-3"
+                          onClick={() =>
+                            navigateTo(`/profile/${user.username}`)
+                          }
+                        >
                           <div
                             className="cursor-pointer bg-blue-700 w-10 h-10 rounded-full"
                             style={{

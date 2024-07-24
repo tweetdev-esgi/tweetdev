@@ -28,9 +28,9 @@ export const convertTimestampToMonthYear =(timestamp: string): string =>{
     }
   };
   
-
-
-
+  export const navigateTo = (location: string) => {
+    window.location.href = location;
+  };
 
 
 

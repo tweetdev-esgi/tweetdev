@@ -1,6 +1,7 @@
 import { Users } from "@phosphor-icons/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { navigateTo } from "../utils/utils";
 
 function FeaturedHubItem({ hub }) {
   function formatNumber(number: number) {
@@ -11,10 +12,6 @@ function FeaturedHubItem({ hub }) {
     }
     return number;
   }
-  const navigate = useNavigate();
-  const navigateTo = (location: string) => {
-    navigate(location);
-  };
   return (
     <div className="relative portal-element border-2 border-componentBorder rounded-xl p-5 h-40 overflow-hidden">
       <div
